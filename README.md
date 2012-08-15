@@ -20,11 +20,11 @@ Upcoming features
 ----
 
 At the moment, this library is quite bare. However, I hope to add the following features very soon:
-# Support for raw co-ordinates to be showcased
-# Support for showcasing ActionBar items
-# Variable sized circles for showcasing
-# Easier usage
-# On-demand showing and hiding of ShowcaseView
+- Support for raw co-ordinates to be showcased
+- Support for showcasing ActionBar items
+- Variable sized circles for showcasing
+- Easier usage
+- On-demand showing and hiding of ShowcaseView
 
 Copyright and Licensing
 ----
