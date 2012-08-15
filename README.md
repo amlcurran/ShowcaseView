@@ -15,3 +15,20 @@ To achieve a full-screen overlay, place a ShowcaseView as high in your layout's 
 As ShowcaseView extends a RelativeLayout, you can add items to the ShowcaseView, such as a button to hide it or text to explain what you are showcasing. If you give the button the id "@id/showcase_button", it will, by default, close the ShowcaseView once pressed. This behaviour can be overridden by using `ShowcaseView.overrideButtonClick(..)`.
 
 Styles are included to maintain consistently in ShowcaseViews. Buttons should use the style ClingButton, with title text using ClingTitleText and standard text using ClingText.
+
+Upcoming features
+----
+
+At the moment, this library is quite bare. However, I hope to add the following features very soon:
+# Support for raw co-ordinates to be showcased
+# Support for showcasing ActionBar items
+# Variable sized circles for showcasing
+# Easier usage
+# On-demand showing and hiding of ShowcaseView
+
+Copyright and Licensing
+----
+
+Copyright Alex Curran © 2012. All rights reserved.
+
+This library is disributed under an Apache 2.0 License.
