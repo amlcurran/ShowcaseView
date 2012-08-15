@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="ShowcaseView">
+        <attr name="backgroundColor" format="color|reference"/>
+    </declare-styleable>
+</resources>

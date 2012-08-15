@@ -4,18 +4,20 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
-import com.espian.showcaseview.sample.R;
 
 /**
  * A view which allows you to showcase areas of your app with an explanation.
  */
-public class ShowcaseView extends RelativeLayout implements View.OnClickListener {
+public class ShowcaseView extends RelativeLayout implements View.OnClickListener,
+		View.OnTouchListener {
 
 	public static final int TYPE_NO_LIMIT = 0;
 	public static final int TYPE_ONE_SHOT = 1;
@@ -26,22 +28,32 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	float showcaseX = -1, showcaseY = -1;
 	int shotType = TYPE_NO_LIMIT;
 	boolean isRedundant = false;
+	boolean block = true;
+	float showcaseRadius = -1;
 
 	Paint background;
+	int backColor;
 	Drawable showcase;
 	View mButton;
 	OnClickListener mListener;
+	OnShowcaseEventListener mEventListener;
 
 	public ShowcaseView(Context context) {
-		super(context, null, 0);
+		this(context, null, 0);
 	}
 
 	public ShowcaseView(Context context, AttributeSet attrs) {
-		super(context, attrs, 0);
+		this(context, attrs, 0);
 	}
 
 	public ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		if (attrs != null) {
+			TypedArray styled = getContext().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, defStyle, 0);
+			int reference = Color.argb(128, 80, 80, 80);
+			backColor = styled.getInt(R.styleable.ShowcaseView_backgroundColor, Color.argb(128, 80, 80, 80));
+			styled.recycle();
+		}
 	}
 
 	private void init() {
@@ -54,10 +66,15 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			return;
 		}
 		background = new Paint();
-		background.setARGB(128, 80, 80, 80);
+		background.setColor(backColor);
 		showcase = getContext().getResources().getDrawable(R.drawable.cling);
 		mButton = findViewById(R.id.showcase_button);
-		if (mButton != null) mButton.setOnClickListener(this);
+		if (mButton != null) {
+			mButton.setOnClickListener(this);
+		}
+		float dens = getResources().getDisplayMetrics().density;
+		showcaseRadius = dens * 94;
+		setOnTouchListener(this);
 	}
 
 	/**
@@ -66,7 +83,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	 * @param view The {@link View} to showcase.
 	 */
 	public void setShowcaseView(final View view) {
-		if (isRedundant) return;
+		if (isRedundant || view == null) {
+			isRedundant = true;
+			return;
+		}
+		isRedundant = false;
 
 		view.post(new Runnable() {
 			@Override
@@ -80,13 +101,38 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	}
 
 	/**
+	 * Set a specific position to showcase
+	 *
+	 * @param x
+	 * @param y
+	 */
+	public void setShowcasePosition(float x, float y) {
+		if (isRedundant) {
+			return;
+		}
+		showcaseX = x;
+		showcaseY = y;
+		invalidate();
+	}
+
+	/**
 	 * Set the shot method of the showcase - only once or no limit
 	 *
 	 * @param shotType either TYPE_ONE_SHOT or TYPE_NO_LIMIT
 	 */
 	public void setShotType(int shotType) {
-		if (shotType == TYPE_NO_LIMIT || shotType == TYPE_ONE_SHOT)
+		if (shotType == TYPE_NO_LIMIT || shotType == TYPE_ONE_SHOT) {
 			this.shotType = shotType;
+		}
+	}
+
+	/**
+	 * Decide whether touches outside the showcased circle should be ignored or not
+	 *
+	 * @param block true to block touches, false otherwise. By default, this is true.
+	 */
+	public void blockNonShowcasedTouches(boolean block) {
+		this.block = block;
 	}
 
 	/**
@@ -95,8 +141,20 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	 * @param listener Listener to listen to on click events
 	 */
 	public void overrideButtonClick(OnClickListener listener) {
-		if (isRedundant) return;
-		if (mButton != null) mButton.setOnClickListener(listener);
+		if (isRedundant) {
+			return;
+		}
+		if (mButton != null) {
+			mButton.setOnClickListener(listener);
+		}
+	}
+
+	public void setOnShowcaseEventListener(OnShowcaseEventListener listener) {
+		mEventListener = listener;
+	}
+
+	public void removeOnShowcaseEventListener() {
+		setOnClickListener(null);
 	}
 
 	@Override
@@ -106,20 +164,18 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			return;
 		}
 
-		float dens = getResources().getDisplayMetrics().density;
-
 		Bitmap b = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(b);
 
 		//Draw the semi-transparent background
-		c.drawColor(Color.argb(128, 80, 80, 80));
+		c.drawColor(backColor);
 
 		//Erase the area for the ring
 		Paint eraser = new Paint();
 		eraser.setColor(0xFFFFFF);
 		eraser.setAlpha(0);
 		eraser.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY));
-		c.drawCircle(showcaseX, showcaseY, dens * 94, eraser);
+		c.drawCircle(showcaseX, showcaseY, showcaseRadius, eraser);
 
 		int cx = (int) showcaseX, cy = (int) showcaseY;
 		int dw = showcase.getIntrinsicWidth();
@@ -145,32 +201,90 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		}
 
 		if (mListener == null) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				ObjectAnimator oa = ObjectAnimator.ofFloat(this, "alpha", 0f);
-				oa.setDuration(300).addListener(new Animator.AnimatorListener() {
-					@Override
-					public void onAnimationStart(Animator animator) {
-					}
-
-					@Override
-					public void onAnimationEnd(Animator animator) {
-						setVisibility(View.GONE);
-					}
-
-					@Override
-					public void onAnimationCancel(Animator animator) {
-					}
-
-					@Override
-					public void onAnimationRepeat(Animator animator) {
-					}
-				});
-				oa.start();
-			} else {
-				setVisibility(View.GONE);
-			}
+			hide();
 		} else {
 			mListener.onClick(view);
 		}
 	}
+
+	public void hide() {
+		if (mEventListener != null) {
+			mEventListener.onShowcaseViewHide(this);
+		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			ObjectAnimator oa = ObjectAnimator.ofFloat(this, "alpha", 0f);
+			oa.setDuration(300).addListener(new Animator.AnimatorListener() {
+				@Override
+				public void onAnimationStart(Animator animator) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animator animator) {
+					setVisibility(View.GONE);
+				}
+
+				@Override
+				public void onAnimationCancel(Animator animator) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animator animator) {
+				}
+			});
+			oa.start();
+		} else {
+			setVisibility(View.GONE);
+		}
+	}
+
+	public void show() {
+		if (mEventListener != null) {
+			mEventListener.onShowcaseViewShow(this);
+		}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			ObjectAnimator oa = ObjectAnimator.ofFloat(this, "alpha", 1f);
+			oa.setDuration(300).addListener(new Animator.AnimatorListener() {
+				@Override
+				public void onAnimationStart(Animator animator) {
+					setVisibility(View.VISIBLE);
+				}
+
+				@Override
+				public void onAnimationEnd(Animator animator) {
+				}
+
+				@Override
+				public void onAnimationCancel(Animator animator) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animator animator) {
+				}
+			});
+			oa.start();
+		} else {
+			setVisibility(View.VISIBLE);
+		}
+	}
+
+	@Override
+	public boolean onTouch(View view, MotionEvent motionEvent) {
+		if (!block) {
+			return false;
+		} else {
+			float xDelta = Math.abs(motionEvent.getRawX() - showcaseX);
+			float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
+			double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
+			return distanceFromFocus > showcaseRadius;
+		}
+	}
+
+	public interface OnShowcaseEventListener {
+
+		public void onShowcaseViewHide(ShowcaseView showcaseView);
+
+		public void onShowcaseViewShow(ShowcaseView showcaseView);
+
+	}
+
 }

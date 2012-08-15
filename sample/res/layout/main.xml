@@ -1,47 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-        >
-    <FrameLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="New Button"
-                android:id="@+id/button" android:layout_marginTop="64dp" android:layout_marginLeft="89dp"/>
-        <com.espian.showcaseview.ShowcaseView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/showcase">
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Showcased button"
-                    android:id="@+id/textView" style="@style/ClingTitleText"
-                    android:layout_marginLeft="6dp"
-                    android:layout_marginTop="240dp"/>
-
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Here's some text explaining the showcased view"
-                    android:id="@+id/textView1"
-                    android:layout_below="@id/textView"
-                    android:layout_alignLeft="@id/textView" style="@style/ClingText"/>
-
-            <Button
-                    style="@style/ClingButton"
-                    android:text="OK"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginRight="6dp"
-                    android:layout_marginBottom="6dp"
-                    android:id="@id/showcase_button"/>
-
+              xmlns:showcase="http://schemas.android.com/apk/res-auto" android:orientation="vertical"
+              android:layout_width="fill_parent" android:layout_height="fill_parent">
+    <FrameLayout android:layout_width="fill_parent" android:layout_height="fill_parent">
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/button_hide" android:id="@+id/button" android:layout_marginTop="64dp"
+                android:layout_marginLeft="89dp"/>
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/button_blocked" android:id="@+id/button" android:layout_marginTop="320dp"
+                android:layout_marginLeft="89dp"/>
+        <com.espian.showcaseview.ShowcaseView android:layout_width="match_parent" android:layout_height="match_parent"
+                                              android:id="@+id/showcase" showcase:backgroundColor="#3333B5E5">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:text="Showcased button" android:id="@+id/textView" style="@style/ShowcaseTitleText"
+                      android:layout_marginLeft="6dp" android:layout_marginTop="240dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:text="Here's some text explaining the showcased view" android:id="@+id/textView1"
+                      android:layout_below="@id/textView" android:layout_alignLeft="@id/textView"
+                      style="@style/ShowcaseText"/>
+            <Button style="@style/ShowcaseButton" android:text="OK" android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true" android:layout_marginRight="6dp"
+                    android:layout_marginBottom="6dp" android:id="@id/showcase_button"/>
         </com.espian.showcaseview.ShowcaseView>
     </FrameLayout>
 </LinearLayout>
-
