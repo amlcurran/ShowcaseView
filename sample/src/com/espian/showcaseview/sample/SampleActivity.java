@@ -12,17 +12,15 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 	ShowcaseView sv;
 	Button button;
 
-	/**
-	 * Called when the activity is first created.
-	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		sv = (ShowcaseView) findViewById(R.id.showcase);
-		sv.setShowcaseView(findViewById(R.id.button));
+
+		button = (Button) findViewById(R.id.button);
+
+		sv = ShowcaseView.insertShowcaseView(R.id.buttonBlocked, this, "Testing", "Here's some detailed text explaining the highlighted button", null);
 		sv.setOnShowcaseEventListener(this);
-		(button = (Button) findViewById(R.id.button)).setOnClickListener(this);
 	}
 
 	@Override
