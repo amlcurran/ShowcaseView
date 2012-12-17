@@ -33,6 +33,6 @@ At the moment, this library is quite bare. However, I hope to add the following 
 Copyright and Licensing
 ----
 
-Copyright Alex Curran © 2012. All rights reserved.
+Copyright Alex Curran ([+Alex](https://plus.google.com/110510888639261520925/posts)) © 2012. All rights reserved.
 
 This library is disributed under an Apache 2.0 License.
