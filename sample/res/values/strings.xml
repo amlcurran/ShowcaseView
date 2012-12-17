@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SampleActivity</string>
-    <string name="button_hide">Hide showcase</string>
+    <string name="button_hide">Gesture up</string>
     <string name="button_show">Show showcase</string>
     <string name="button_blocked">Blocked button</string>
 </resources>

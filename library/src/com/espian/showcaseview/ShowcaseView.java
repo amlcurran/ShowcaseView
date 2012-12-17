@@ -1,6 +1,7 @@
 package com.espian.showcaseview;
 
 import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
@@ -44,7 +45,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	private TextPaint mPaintSub;
 	private final int backColor;
 	private Drawable showcase;
-	private View mButton;
+	private View mButton, mHandy;
 	private final Button mBackupButton;
 	private OnShowcaseEventListener mEventListener;
 	private PorterDuffXfermode mBlender;
@@ -119,6 +120,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			mBackupButton.setOnClickListener(this);
 			addView(mBackupButton);
 		}
+
+        mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
+        addView(mHandy);
+        mHandy.setAlpha(0f);
+
 	}
 
 	/**
@@ -274,6 +280,27 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	}
 
+    public AnimatorSet animateGesture(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) {
+
+        ObjectAnimator alphaIn = ObjectAnimator.ofFloat(mHandy, "alpha", 0f, 1f).setDuration(500);
+
+        ObjectAnimator setUpX = ObjectAnimator.ofFloat(mHandy, "x", showcaseX + offsetStartX).setDuration(0);
+        ObjectAnimator setUpY = ObjectAnimator.ofFloat(mHandy, "y", showcaseY + offsetStartY).setDuration(0);
+
+        ObjectAnimator moveX = ObjectAnimator.ofFloat(mHandy, "x", showcaseX + offsetEndX).setDuration(1000);
+        ObjectAnimator moveY = ObjectAnimator.ofFloat(mHandy, "y", showcaseY + offsetEndY).setDuration(1000);
+        moveX.setStartDelay(1000);
+        moveY.setStartDelay(1000);
+
+        ObjectAnimator alphaOut = ObjectAnimator.ofFloat(mHandy, "alpha", 0f).setDuration(500);
+        alphaOut.setStartDelay(2500);
+
+        AnimatorSet as = new AnimatorSet();
+        as.play(setUpX).with(setUpY).before(alphaIn).before(moveX).with(moveY).before(alphaOut);
+        return as;
+
+    }
+
 	@Override
 	public void onClick(View view) {
 		// If the type is set to one-shot, store that it has shot
@@ -281,6 +308,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			SharedPreferences internal = getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE);
 			internal.edit().putBoolean("hasShot", true).commit();
 		}
+        hide();
 	}
 
 	public void hide() {

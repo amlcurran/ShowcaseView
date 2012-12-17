@@ -17,16 +17,17 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		button = (Button) findViewById(R.id.button);
+		button = (Button) findViewById(R.id.buttonBlocked);
+        button.setOnClickListener(this);
 
-		sv = ShowcaseView.insertShowcaseView(R.id.buttonBlocked, this, "Testing", "Here's some detailed text explaining the highlighted button", null);
+		sv = ShowcaseView.insertShowcaseView(R.id.buttonBlocked, this, "ShowcaseView Sample", "When the ShowcaseView is showing, pressing the button will show a gesture.", null);
 		sv.setOnShowcaseEventListener(this);
 	}
 
 	@Override
 	public void onClick(View view) {
 		if (sv.isShown()) {
-			sv.hide();
+            sv.animateGesture(0, 0, 0, -400).start();
 		} else {
 			sv.show();
 		}

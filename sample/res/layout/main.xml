@@ -6,14 +6,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_hide"
-        android:id="@+id/button"
-        android:layout_marginTop="64dp"
-        android:layout_marginLeft="89dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_blocked"
         android:id="@+id/buttonBlocked"
         android:layout_marginTop="320dp"
         android:layout_marginLeft="89dp" />
