@@ -5,8 +5,8 @@
     android:versionName="1.0">
 
     <uses-sdk
-        android:targetSdkVersion="16"
-        android:minSdkVersion="7" />
+        android:targetSdkVersion="17"
+        android:minSdkVersion="14" />
     <application
         android:label="@string/app_name"
         android:icon="@drawable/ic_launcher">
@@ -18,5 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ActionItemsSampleActivity" />
     </application>
 </manifest>

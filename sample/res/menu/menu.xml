@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_item1"
+          android:icon="@drawable/ic_edit"
+            android:showAsAction="always"/>
+    <item android:id="@+id/menu_item2"
+          android:icon="@drawable/ic_discard"
+            android:title="Showcase title"/>
+</menu>

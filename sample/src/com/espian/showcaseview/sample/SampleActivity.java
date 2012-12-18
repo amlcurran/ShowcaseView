@@ -1,6 +1,7 @@
 package com.espian.showcaseview.sample;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,8 +21,11 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 		button = (Button) findViewById(R.id.buttonBlocked);
         button.setOnClickListener(this);
 
-		sv = ShowcaseView.insertShowcaseView(R.id.buttonBlocked, this, "ShowcaseView Sample", "When the ShowcaseView is showing, pressing the button will show a gesture.", null);
-		sv.setOnShowcaseEventListener(this);
+        sv = ShowcaseView.insertShowcaseView(R.id.buttonBlocked, this, "ShowcaseView Sample", "When the ShowcaseView is showing, " +
+                "pressing the button will show a gesture. When it is hidden " +
+                "it'll go to another Activity.", null);
+        sv.setOnShowcaseEventListener(this);
+
 	}
 
 	@Override
@@ -29,7 +33,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 		if (sv.isShown()) {
             sv.animateGesture(0, 0, 0, -400).start();
 		} else {
-			sv.show();
+			startActivity(new Intent(this, ActionItemsSampleActivity.class));
 		}
 	}
 

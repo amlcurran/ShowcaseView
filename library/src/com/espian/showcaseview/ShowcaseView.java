@@ -15,12 +15,11 @@ import android.text.Layout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+
+import java.lang.reflect.Field;
 
 /**
  * A view which allows you to showcase areas of your app with an explanation.
@@ -33,6 +32,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	public static final int INSERT_TO_DECOR = 0;
 	public static final int INSERT_TO_VIEW = 1;
+
+    public static final int ITEM_ACTION_HOME = 0;
+    public static final int ITEM_TITLE_OR_SPINNER = 1;
+    public static final int ITEM_ACTION_ITEM = 2;
+    public static final int ITEM_ACTION_OVERFLOW = 6;
 
 	private final String INTERNAL_PREFS = "showcase_internal";
 	private final String SHOT_PREF_STORE = "hasShot";
@@ -172,6 +176,93 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		init();
 		invalidate();
 	}
+
+    public void setShowcaseItem(final int itemType, final int actionItemId, final Activity activity) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                View homeButton = activity.findViewById(android.R.id.home);
+                if (homeButton == null)
+                    throw new RuntimeException("insertShowcaseViewWithType cannot be used when the theme " +
+                            "has no ActionBar");
+                ViewParent p = homeButton.getParent().getParent(); //ActionBarView
+
+                Class abv = p.getClass(); //ActionBarView class
+                Class absAbv = abv.getSuperclass(); //AbsActionBarView class
+
+                switch (itemType) {
+
+                    case ITEM_ACTION_HOME:
+                        setShowcaseView(homeButton);
+                        break;
+
+                    case ITEM_TITLE_OR_SPINNER:
+                            try {
+                                Field mTitleViewField = abv.getDeclaredField("mTitleView");
+                                mTitleViewField.setAccessible(true);
+                                View titleView = (View) mTitleViewField.get(p);
+                                if (titleView != null) {
+                                    setShowcaseView(titleView);
+                                    break;
+                                }
+                                Field mSpinnerField = abv.getDeclaredField("mSpinner");
+                                mSpinnerField.setAccessible(true);
+                                View mSpinnerView = (View) mSpinnerField.get(p);
+                                if (mSpinnerView != null) {
+                                    setShowcaseView(mSpinnerView);
+                                    break;
+                                }
+                            } catch (NoSuchFieldException e) {
+                                e.printStackTrace();
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
+                        break;
+
+                    case ITEM_ACTION_ITEM:
+                    case ITEM_ACTION_OVERFLOW:
+                        try {
+                            Field mAmpField = absAbv.getDeclaredField("mActionMenuPresenter");
+                            mAmpField.setAccessible(true);
+                            Object mAmp = mAmpField.get(p);
+                            if (itemType == ITEM_ACTION_OVERFLOW) {
+                                // Finds the overflow button associated with the ActionMenuPresenter
+                                Field mObField = mAmp.getClass().getDeclaredField("mOverflowButton");
+                                mObField.setAccessible(true);
+                                View mOb = (View) mObField.get(mAmp);
+                                if (mOb != null)
+                                    setShowcaseView(mOb);
+                            } else {
+                                // Want an ActionItem, so find it
+                                Field mAmvField = mAmp.getClass().getSuperclass().getDeclaredField("mMenuView");
+                                mAmvField.setAccessible(true);
+                                Object mAmv = mAmvField.get(mAmp);
+
+                                Field mChField = mAmv.getClass().getSuperclass().getSuperclass().getDeclaredField("mChildren");
+                                mChField.setAccessible(true);
+                                Object[] mChs = (Object[]) mChField.get(mAmv);
+                                for (Object mCh : mChs) {
+                                    if (mCh != null) {
+                                        View v = (View) mCh;
+                                        if (v.getId() == actionItemId)
+                                            setShowcaseView(v);
+                                    }
+                                }
+                            }
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (NoSuchFieldException e) {
+                            e.printStackTrace();
+                        } catch (NullPointerException npe) {
+                            throw new RuntimeException("insertShowcaseViewWithType() must be called " +
+                                    "after or during onCreateOptionsMenu() of the host Activity");
+                        }
+
+                }
+            }
+        });
+
+    }
 
 	/**
 	 * Set the shot method of the showcase - only once or no limit
@@ -393,10 +484,53 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	public void setText(String titleText, String subText) {
 
+        //TODO allow dynamic text changing
 		mTitleText = titleText;
 		mSubText = subText;
 
 	}
+
+    /**
+     * Get the ghostly gesture hand for custom gestures
+     * @return a View respresenting the ghostly hand
+     */
+    public View getHand() {
+        return mHandy;
+    }
+
+    /**
+     * Point to a specific view
+     * @param view
+     */
+    public void pointTo(View view) {
+
+        ObjectAnimator alphaIn = ObjectAnimator.ofFloat(mHandy, "alpha", 0f, 1f).setDuration(500);
+
+        ObjectAnimator setUpX = ObjectAnimator.ofFloat(mHandy, "x", view.getX() + view.getWidth() / 2).setDuration(0);
+        ObjectAnimator setUpY = ObjectAnimator.ofFloat(mHandy, "y", view.getY() + view.getHeight() / 2).setDuration(0);
+
+        AnimatorSet as = new AnimatorSet();
+        as.play(setUpX).with(setUpY).before(alphaIn);
+        as.start();
+    }
+
+    /**
+     * Point to a specific point on the screen
+     * @param x
+     * @param y
+     */
+    public void pointTo(float x, float y) {
+
+        ObjectAnimator alphaIn = ObjectAnimator.ofFloat(mHandy, "alpha", 0f, 1f).setDuration(500);
+
+        ObjectAnimator setUpX = ObjectAnimator.ofFloat(mHandy, "x", x).setDuration(0);
+        ObjectAnimator setUpY = ObjectAnimator.ofFloat(mHandy, "y", y).setDuration(0);
+
+        AnimatorSet as = new AnimatorSet();
+        as.play(setUpX).with(setUpY).before(alphaIn);
+        as.start();
+
+    }
 
 	public void setConfigOptions(ConfigOptions options) {
 		mOptions = options;
@@ -457,11 +591,29 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		return insertShowcaseView(showcase, activity, null, null, null);
 	}
 
-	public static ShowcaseView insertShowcaseView(int showcaseViewId, Activity activity) {
-		View v = activity.findViewById(showcaseViewId);
-		if (v != null) return insertShowcaseView(v, activity, null, null, null);
-		return null;
-	}
+    /**
+     * Quickly insert a ShowcaseView into an Activity, highlighting an item.
+     * @param type          the type of item to showcase (can be ITEM_ACTION_HOME, ITEM_TITLE_OR_SPINNER, ITEM_ACTION_ITEM or ITEM_ACTION_OVERFLOW)
+     * @param itemId        the ID of an Action item to showcase (only required for ITEM_ACTION_ITEM
+     * @param activity      Activity to insert the ShowcaseView into
+     * @param title         Text to show as a title. Can be null.
+     * @param detailText    More detailed text. Can be null.
+     * @param options       A set of options to customise the ShowcaseView
+     * @return the created ShowcaseView instance
+     */
+    public static ShowcaseView insertShowcaseViewWithType(int type, int itemId, Activity activity, String title, String detailText, ConfigOptions options) {
+        ShowcaseView sv = new ShowcaseView(activity, null, 0);
+        if (options != null)
+            sv.setConfigOptions(options);
+        if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
+            ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
+        } else {
+            ((ViewGroup) activity.findViewById(android.R.id.content)).addView(sv);
+        }
+        sv.setShowcaseItem(type, itemId, activity);
+        sv.setText(title, detailText);
+        return sv;
+    }
 
 	public static ShowcaseView insertShowcaseView(float x, float y, Activity activity) {
 		return insertShowcaseView(x, y, activity, null, null, null);
