@@ -21,3 +21,9 @@ local.properties
 
 # Os specific files
 .DS_Store
+
+# IntelliJ project files
+*.iml
+*.ipr
+*.iws
+.idea/
