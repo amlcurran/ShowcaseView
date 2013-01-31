@@ -11,6 +11,8 @@
 # generated files
 bin/
 gen/
+lib/
+target/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -26,4 +28,8 @@ local.properties
 *.iml
 *.ipr
 *.iws
+.idea/i
 .idea/
+
+# Maven Files
+pom.xml.*

@@ -1,0 +1,97 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
+
+    <groupId>com.github.espiandev</groupId>
+    <artifactId>showcaseview-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>2r2</version>
+
+    <name>ShowcaseView (parent)</name>
+    <description>Android library for implementing Holo-style highlighting of important UI areas.</description>
+    <url>http://espiandev.github.com/ShowcaseView/</url>
+    <inceptionYear>2012</inceptionYear>
+
+    <modules>
+        <module>library</module>
+        <module>sample</module>
+    </modules>
+
+    <scm>
+        <url>https://github.com/Espiandev/ShowcaseView/</url>
+        <connection>scm:git:git://github.com/Espiandev/ShowcaseView.git</connection>
+        <developerConnection>scm:git:git@github.com:Espiandev/ShowcaseView.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Alex Curran</name>
+            <email>aml.curran@gmail.com</email>
+            <id>espiandev</id>
+            <url>http://www.espiandev.co.uk</url>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache License Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/Espiandev/ShowcaseView/issues</url>
+    </issueManagement>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.android</groupId>
+                <artifactId>android</artifactId>
+                <version>4.0.1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.android</groupId>
+                <artifactId>support-v4</artifactId>
+                <version>r7</version>
+            </dependency>
+            <dependency>
+                <groupId>com.nineoldandroids</groupId>
+                <artifactId>library</artifactId>
+                <version>2.4.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                    <artifactId>android-maven-plugin</artifactId>
+                    <version>3.3.2</version>
+                    <configuration>
+                        <sdk>
+                            <platform>15</platform>
+                        </sdk>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+
+    </build>
+</project>
