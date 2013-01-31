@@ -38,24 +38,24 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	public static final int ITEM_ACTION_ITEM = 2;
 	public static final int ITEM_ACTION_OVERFLOW = 6;
 
-	private final String INTERNAL_PREFS = "showcase_internal";
-	private final String SHOT_PREF_STORE = "hasShot";
-
-	private float showcaseX = -1, showcaseY = -1, showcaseRadius = -1, metricScale = 1.0f;
+	private float showcaseX = -1, showcaseY = -1, showcaseRadius = -1, metricScale = 1.0f,
+			legacyShowcaseX = -1, legacyShowcaseY = -1;
 	private boolean isRedundant = false;
 
 	private ConfigOptions mOptions;
 	private Paint mPaintTitle, mEraser;
-	private TextPaint mPaintSub;
+	private TextPaint mPaintDetail;
 	private final int backColor;
 	private Drawable showcase;
 	private View mButton, mHandy;
 	private final Button mBackupButton;
 	private OnShowcaseEventListener mEventListener;
-	private PorterDuffXfermode mBlender;
 	private Rect voidedArea;
 	private String mTitleText, mSubText;
 	private Context mContext;
+	private int detailTextColor = -1, titleTextColor = -1;
+	private DynamicLayout mDynamicDetailLayout;
+	private float[] mBestTextPosition;
 
 	public ShowcaseView(Context context) {
 		this(context, null, 0);
@@ -73,8 +73,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		if (attrs != null) {
 			TypedArray styled = getContext().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, defStyle, 0);
 			backColor = styled.getInt(R.styleable.ShowcaseView_backgroundColor, Color.argb(128, 80, 80, 80));
+			detailTextColor = styled.getColor(R.styleable.ShowcaseView_detailTextColor, Color.WHITE);
+			titleTextColor = styled.getColor(R.styleable.ShowcaseView_titleTextColor, Color.parseColor("#49C0EC"));
 			styled.recycle();
 		} else {
+			detailTextColor = Color.WHITE;
+			titleTextColor = Color.parseColor("#49C0EC");
 			backColor = Color.parseColor("#3333B5E5");
 		}
 		metricScale = getContext().getResources().getDisplayMetrics().density;
@@ -83,8 +87,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	}
 
 	private void init() {
-		boolean hasShot = getContext().getSharedPreferences(INTERNAL_PREFS, Context.MODE_PRIVATE)
-				.getBoolean(SHOT_PREF_STORE, false);
+		boolean hasShot = getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE)
+				.getBoolean("hasShot", false);
 		if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
 			// The showcase has already been shot once, so we don't need to do anything
 			setVisibility(View.GONE);
@@ -97,18 +101,18 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			mButton.setOnClickListener(this);
 		}
 		showcaseRadius = metricScale * 94;
-		mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
+		PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
 		setOnTouchListener(this);
 
 		mPaintTitle = new Paint();
-		mPaintTitle.setColor(Color.parseColor("#49C0EC"));
+		mPaintTitle.setColor(titleTextColor);
 		mPaintTitle.setShadowLayer(2.0f, 0f, 2.0f, Color.BLACK);
 		mPaintTitle.setTextSize(24 * metricScale);
 
-		mPaintSub = new TextPaint();
-		mPaintSub.setColor(Color.WHITE);
-		mPaintSub.setShadowLayer(2.0f, 0f, 2.0f, Color.BLACK);
-		mPaintSub.setTextSize(16 * metricScale);
+		mPaintDetail = new TextPaint();
+		mPaintDetail.setColor(detailTextColor);
+		mPaintDetail.setShadowLayer(2.0f, 0f, 2.0f, Color.BLACK);
+		mPaintDetail.setTextSize(16 * metricScale);
 
 		mEraser = new Paint();
 		mEraser.setColor(0xFFFFFF);
@@ -272,6 +276,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	 * Set the shot method of the showcase - only once or no limit
 	 *
 	 * @param shotType either TYPE_ONE_SHOT or TYPE_NO_LIMIT
+	 * @deprecated Use the option in {@link ConfigOptions} instead.
 	 */
 	@Deprecated
 	public void setShotType(int shotType) {
@@ -284,6 +289,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	 * Decide whether touches outside the showcased circle should be ignored or not
 	 *
 	 * @param block true to block touches, false otherwise. By default, this is true.
+	 * @deprecated Use the option in {@link ConfigOptions} instead.
 	 */
 	@Deprecated
 	public void blockNonShowcasedTouches(boolean block) {
@@ -324,29 +330,36 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		//Erase the area for the ring
 		c.drawCircle(showcaseX, showcaseY, showcaseRadius, mEraser);
 
-		makeVoidedRect();
+		boolean recalculateText = makeVoidedRect();
 
 		showcase.setBounds(voidedArea);
 		showcase.draw(c);
 
 		canvas.drawBitmap(b, 0, 0, null);
 
-		if (!TextUtils.isEmpty(mTitleText) && !TextUtils.isEmpty(mSubText)) {
-			float[] textPos = getBestTextPosition(canvas.getWidth(), canvas.getHeight());
-			if (!TextUtils.isEmpty(mTitleText))
-				canvas.drawText(mTitleText, textPos[0], textPos[1], mPaintTitle);
-			if (!TextUtils.isEmpty(mSubText)) {
-				canvas.save();
-				DynamicLayout slTitle = new DynamicLayout(mSubText, mPaintSub, ((Number) textPos[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
-						1.2f, 1.0f, true);
-				canvas.translate(textPos[0], textPos[1] + 12 * metricScale);
-				slTitle.draw(canvas);
-				canvas.restore();
-			}
-		}
-
+		// Clean up, as we no longer require these items.
 		c.setBitmap(null);
 		b.recycle();
+
+		if (!TextUtils.isEmpty(mTitleText) || !TextUtils.isEmpty(mSubText)) {
+			if (recalculateText)
+				mBestTextPosition = getBestTextPosition(canvas.getWidth(), canvas.getHeight());
+
+			if (!TextUtils.isEmpty(mTitleText))
+				canvas.drawText(mTitleText, mBestTextPosition[0], mBestTextPosition[1], mPaintTitle);
+
+			if (!TextUtils.isEmpty(mSubText)) {
+				canvas.save();
+				if (recalculateText)
+					mDynamicDetailLayout = new DynamicLayout(mSubText, mPaintDetail,
+							((Number) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
+							1.2f, 1.0f, true);
+				canvas.translate(mBestTextPosition[0], mBestTextPosition[1] + 12 * metricScale);
+				mDynamicDetailLayout.draw(canvas);
+				canvas.restore();
+
+			}
+		}
 
 		super.dispatchDraw(canvas);
 
@@ -365,13 +378,31 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	}
 
-	private void makeVoidedRect() {
+	/**
+	 * Creates a {@link Rect} which represents the area the showcase covers. Used to calculate
+	 * where best to place the text
+	 *
+	 * @return true if voidedArea has changed, false otherwise.
+	 */
+	private boolean makeVoidedRect() {
 
-		int cx = (int) showcaseX, cy = (int) showcaseY;
-		int dw = showcase.getIntrinsicWidth();
-		int dh = showcase.getIntrinsicHeight();
+		// This if statement saves resources by not recalculating voidedArea
+		// if the X & Y coordinates haven't changed
+		if (voidedArea == null || (showcaseX != legacyShowcaseX || showcaseY != legacyShowcaseY)) {
 
-		voidedArea = new Rect(cx - dw / 2, cy - dh / 2, cx + dw / 2, cy + dh / 2);
+			int cx = (int) showcaseX, cy = (int) showcaseY;
+			int dw = showcase.getIntrinsicWidth();
+			int dh = showcase.getIntrinsicHeight();
+
+			voidedArea = new Rect(cx - dw / 2, cy - dh / 2, cx + dw / 2, cy + dh / 2);
+
+			legacyShowcaseX = showcaseX;
+			legacyShowcaseY = showcaseY;
+
+			return true;
+
+		}
+		return false;
 
 	}
 
@@ -495,19 +526,30 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	}
 
+	public ShowcaseView setTextColors(int titleTextColor, int detailTextColor) {
+		this.titleTextColor = titleTextColor;
+		this.detailTextColor = detailTextColor;
+		if (mPaintTitle != null)
+			mPaintTitle.setColor(titleTextColor);
+		if (mPaintDetail != null)
+			mPaintDetail.setColor(detailTextColor);
+		invalidate();
+		return this;
+	}
+
 	public void setText(String titleText, String subText) {
 
-		//TODO allow dynamic text changing
 		mTitleText = titleText;
 		mSubText = subText;
+		invalidate();
 
 	}
 
 	public void setText(int titleText, int subText) {
 
-		//TODO allow dynamic text changing
 		mTitleText = mContext.getResources().getString(titleText);
 		mSubText = mContext.getResources().getString(subText);
+		invalidate();
 
 	}
 

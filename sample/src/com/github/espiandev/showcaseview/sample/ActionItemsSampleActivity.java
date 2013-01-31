@@ -1,6 +1,7 @@
 package com.github.espiandev.showcaseview.sample;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ public class ActionItemsSampleActivity extends Activity {
 
 		sv = ShowcaseView.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_OVERFLOW, R.id.menu_item1, this,
 				"ShowcaseView & action items", "Try touching action items to showcase them", mOptions);
+		sv.setTextColors(Color.GREEN, Color.GRAY);
 
 		return super.onCreateOptionsMenu(menu);
 	}
