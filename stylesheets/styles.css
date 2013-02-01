@@ -1,8 +1,8 @@
-@import url(https://fonts.googleapis.com/css?family=Lato:300italic,700italic,300,700);
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,100,700);
 
 body {
   padding:50px;
-  font:14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font:16px/1.5 Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
   color:#777;
   font-weight:300;
 }
@@ -166,7 +166,9 @@ section {
 }
 
 small {
-  font-size:11px;
+  font-size:12px;
+  padding-bottom: 2px;
+  padding-top: 2px;
 }
 
 hr {
