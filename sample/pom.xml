@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.github.espiandev</groupId>
             <artifactId>showcaseview-library</artifactId>
-            <version>3.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>apklib</type>
         </dependency>
     </dependencies>
