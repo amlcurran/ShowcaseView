@@ -1,8 +1,5 @@
 package com.github.espiandev.showcaseview;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,6 +15,10 @@ import android.util.AttributeSet;
 import android.view.*;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.view.ViewHelper;
 
 import java.lang.reflect.Field;
 
@@ -135,7 +136,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 		mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
 		addView(mHandy);
-		mHandy.setAlpha(0f);
+		ViewHelper.setAlpha(mHandy, 0f);
 
 	}
 
@@ -190,6 +191,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			@Override
 			public void run() {
 				View homeButton = activity.findViewById(android.R.id.home);
+				if (homeButton == null) {
+					// Thanks to @hameno for this
+					int homeId = activity.getResources().getIdentifier("abs__home", "id", activity.getPackageName());
+					if (homeId != 0) {
+						homeButton = activity.findViewById(homeId);
+					}
+				}
 				if (homeButton == null)
 					throw new RuntimeException("insertShowcaseViewWithType cannot be used when the theme " +
 							"has no ActionBar");
@@ -246,7 +254,16 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 								mAmvField.setAccessible(true);
 								Object mAmv = mAmvField.get(mAmp);
 
-								Field mChField = mAmv.getClass().getSuperclass().getSuperclass().getDeclaredField("mChildren");
+								Field mChField;
+								if (mAmv.getClass().toString().contains("com.actionbarsherlock")) {
+									Class c = mAmv.getClass();
+									Class s1 = c.getSuperclass();
+									Class s2 = s1.getSuperclass();
+									Class s3 = s2.getSuperclass();
+									Class s4 = s3.getSuperclass();
+									mChField = s4.getDeclaredField("mChildren");
+								} else
+									mChField = mAmv.getClass().getSuperclass().getSuperclass().getDeclaredField("mChildren");
 								mChField.setAccessible(true);
 								Object[] mChs = (Object[]) mChField.get(mAmv);
 								for (Object mCh : mChs) {
@@ -321,6 +338,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			return;
 		}
 
+		int width = getMeasuredWidth();
+		int height = getMeasuredHeight();
 		Bitmap b = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(b);
 
@@ -338,8 +357,14 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		canvas.drawBitmap(b, 0, 0, null);
 
 		// Clean up, as we no longer require these items.
-		c.setBitmap(null);
+		try {
+			c.setBitmap(null);
+		} catch (NullPointerException npe) {
+			//TODO why does this NPE happen?
+			npe.printStackTrace();
+		}
 		b.recycle();
+		b = null;
 
 		if (!TextUtils.isEmpty(mTitleText) || !TextUtils.isEmpty(mSubText)) {
 			if (recalculateText)

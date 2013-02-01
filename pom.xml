@@ -11,7 +11,7 @@
     <groupId>com.github.espiandev</groupId>
     <artifactId>showcaseview-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2r2</version>
+    <version>3</version>
 
     <name>ShowcaseView (parent)</name>
     <description>Android library for implementing Holo-style highlighting of important UI areas.</description>

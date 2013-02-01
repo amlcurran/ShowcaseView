@@ -1,13 +1,13 @@
 package com.github.espiandev.showcaseview.sample;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.github.espiandev.showcaseview.ShowcaseView;
 
-public class ActionItemsSampleActivity extends Activity {
+public class ActionItemsSampleActivity extends SherlockActivity {
 
 	ShowcaseView sv;
 	ShowcaseView.ConfigOptions mOptions = new ShowcaseView.ConfigOptions();
@@ -16,13 +16,13 @@ public class ActionItemsSampleActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		mOptions.block = false;
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.menu, menu);
+		getSupportMenuInflater().inflate(R.menu.menu, menu);
 
 		sv = ShowcaseView.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_OVERFLOW, R.id.menu_item1, this,
 				"ShowcaseView & action items", "Try touching action items to showcase them", mOptions);

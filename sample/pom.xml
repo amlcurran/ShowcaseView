@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.espiandev</groupId>
         <artifactId>showcaseview-parent</artifactId>
-        <version>2r2</version>
+        <version>3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -16,9 +16,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.actionbarsherlock</groupId>
+            <artifactId>actionbarsherlock</artifactId>
+            <version>4.2.0</version>
+            <type>apklib</type>
+        </dependency>
+        <dependency>
             <groupId>com.github.espiandev</groupId>
             <artifactId>showcaseview-library</artifactId>
-            <version>2r2</version>
+            <version>3</version>
+            <type>apklib</type>
         </dependency>
     </dependencies>
 
