@@ -6,12 +6,12 @@
     <parent>
         <groupId>com.github.espiandev</groupId>
         <artifactId>showcaseview-parent</artifactId>
-        <version>3</version>
+        <version>${release}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>showcaseview-library</artifactId>
-    <version>3</version>
+    <version>${release}</version>
     <packaging>apklib</packaging>
 
     <name>ShowcaseView (library)</name>
@@ -20,13 +20,13 @@
         <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
-            <version>4.0.1.2</version>
+            <version>${android.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>support-v4</artifactId>
-            <version>r7</version>
+            <version>${android-support.version}</version>
         </dependency>
         <dependency>
             <groupId>com.nineoldandroids</groupId>
@@ -36,7 +36,7 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src/</sourceDirectory>
+        <sourceDirectory>src</sourceDirectory>
 
         <plugins>
             <plugin>
@@ -45,7 +45,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <sdk>
-                        <platform>17</platform>
+                        <platform>${android.platform}</platform>
                     </sdk>
                 </configuration>
             </plugin>

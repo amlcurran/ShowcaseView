@@ -6,15 +6,20 @@
     <parent>
         <groupId>com.github.espiandev</groupId>
         <artifactId>showcaseview-parent</artifactId>
-        <version>3</version>
+        <version>${release}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>showcaseview-sample</artifactId>
-    <version>2r1</version>
+    <version>${release}</version>
     <packaging>apklib</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>${android.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.actionbarsherlock</groupId>
             <artifactId>actionbarsherlock</artifactId>
@@ -24,13 +29,13 @@
         <dependency>
             <groupId>com.github.espiandev</groupId>
             <artifactId>showcaseview-library</artifactId>
-            <version>3</version>
+            <version>${release}</version>
             <type>apklib</type>
         </dependency>
     </dependencies>
 
     <build>
-        <sourceDirectory>src/</sourceDirectory>
+        <sourceDirectory>src</sourceDirectory>
 
         <plugins>
             <plugin>
@@ -39,7 +44,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <sdk>
-                        <platform>17</platform>
+                        <platform>${android.platform}</platform>
                     </sdk>
                 </configuration>
             </plugin>
