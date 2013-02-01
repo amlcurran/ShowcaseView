@@ -11,28 +11,37 @@
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <script src="javascripts/jquery.min.js"></script>
+    <script type="text/javascript">
+        $('document').ready(function() {
+            var left = $('#viewTarget').offset().left - 300 + $('#viewTarget').width() / 2;
+            var top = $('#viewTarget').offset().top - 300 + $('#viewTarget').height() / 2;
+            $('#showcaseview').offset({top: top, left: left});
+        });
+    </script>
 </head>
 <body>
 <div class="wrapper">
-    <header>
-        <h1>Showcaseview</h1>
+    <img src="stylesheets/cling.png" id="showcaseview" style="position: absolute; z-index: -1">
+    <header id="viewTarget">
+        <h1 style="text-align: center" >Showcaseview</h1>
 
         <p></p>
 
-        <p class="view"><a href="https://github.com/Espiandev/ShowcaseView">View the Project on GitHub
+        <p class="view" style="text-align: center"><a href="https://github.com/Espiandev/ShowcaseView">View the Project on GitHub
             <small>Espiandev/ShowcaseView</small>
         </a></p>
 
 
-        <ul>
+        <ul  >
             <li><a href="https://github.com/Espiandev/ShowcaseView/zipball/master">Download <strong>ZIP
                 File</strong></a></li>
             <li><a href="https://github.com/Espiandev/ShowcaseView/tarball/master">Download <strong>TAR
                 Ball</strong></a></li>
-            <li><a href="https://github.com/Espiandev/ShowcaseView">View On <strong>GitHub</strong></a></li>
+            <li><a href="https://github.com/Espiandev/ShowcaseView" >View On <strong>GitHub</strong></a></li>
         </ul>
 
-        <img src="res/screencap.png" />
+        <!-- <img src="res/screencap.png" /> -->
 
     </header>
     <section>
