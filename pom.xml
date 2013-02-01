@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,7 +12,7 @@
     <groupId>com.github.espiandev</groupId>
     <artifactId>showcaseview-parent</artifactId>
     <packaging>pom</packaging>
-    <version>${release}</version>
+    <version>3.0.1-SNAPSHOT</version>
 
     <name>ShowcaseView (parent)</name>
     <description>Android library for implementing Holo-style highlighting of important UI areas.</description>
@@ -55,7 +56,6 @@
         <android.version>4.0.1.2</android.version>
         <android.platform>14</android.platform>
         <android-support.version>r7</android-support.version>
-        <release>3.0.1-SNAPSHOT</release>
 
     </properties>
 
@@ -88,6 +88,31 @@
         <pluginManagement>
             <plugins>
 
+                <plugin>
+                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                    <artifactId>android-maven-plugin</artifactId>
+                    <version>3.3.2</version>
+                    <configuration>
+                        <sdk>
+                            <platform>${android.platform}</platform>
+                        </sdk>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.8</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>2.9.1</version>
+                    <configuration>
+                        <failsOnError>true</failsOnError>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                     <artifactId>android-maven-plugin</artifactId>

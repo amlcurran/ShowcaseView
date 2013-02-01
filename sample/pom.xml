@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>com.github.espiandev</groupId>
         <artifactId>showcaseview-parent</artifactId>
-        <version>${release}</version>
+        <version>3.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>showcaseview-sample</artifactId>
-    <version>${release}</version>
     <packaging>apklib</packaging>
 
     <dependencies>
@@ -29,7 +27,7 @@
         <dependency>
             <groupId>com.github.espiandev</groupId>
             <artifactId>showcaseview-library</artifactId>
-            <version>${release}</version>
+            <version>3.0.1-SNAPSHOT</version>
             <type>apklib</type>
         </dependency>
     </dependencies>
