@@ -60,6 +60,20 @@
 
         <p>Version 2 also added support for showcasing action bar items. This currently doesn't work for split
             ActionBars, but that should hopefully be coming soon.</p>
+            
+        <h2>Customisation & options</h2>    
+        <p>ShowcaseView can be customised by providing a set of `ShowcaseView.ConfigOptions` with initialisation. The
+            customisations available include:
+            <ul>
+                <li>Whether a touch outside the highlighted area is blocked, allowed, or hides the ShowcaseView (SCV)</li>
+                <li>Have SCV show up every time an activity starts or only a single time with `ConfigOptions.shotType` 
+                    (`TYPE_NO_LIMIT` or `TYPE_ONE_SHOT` respectively)</li>
+                <li>Have the SCV overlay the ActionBar as well as the Activity's content (`ConfigOptions.insert` with 
+                    `INSERT_TO_DECOR` or `INSERT_TO_CONTENT` respectively)</li>
+                <li>You can change the text colour as well, using `ShowcaseView.setTextColors(..)`</li>
+            </ul>
+        </p>
+        <p>In the next release, I hope to add more detailed theming options.</p>
 
         <h3>Compatibility</h3>
 
