@@ -10,13 +10,16 @@
     </parent>
 
     <artifactId>showcaseview-sample</artifactId>
-    <packaging>apklib</packaging>
+    <packaging>apk</packaging>
+
+    <name>ShowcaseView (sample)</name>
 
     <dependencies>
         <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
             <version>${android.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.actionbarsherlock</groupId>

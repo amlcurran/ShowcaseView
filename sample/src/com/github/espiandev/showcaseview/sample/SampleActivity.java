@@ -3,6 +3,7 @@ package com.github.espiandev.showcaseview.sample;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
 import com.github.espiandev.showcaseview.ShowcaseView;
@@ -18,12 +19,18 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+			.detectCustomSlowCalls().detectDiskWrites()
+			.penaltyDialog().build());
+
 		button = (Button) findViewById(R.id.buttonBlocked);
 		button.setOnClickListener(this);
 
+		ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+		co.hideOnClickOutside = true;
 		sv = ShowcaseView.insertShowcaseView(R.id.buttonBlocked, this, "ShowcaseView Sample", "When the ShowcaseView is showing, " +
 				"pressing the button will show a gesture. When it is hidden " +
-				"it'll go to another Activity.", null);
+				"it'll go to another Activity.", co);
 		sv.setOnShowcaseEventListener(this);
 
 	}

@@ -41,7 +41,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	private float showcaseX = -1, showcaseY = -1, showcaseRadius = -1, metricScale = 1.0f,
 			legacyShowcaseX = -1, legacyShowcaseY = -1;
-	private boolean isRedundant = false;
+	private boolean isRedundant = false, hasCustomClickListener = false;
 
 	private ConfigOptions mOptions;
 	private Paint mPaintTitle, mEraser;
@@ -89,7 +89,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	private void init() {
 		boolean hasShot = getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE)
-				.getBoolean("hasShot", false);
+				.getBoolean("hasShot" + getConfigOptions().showcaseId, false);
 		if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
 			// The showcase has already been shot once, so we don't need to do anything
 			setVisibility(View.GONE);
@@ -130,7 +130,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			lps.width = LayoutParams.WRAP_CONTENT;
 			mBackupButton.setLayoutParams(lps);
 			mBackupButton.setText("OK");
-			mBackupButton.setOnClickListener(this);
+			if (!hasCustomClickListener)
+				mBackupButton.setOnClickListener(this);
 			addView(mBackupButton);
 		}
 
@@ -256,12 +257,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 								Field mChField;
 								if (mAmv.getClass().toString().contains("com.actionbarsherlock")) {
-									Class c = mAmv.getClass();
-									Class s1 = c.getSuperclass();
-									Class s2 = s1.getSuperclass();
-									Class s3 = s2.getSuperclass();
-									Class s4 = s3.getSuperclass();
-									mChField = s4.getDeclaredField("mChildren");
+									// There are thousands of superclasses to traverse up
+									// Have to get superclasses because mChildren is private
+									mChField = mAmv.getClass().getSuperclass().getSuperclass()
+											.getSuperclass().getSuperclass().getDeclaredField("mChildren");
 								} else
 									mChField = mAmv.getClass().getSuperclass().getSuperclass().getDeclaredField("mChildren");
 								mChField.setAccessible(true);
@@ -322,9 +321,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		if (isRedundant) {
 			return;
 		}
-		if (mButton != null) {
+		if (mButton != null)
 			mButton.setOnClickListener(listener);
-		}
+		if (mBackupButton != null)
+			mBackupButton.setOnClickListener(listener);
+		hasCustomClickListener = true;
 	}
 
 	public void setOnShowcaseEventListener(OnShowcaseEventListener listener) {
@@ -457,7 +458,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		// If the type is set to one-shot, store that it has shot
 		if (mOptions.shotType == TYPE_ONE_SHOT) {
 			SharedPreferences internal = getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE);
-			internal.edit().putBoolean("hasShot", true).commit();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
+				internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).apply();
+			else
+				internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).commit();
 		}
 		hide();
 	}
@@ -524,23 +528,18 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	@Override
 	public boolean onTouch(View view, MotionEvent motionEvent) {
-		if (!mOptions.block) {
-			float xDelta = Math.abs(motionEvent.getRawX() - showcaseX);
-			float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
-			double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
-			if (mOptions.hideOnClickOutside && !(distanceFromFocus > showcaseRadius)) {
-				this.hide();
-			}
-			return false;
-		} else {
-			float xDelta = Math.abs(motionEvent.getRawX() - showcaseX);
-			float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
-			double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
-			if (mOptions.hideOnClickOutside && !(distanceFromFocus > showcaseRadius)) {
-				this.hide();
-			}
-			return distanceFromFocus > showcaseRadius;
+
+		float xDelta = Math.abs(motionEvent.getRawX() - showcaseX);
+		float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
+		double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
+
+		if (mOptions.hideOnClickOutside && distanceFromFocus > showcaseRadius) {
+			this.hide();
+			return true;
 		}
+
+		return mOptions.block && distanceFromFocus > showcaseRadius || distanceFromFocus > showcaseRadius;
+
 	}
 
 	public interface OnShowcaseEventListener {
@@ -623,11 +622,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	}
 
-	public void setConfigOptions(ConfigOptions options) {
+	private void setConfigOptions(ConfigOptions options) {
 		mOptions = options;
 	}
 
-	public ConfigOptions getConfigOptions() {
+	private ConfigOptions getConfigOptions() {
+		// Make sure that this method never returns null
+		if (mOptions == null) return mOptions = new ConfigOptions();
 		return mOptions;
 	}
 
@@ -785,6 +786,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	public static class ConfigOptions {
 		public boolean block = true, noButton = false;
+		public int showcaseId = 0;
 		public int shotType = TYPE_NO_LIMIT;
 		public int insert = INSERT_TO_DECOR;
 		public boolean hideOnClickOutside = false;
