@@ -1,1 +1,14 @@
-<resources></resources>
+<resources>
+    <style name="CustomShowcaseTheme" parent="ShowcaseView.Light">
+        <item name="titleTextColor">#ffbb33</item>
+        <item name="backgroundColor">#33ffbb33</item>
+    </style>
+    <style name="CustomShowcaseButton" parent="ShowcaseButton">
+        <item name="backgroundColor">#CF3119</item>
+        <item name="text">Close</item>
+    </style>
+    <style name="SampleTheme" parent="Theme.Sherlock.Light.DarkActionBar">
+        <item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>
+        <item name="showcaseButtonStyle">@style/CustomShowcaseButton</item>
+    </style>
+</resources>

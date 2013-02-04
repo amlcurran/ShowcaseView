@@ -1,6 +1,5 @@
 package com.github.espiandev.showcaseview.sample;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -26,7 +25,7 @@ public class ActionItemsSampleActivity extends SherlockActivity {
 
 		sv = ShowcaseView.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_OVERFLOW, R.id.menu_item1, this,
 				"ShowcaseView & action items", "Try touching action items to showcase them", mOptions);
-		sv.setTextColors(Color.GREEN, Color.GRAY);
+		//sv.setTextColors(Color.GREEN, Color.GRAY);
 
 		return super.onCreateOptionsMenu(menu);
 	}

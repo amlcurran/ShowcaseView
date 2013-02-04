@@ -57,33 +57,44 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	private int detailTextColor = -1, titleTextColor = -1;
 	private DynamicLayout mDynamicDetailLayout;
 	private float[] mBestTextPosition;
+	private int buttonBack, buttonTextColor;
+	private String buttonLabel;
 
 	public ShowcaseView(Context context) {
-		this(context, null, 0);
+		this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
 		this.mContext = context;
 	}
 
 	public ShowcaseView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
+		this(context, attrs, R.styleable.CustomTheme_showcaseViewStyle);
 		this.mContext = context;
 	}
 
 	public ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		this.mContext = context;
-		if (attrs != null) {
-			TypedArray styled = getContext().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, defStyle, 0);
-			backColor = styled.getInt(R.styleable.ShowcaseView_backgroundColor, Color.argb(128, 80, 80, 80));
-			detailTextColor = styled.getColor(R.styleable.ShowcaseView_detailTextColor, Color.WHITE);
-			titleTextColor = styled.getColor(R.styleable.ShowcaseView_titleTextColor, Color.parseColor("#49C0EC"));
-			styled.recycle();
-		} else {
-			detailTextColor = Color.WHITE;
-			titleTextColor = Color.parseColor("#49C0EC");
-			backColor = Color.parseColor("#3333B5E5");
-		}
+		// Get the attributes for the ShowcaseView
+		final TypedArray styled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseView,
+				R.attr.showcaseViewStyle, R.style.ShowcaseView);
+		backColor = styled.getInt(R.styleable.ShowcaseView_backgroundColor, Color.argb(128, 80, 80, 80));
+		detailTextColor = styled.getColor(R.styleable.ShowcaseView_detailTextColor, Color.WHITE);
+		titleTextColor = styled.getColor(R.styleable.ShowcaseView_titleTextColor, Color.parseColor("#49C0EC"));
+		// Get the attributes for the Button
+//		final TypedArray buttonStyled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseButton,
+//				R.attr.showcaseButtonStyle, R.style.ShowcaseButton);
+//		buttonBack = buttonStyled.getColor(R.styleable.ShowcaseButton_buttonBackgroundColor, Color.parseColor("#33B5E5"));
+//		buttonLabel = buttonStyled.getString(R.styleable.ShowcaseButton_text);
+//		buttonTextColor = buttonStyled.getColor(R.styleable.ShowcaseButton_textColor, Color.WHITE);
+		styled.recycle();
 		metricScale = getContext().getResources().getDisplayMetrics().density;
+//		mBackupButton = new Button(mContext, null, R.style.ShowcaseButton);
+//		mBackupButton.setId(R.id.showcase_button);
+//		float densityMod = mContext.getResources().getDisplayMetrics().density;
+//		mBackupButton.setPadding((int) (35 * densityMod), (int) (10 * densityMod), (int) (35 * densityMod), (int) (15 * densityMod));
 		mBackupButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
+//		mBackupButton.setBackgroundColor(buttonBack);
+//		mBackupButton.setText(!TextUtils.isEmpty(buttonLabel) ? buttonLabel.toUpperCase() : "OK");
+//		mBackupButton.setTextColor(buttonTextColor);
 		setConfigOptions(new ConfigOptions());
 	}
 
@@ -107,12 +118,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 		mPaintTitle = new Paint();
 		mPaintTitle.setColor(titleTextColor);
-		mPaintTitle.setShadowLayer(2.0f, 0f, 2.0f, Color.BLACK);
+		mPaintTitle.setShadowLayer(2.0f, 0f, 2.0f, Color.DKGRAY);
 		mPaintTitle.setTextSize(24 * metricScale);
 
 		mPaintDetail = new TextPaint();
 		mPaintDetail.setColor(detailTextColor);
-		mPaintDetail.setShadowLayer(2.0f, 0f, 2.0f, Color.BLACK);
+		mPaintDetail.setShadowLayer(2.0f, 0f, 2.0f, Color.DKGRAY);
 		mPaintDetail.setTextSize(16 * metricScale);
 
 		mEraser = new Paint();
@@ -538,7 +549,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			return true;
 		}
 
-		return mOptions.block && distanceFromFocus > showcaseRadius || distanceFromFocus > showcaseRadius;
+		if (!mOptions.block) return false;
+
+		return distanceFromFocus > showcaseRadius;
 
 	}
 
@@ -644,7 +657,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	 */
 	public static ShowcaseView insertShowcaseView(View viewToShowcase, Activity activity, String title,
 	                                              String detailText, ConfigOptions options) {
-		ShowcaseView sv = new ShowcaseView(activity, null, 0);
+		ShowcaseView sv = new ShowcaseView(activity);
 		if (options != null)
 			sv.setConfigOptions(options);
 		if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
@@ -669,7 +682,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	 */
 	public static ShowcaseView insertShowcaseView(View viewToShowcase, Activity activity, int title,
 	                                              int detailText, ConfigOptions options) {
-		ShowcaseView sv = new ShowcaseView(activity, null, 0);
+		ShowcaseView sv = new ShowcaseView(activity);
 		if (options != null)
 			sv.setConfigOptions(options);
 		if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
@@ -698,7 +711,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	public static ShowcaseView insertShowcaseView(float x, float y, Activity activity, String title,
 	                                              String detailText, ConfigOptions options) {
-		ShowcaseView sv = new ShowcaseView(activity, null, 0);
+		ShowcaseView sv = new ShowcaseView(activity);
 		if (options != null)
 			sv.setConfigOptions(options);
 		if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
@@ -713,7 +726,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	public static ShowcaseView insertShowcaseView(float x, float y, Activity activity, int title,
 	                                              int detailText, ConfigOptions options) {
-		ShowcaseView sv = new ShowcaseView(activity, null, 0);
+		ShowcaseView sv = new ShowcaseView(activity);
 		if (options != null)
 			sv.setConfigOptions(options);
 		if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
@@ -742,7 +755,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	 * @return the created ShowcaseView instance
 	 */
 	public static ShowcaseView insertShowcaseViewWithType(int type, int itemId, Activity activity, String title, String detailText, ConfigOptions options) {
-		ShowcaseView sv = new ShowcaseView(activity, null, 0);
+		ShowcaseView sv = new ShowcaseView(activity);
 		if (options != null)
 			sv.setConfigOptions(options);
 		if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
@@ -767,7 +780,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	 * @return the created ShowcaseView instance
 	 */
 	public static ShowcaseView insertShowcaseViewWithType(int type, int itemId, Activity activity, int title, int detailText, ConfigOptions options) {
-		ShowcaseView sv = new ShowcaseView(activity, null, 0);
+		ShowcaseView sv = new ShowcaseView(activity);
 		if (options != null)
 			sv.setConfigOptions(options);
 		if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {

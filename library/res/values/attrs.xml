@@ -4,4 +4,13 @@
         <attr name="detailTextColor" format="color|reference" />
         <attr name="titleTextColor" format="color|reference" />
     </declare-styleable>
+    <declare-styleable name="ShowcaseButton">
+        <attr name="buttonBackgroundColor" format="color|reference" />
+        <attr name="textColor" format="color|reference" />
+        <attr name="text" format="string|reference" />
+    </declare-styleable>
+    <declare-styleable name="CustomTheme">
+        <attr name="showcaseViewStyle" format="reference" />
+        <attr name="showcaseButtonStyle" format="reference" />
+    </declare-styleable>
 </resources>

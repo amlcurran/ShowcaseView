@@ -19,6 +19,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ActionItemsSampleActivity"
-            android:theme="@style/Theme.Sherlock.Light.DarkActionBar" />
+            android:theme="@style/SampleTheme" />
     </application>
 </manifest>

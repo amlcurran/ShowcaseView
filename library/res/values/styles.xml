@@ -8,6 +8,7 @@
         <item name="android:paddingLeft">35dp</item>
         <item name="android:paddingRight">35dp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#FFFFFF</item>
         <item name="android:background">@drawable/cling_button_bg</item>
     </style>
     <style name="ShowcaseTitleText">
@@ -28,4 +29,17 @@
         <item name="android:shadowRadius">2.0</item>
         <item name="android:lineSpacingMultiplier">1.1</item>
     </style>
+
+    <style name="ShowcaseView.Light">
+        <item name="titleTextColor">#33B5E5</item>
+        <item name="detailTextColor">#444</item>
+        <item name="backgroundColor">#3333B5E5</item>
+    </style>
+
+    <style name="ShowcaseView">
+        <item name="titleTextColor">#33B5E5</item>
+        <item name="detailTextColor">#FFFFFF</item>
+        <item name="backgroundColor">#3333B5E5</item>
+    </style>
+
 </resources>
