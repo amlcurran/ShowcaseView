@@ -9,6 +9,19 @@ Please check out [the website](http://espiandev.github.com/ShowcaseView) for mor
 
 ![Example image](https://raw.github.com/Espiandev/ShowcaseView/master/example.png)
 
+
+Setup 
+
+-----
+
+1. Download old nine library to make sure showcase view works for you. https://github.com/JakeWharton/NineOldAndroids
+2. Import nine old library to your eclipse workspace [ File -> Import -> Existing Android Code Into Workspace
+3. Download Showcase View and import the showcase library the same way.
+4. At this point eclipse may give some compile errors to the showcase view library becuase we need to add nine old library as supporting library for showcase view.
+5. Right click the showcase view library folder inside eclipse workspace.
+6. Go to properties -> Android -> Add -> select nine old library -> Hit Apply and you are done.
+
+
 Usage
 ----
 
