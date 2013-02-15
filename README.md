@@ -9,6 +9,13 @@ Please check out [the website](http://espiandev.github.com/ShowcaseView) for mor
 
 ![Example image](https://raw.github.com/Espiandev/ShowcaseView/master/example.png)
 
+Set-up
+----
+
+For people who use Maven, ShowcaseView should work immediately without any issues. If you aren't, you'll need to download the [NineOldAndroids library](https://github.com/JakeWharton/NineOldAndroids) and add it as a dependency library to the ShowcaseView library. Then add ShowcaseView as a library dependency to your project, and you're done! 
+
+**WARNING:** Sometimes Eclipse/IDEA will automatically import the non-NineOldAndroid versions of the animation classes, which will cause crashes on versions of Android below 3.0. Check that your imports start with `com.nineoldandroids.animation` and not `android.animation`.
+
 Usage
 ----
 
