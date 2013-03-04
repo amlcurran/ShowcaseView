@@ -109,7 +109,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		}
 		showcase = getContext().getResources().getDrawable(R.drawable.cling);
 		mButton = findViewById(R.id.showcase_button);
-		if (mButton != null) {
+		if (mButton != null && !hasCustomClickListener) {
 			mButton.setOnClickListener(this);
 		}
 		showcaseRadius = metricScale * 94;
@@ -120,11 +120,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		mPaintTitle.setColor(titleTextColor);
 		mPaintTitle.setShadowLayer(2.0f, 0f, 2.0f, Color.DKGRAY);
 		mPaintTitle.setTextSize(24 * metricScale);
+		mPaintTitle.setAntiAlias(true);
 
 		mPaintDetail = new TextPaint();
 		mPaintDetail.setColor(detailTextColor);
 		mPaintDetail.setShadowLayer(2.0f, 0f, 2.0f, Color.DKGRAY);
 		mPaintDetail.setTextSize(16 * metricScale);
+		mPaintDetail.setAntiAlias(true);
 
 		mEraser = new Paint();
 		mEraser.setColor(0xFFFFFF);
@@ -333,9 +335,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			return;
 		}
 		if (mButton != null)
+		{
 			mButton.setOnClickListener(listener);
+		}
 		if (mBackupButton != null)
+		{
 			mBackupButton.setOnClickListener(listener);
+		}
 		hasCustomClickListener = true;
 	}
 
