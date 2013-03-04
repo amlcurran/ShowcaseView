@@ -109,7 +109,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		}
 		showcase = getContext().getResources().getDrawable(R.drawable.cling);
 		mButton = findViewById(R.id.showcase_button);
-		if (mButton != null) {
+		if (mButton != null && !hasCustomClickListener) {
 			mButton.setOnClickListener(this);
 		}
 		showcaseRadius = metricScale * 94;
