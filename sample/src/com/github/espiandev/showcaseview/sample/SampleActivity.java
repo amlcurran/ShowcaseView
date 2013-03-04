@@ -38,7 +38,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 	@Override
 	public void onClick(View view) {
 		if (sv.isShown()) {
-			sv.animateGesture(0, 0, 0, -400).start();
+			sv.animateGesture(0, 0, 0, -400);
 		} else {
 			startActivity(new Intent(this, ActionItemsSampleActivity.class));
 		}
