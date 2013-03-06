@@ -1,5 +1,6 @@
 package com.github.espiandev.showcaseview;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -476,6 +477,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		handler.postDelayed(runnable, 3000);
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public void onClick(View view) {
 		// If the type is set to one-shot, store that it has shot
@@ -624,12 +626,26 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 		ObjectAnimator alphaIn = ObjectAnimator.ofFloat(mHandy, "alpha", 0f, 1f).setDuration(500);
 
-		ObjectAnimator setUpX = ObjectAnimator.ofFloat(mHandy, "x", view.getX() + view.getWidth() / 2).setDuration(0);
-		ObjectAnimator setUpY = ObjectAnimator.ofFloat(mHandy, "y", view.getY() + view.getHeight() / 2).setDuration(0);
+		ObjectAnimator setUpX = ObjectAnimator.ofFloat(mHandy, "x", getXfromView(view) + view.getWidth() / 2).setDuration(0);
+		ObjectAnimator setUpY = ObjectAnimator.ofFloat(mHandy, "y", getYfromView(view) + view.getHeight() / 2).setDuration(0);
 
 		AnimatorSet as = new AnimatorSet();
 		as.play(setUpX).with(setUpY).before(alphaIn);
 		as.start();
+	}
+
+	@SuppressLint("NewApi")
+	private float getXfromView(View view) {
+		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB)
+			return view.getX();
+		return view.getLeft();
+	}
+
+	@SuppressLint("NewApi")
+	private float getYfromView(View view) {
+		if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB)
+			return view.getY();
+		return view.getTop();
 	}
 
 	/**
@@ -822,3 +838,4 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	}
 
 }
+
