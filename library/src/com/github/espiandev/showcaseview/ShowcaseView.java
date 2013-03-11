@@ -217,6 +217,15 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 							"has no ActionBar");
 				ViewParent p = homeButton.getParent().getParent(); //ActionBarView
 
+				if (!p.getClass().getName().contains("ActionBarView")) {
+					String previousP = p.getClass().getName();
+					p = p.getParent();
+					String throwP = p.getClass().getName();
+					if (!p.getClass().getName().contains("ActionBarView"))
+						throw new IllegalStateException("Cannot find ActionBarView for " +
+								"Activity, instead found " + previousP + " and " + throwP);
+				}
+
 				Class abv = p.getClass(); //ActionBarView class
 				Class absAbv = abv.getSuperclass(); //AbsActionBarView class
 
@@ -614,8 +623,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 		ObjectAnimator alphaIn = ObjectAnimator.ofFloat(mHandy, "alpha", 0f, 1f).setDuration(500);
 
-		ObjectAnimator setUpX = ObjectAnimator.ofFloat(mHandy, "x", view.getX() + view.getWidth() / 2).setDuration(0);
-		ObjectAnimator setUpY = ObjectAnimator.ofFloat(mHandy, "y", view.getY() + view.getHeight() / 2).setDuration(0);
+		ObjectAnimator setUpX = ObjectAnimator.ofFloat(mHandy, "x", ViewHelper.getX(view) + view.getWidth() / 2).setDuration(0);
+		ObjectAnimator setUpY = ObjectAnimator.ofFloat(mHandy, "y", ViewHelper.getY(view) + view.getHeight() / 2).setDuration(0);
 
 		AnimatorSet as = new AnimatorSet();
 		as.play(setUpX).with(setUpY).before(alphaIn);
