@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Handler;
 import android.text.DynamicLayout;
 import android.text.Layout;
 import android.text.TextPaint;
@@ -453,7 +454,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	}
 
-	public AnimatorSet animateGesture(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) {
+	public void animateGesture(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) {
 		mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
 		addView(mHandy);
 		ViewHelper.setAlpha(mHandy, 0f);
