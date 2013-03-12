@@ -147,11 +147,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 				mBackupButton.setOnClickListener(this);
 			addView(mBackupButton);
 		}
-
-		mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
-		addView(mHandy);
-		ViewHelper.setAlpha(mHandy, 0f);
-
 	}
 
 	/**
@@ -459,6 +454,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	}
 
 	public AnimatorSet animateGesture(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) {
+		mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
+		addView(mHandy);
+		ViewHelper.setAlpha(mHandy, 0f);
 
 		ObjectAnimator alphaIn = ObjectAnimator.ofFloat(mHandy, "alpha", 0f, 1f).setDuration(500);
 
@@ -475,8 +473,16 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 		AnimatorSet as = new AnimatorSet();
 		as.play(setUpX).with(setUpY).before(alphaIn).before(moveX).with(moveY).before(alphaOut);
-		return as;
+		as.start();
 
+		Handler handler = new Handler();
+		Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				removeView(mHandy);
+			}
+		};
+		handler.postDelayed(runnable, 3000);
 	}
 
 	@Override
@@ -611,6 +617,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	 * @return a View representing the ghostly hand
 	 */
 	public View getHand() {
+		final View mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
+		addView(mHandy);
+		ViewHelper.setAlpha(mHandy, 0f);
+
 		return mHandy;
 	}
 
