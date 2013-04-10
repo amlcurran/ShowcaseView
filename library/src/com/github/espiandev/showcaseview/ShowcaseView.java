@@ -39,7 +39,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	public static final int ITEM_TITLE_OR_SPINNER = 1;
 	public static final int ITEM_ACTION_ITEM = 2;
 	public static final int ITEM_ACTION_OVERFLOW = 6;
-
 	private float showcaseX = -1, showcaseY = -1, showcaseRadius = -1, metricScale = 1.0f,
 			legacyShowcaseX = -1, legacyShowcaseY = -1;
 	private boolean isRedundant = false, hasCustomClickListener = false;
@@ -49,8 +48,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	private TextPaint mPaintDetail;
 	private final int backColor;
 	private Drawable showcase;
-	private View mButton, mHandy;
-	private final Button mBackupButton;
+	private View mHandy;
+	private final Button mEndButton;
 	private OnShowcaseEventListener mEventListener;
 	private Rect voidedArea;
 	private String mTitleText, mSubText;
@@ -58,8 +57,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	private int detailTextColor = -1, titleTextColor = -1;
 	private DynamicLayout mDynamicDetailLayout;
 	private float[] mBestTextPosition;
-	private int buttonBack, buttonTextColor;
-	private String buttonLabel;
+	private boolean mAlteredText = false;
+
+	private final String buttonText;
 
 	public ShowcaseView(Context context) {
 		this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
@@ -74,28 +74,18 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	public ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		this.mContext = context;
+
 		// Get the attributes for the ShowcaseView
 		final TypedArray styled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseView,
 				R.attr.showcaseViewStyle, R.style.ShowcaseView);
 		backColor = styled.getInt(R.styleable.ShowcaseView_backgroundColor, Color.argb(128, 80, 80, 80));
 		detailTextColor = styled.getColor(R.styleable.ShowcaseView_detailTextColor, Color.WHITE);
 		titleTextColor = styled.getColor(R.styleable.ShowcaseView_titleTextColor, Color.parseColor("#49C0EC"));
-		// Get the attributes for the Button
-//		final TypedArray buttonStyled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseButton,
-//				R.attr.showcaseButtonStyle, R.style.ShowcaseButton);
-//		buttonBack = buttonStyled.getColor(R.styleable.ShowcaseButton_buttonBackgroundColor, Color.parseColor("#33B5E5"));
-//		buttonLabel = buttonStyled.getString(R.styleable.ShowcaseButton_text);
-//		buttonTextColor = buttonStyled.getColor(R.styleable.ShowcaseButton_textColor, Color.WHITE);
+		buttonText = styled.getString(R.styleable.ShowcaseView_buttonText);
 		styled.recycle();
+
 		metricScale = getContext().getResources().getDisplayMetrics().density;
-//		mBackupButton = new Button(mContext, null, R.style.ShowcaseButton);
-//		mBackupButton.setId(R.id.showcase_button);
-//		float densityMod = mContext.getResources().getDisplayMetrics().density;
-//		mBackupButton.setPadding((int) (35 * densityMod), (int) (10 * densityMod), (int) (35 * densityMod), (int) (15 * densityMod));
-		mBackupButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
-//		mBackupButton.setBackgroundColor(buttonBack);
-//		mBackupButton.setText(!TextUtils.isEmpty(buttonLabel) ? buttonLabel.toUpperCase() : "OK");
-//		mBackupButton.setTextColor(buttonTextColor);
+		mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
 		setConfigOptions(new ConfigOptions());
 	}
 
@@ -109,10 +99,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			return;
 		}
 		showcase = getContext().getResources().getDrawable(R.drawable.cling);
-		mButton = findViewById(R.id.showcase_button);
-		if (mButton != null && !hasCustomClickListener) {
-			mButton.setOnClickListener(this);
-		}
+
 		showcaseRadius = metricScale * 94;
 		PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
 		setOnTouchListener(this);
@@ -134,7 +121,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		mEraser.setAlpha(0);
 		mEraser.setXfermode(mBlender);
 
-		if (mButton == null && !mOptions.noButton) {
+		if (!mOptions.noButton) {
 			RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
 			lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 			lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -142,11 +129,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			lps.setMargins(margin, margin, margin, margin);
 			lps.height = LayoutParams.WRAP_CONTENT;
 			lps.width = LayoutParams.WRAP_CONTENT;
-			mBackupButton.setLayoutParams(lps);
-			mBackupButton.setText("OK");
-			if (!hasCustomClickListener)
-				mBackupButton.setOnClickListener(this);
-			addView(mBackupButton);
+			mEndButton.setLayoutParams(lps);
+			mEndButton.setText(buttonText != null ? buttonText : getResources().getString(R.string.ok));
+			if (!hasCustomClickListener) mEndButton.setOnClickListener(this);
+			addView(mEndButton);
 		}
 	}
 
@@ -331,21 +317,15 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	}
 
 	/**
-	 * Override the standard button click event, if there is a button available
-	 *
+	 * Override the standard button click event
 	 * @param listener Listener to listen to on click events
 	 */
 	public void overrideButtonClick(OnClickListener listener) {
 		if (isRedundant) {
 			return;
 		}
-		if (mButton != null)
-		{
-			mButton.setOnClickListener(listener);
-		}
-		if (mBackupButton != null)
-		{
-			mBackupButton.setOnClickListener(listener);
+		if (mEndButton != null) {
+			mEndButton.setOnClickListener(listener != null ? listener : this);
 		}
 		hasCustomClickListener = true;
 	}
@@ -355,14 +335,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	}
 
 	@Override
-	public void dispatchDraw(Canvas canvas) {
+	protected void dispatchDraw(Canvas canvas) {
 		if (showcaseX < 0 || showcaseY < 0 || isRedundant) {
 			super.dispatchDraw(canvas);
 			return;
 		}
 
-		int width = getMeasuredWidth();
-		int height = getMeasuredHeight();
 		Bitmap b = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
 		Canvas c = new Canvas(b);
 
@@ -372,7 +350,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		//Erase the area for the ring
 		c.drawCircle(showcaseX, showcaseY, showcaseRadius, mEraser);
 
-		boolean recalculateText = makeVoidedRect();
+		boolean recalculateText = makeVoidedRect() || mAlteredText;
+		mAlteredText = false;
 
 		showcase.setBounds(voidedArea);
 		showcase.draw(c);
@@ -600,6 +579,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 		mTitleText = titleText;
 		mSubText = subText;
+		mAlteredText = true;
 		invalidate();
 
 	}
@@ -608,6 +588,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 		mTitleText = mContext.getResources().getString(titleText);
 		mSubText = mContext.getResources().getString(subText);
+		mAlteredText = true;
 		invalidate();
 
 	}

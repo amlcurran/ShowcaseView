@@ -34,12 +34,14 @@
         <item name="titleTextColor">#33B5E5</item>
         <item name="detailTextColor">#444</item>
         <item name="backgroundColor">#3333B5E5</item>
+        <item name="buttonText">@string/ok</item>
     </style>
 
     <style name="ShowcaseView">
         <item name="titleTextColor">#33B5E5</item>
         <item name="detailTextColor">#FFFFFF</item>
         <item name="backgroundColor">#3333B5E5</item>
+        <item name="buttonText">@string/ok</item>
     </style>
 
 </resources>
