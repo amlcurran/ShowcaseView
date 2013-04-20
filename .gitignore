@@ -20,6 +20,7 @@ local.properties
 # Eclipse project files
 .classpath
 .project
+.settings/
 
 # Os specific files
 .DS_Store
