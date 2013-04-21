@@ -1,26 +1,41 @@
 package com.github.espiandev.showcaseview;
 
+import java.lang.reflect.Field;
+import java.util.concurrent.*;
+
+import android.os.AsyncTask;
+import android.os.StrictMode;
+import com.nineoldandroids.view.ViewHelper;
+
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Handler;
 import android.text.DynamicLayout;
 import android.text.Layout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.view.ViewHelper;
-
-import java.lang.reflect.Field;
 
 /**
  * A view which allows you to showcase areas of your app with an explanation.
@@ -99,9 +114,35 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	}
 
 	private void init() {
-		boolean hasShot = getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE)
-				.getBoolean("hasShot" + getConfigOptions().showcaseId, false);
-		if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
+        final FutureTask<Boolean> hasShotTask = new FutureTask<Boolean>(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                return getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE).getBoolean("hasShot" + getConfigOptions().showcaseId, false);
+            }
+        });
+
+        final Executor executor;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            executor = AsyncTask.THREAD_POOL_EXECUTOR;
+        }
+        else {
+            executor = Executors.newCachedThreadPool();
+        }
+
+        executor.execute(hasShotTask);
+
+        boolean hasShot;
+
+        try {
+            hasShot = hasShotTask.get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
 			// The showcase has already been shot once, so we don't need to do anything
 			setVisibility(View.GONE);
 			isRedundant = true;
@@ -444,7 +485,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	}
 
-	public AnimatorSet animateGesture(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) {
+	public void animateGesture(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) {
 		mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
 		addView(mHandy);
 		ViewHelper.setAlpha(mHandy, 0f);
@@ -480,12 +521,19 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	public void onClick(View view) {
 		// If the type is set to one-shot, store that it has shot
 		if (mOptions.shotType == TYPE_ONE_SHOT) {
-			SharedPreferences internal = getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE);
+			final SharedPreferences internal = getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
 				internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).apply();
-			else
-				internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).commit();
-		}
+            else {
+                final AsyncTask<Void, Void, Boolean> commitAsync = new AsyncTask<Void, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... voids) {
+                        return internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).commit();
+                    }
+                };
+                commitAsync.execute();
+            }
+        }
 		hide();
 	}
 
