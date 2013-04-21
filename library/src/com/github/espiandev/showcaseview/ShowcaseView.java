@@ -1,7 +1,10 @@
 package com.github.espiandev.showcaseview;
 
 import java.lang.reflect.Field;
+import java.util.concurrent.*;
 
+import android.os.AsyncTask;
+import android.os.StrictMode;
 import com.nineoldandroids.view.ViewHelper;
 
 import android.animation.Animator;
@@ -111,9 +114,35 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	}
 
 	private void init() {
-		boolean hasShot = getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE)
-				.getBoolean("hasShot" + getConfigOptions().showcaseId, false);
-		if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
+        final FutureTask<Boolean> hasShotTask = new FutureTask<Boolean>(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                return getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE).getBoolean("hasShot" + getConfigOptions().showcaseId, false);
+            }
+        });
+
+        final Executor executor;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            executor = AsyncTask.THREAD_POOL_EXECUTOR;
+        }
+        else {
+            executor = Executors.newCachedThreadPool();
+        }
+
+        executor.execute(hasShotTask);
+
+        boolean hasShot;
+
+        try {
+            hasShot = hasShotTask.get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
 			// The showcase has already been shot once, so we don't need to do anything
 			setVisibility(View.GONE);
 			isRedundant = true;
@@ -492,12 +521,19 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	public void onClick(View view) {
 		// If the type is set to one-shot, store that it has shot
 		if (mOptions.shotType == TYPE_ONE_SHOT) {
-			SharedPreferences internal = getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE);
+			final SharedPreferences internal = getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
 				internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).apply();
-			else
-				internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).commit();
-		}
+            else {
+                final AsyncTask<Void, Void, Boolean> commitAsync = new AsyncTask<Void, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... voids) {
+                        return internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).commit();
+                    }
+                };
+                commitAsync.execute();
+            }
+        }
 		hide();
 	}
 
