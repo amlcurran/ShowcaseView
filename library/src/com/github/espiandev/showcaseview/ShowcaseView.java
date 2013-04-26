@@ -121,7 +121,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		mEraser.setAlpha(0);
 		mEraser.setXfermode(mBlender);
 
-		if (!mOptions.noButton) {
+		if (!mOptions.noButton && (findViewById(R.id.showcase_button) == null)) {
 			RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
 			lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 			lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
