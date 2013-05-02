@@ -1,5 +1,6 @@
 package com.github.espiandev.showcaseview;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -55,6 +56,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	private String mTitleText, mSubText;
 	private Context mContext;
 	private int detailTextColor = -1, titleTextColor = -1;
+	private DynamicLayout mDynamicTitleLayout;
 	private DynamicLayout mDynamicDetailLayout;
 	private float[] mBestTextPosition;
 	private boolean mAlteredText = false;
@@ -121,7 +123,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		mEraser.setAlpha(0);
 		mEraser.setXfermode(mBlender);
 
-		if (!mOptions.noButton) {
+		if (!mOptions.noButton && mEndButton.getParent() == null) {
 			RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
 			lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 			lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -134,6 +136,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			if (!hasCustomClickListener) mEndButton.setOnClickListener(this);
 			addView(mEndButton);
 		}
+		
 	}
 
 	/**
@@ -372,8 +375,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 			if (recalculateText)
 				mBestTextPosition = getBestTextPosition(canvas.getWidth(), canvas.getHeight());
 
-			if (!TextUtils.isEmpty(mTitleText))
+			if (!TextUtils.isEmpty(mTitleText)) {
+				//TODO: use a dynamic detail layout
 				canvas.drawText(mTitleText, mBestTextPosition[0], mBestTextPosition[1], mPaintTitle);
+			}
 
 			if (!TextUtils.isEmpty(mSubText)) {
 				canvas.save();
@@ -392,6 +397,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	}
 
+	/**
+	 * Calculates the best place to position text
+	 * @param canvasW width of the screen
+	 * @param canvasH height of the screen
+	 * @return 
+	 */
 	private float[] getBestTextPosition(int canvasW, int canvasH) {
 
 		//if the width isn't much bigger than the voided area, just consider top & bottom
@@ -400,7 +411,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		//float spaceLeft = voidedArea.left;
 		//float spaceRight = canvasW - voidedArea.right;
 
-		//TODO currently only considers above or below showcase, deal with left or right
+		//TODO: currently only considers above or below showcase, deal with left or right
 		return new float[]{24 * metricScale, spaceTop > spaceBottom ? 128 * metricScale : 24 * metricScale + voidedArea.bottom, canvasW - 48 * metricScale};
 
 	}
@@ -465,15 +476,14 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		handler.postDelayed(runnable, 3000);
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public void onClick(View view) {
 		// If the type is set to one-shot, store that it has shot
 		if (mOptions.shotType == TYPE_ONE_SHOT) {
 			SharedPreferences internal = getContext().getSharedPreferences("showcase_internal", Context.MODE_PRIVATE);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD)
-				internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).apply();
-			else
-				internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).commit();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).apply();
+			else internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).commit();
 		}
 		hide();
 	}

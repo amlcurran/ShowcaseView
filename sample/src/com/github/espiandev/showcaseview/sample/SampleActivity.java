@@ -3,7 +3,6 @@ package com.github.espiandev.showcaseview.sample;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
 import com.github.espiandev.showcaseview.ShowcaseView;
@@ -18,10 +17,6 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
-		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-			.detectCustomSlowCalls().detectDiskWrites()
-			.penaltyDialog().build());
 
 		button = (Button) findViewById(R.id.buttonBlocked);
 		button.setOnClickListener(this);
