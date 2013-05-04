@@ -11,6 +11,7 @@
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:background">@drawable/cling_button_bg</item>
     </style>
+
     <style name="ShowcaseTitleText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -21,6 +22,7 @@
         <item name="android:shadowDy">2</item>
         <item name="android:shadowRadius">2.0</item>
     </style>
+
     <style name="ShowcaseText">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">#FFFFFF</item>
@@ -31,17 +33,17 @@
     </style>
 
     <style name="ShowcaseView.Light">
-        <item name="titleTextColor">#33B5E5</item>
-        <item name="detailTextColor">#444</item>
-        <item name="backgroundColor">#3333B5E5</item>
-        <item name="buttonText">@string/ok</item>
+        <item name="sv_titleTextColor">#33B5E5</item>
+        <item name="sv_detailTextColor">#444</item>
+        <item name="sv_backgroundColor">#3333B5E5</item>
+        <item name="sv_buttonText">@string/ok</item>
     </style>
 
     <style name="ShowcaseView">
-        <item name="titleTextColor">#33B5E5</item>
-        <item name="detailTextColor">#FFFFFF</item>
-        <item name="backgroundColor">#3333B5E5</item>
-        <item name="buttonText">@string/ok</item>
+        <item name="sv_titleTextColor">#33B5E5</item>
+        <item name="sv_detailTextColor">#FFFFFF</item>
+        <item name="sv_backgroundColor">#3333B5E5</item>
+        <item name="sv_buttonText">@string/ok</item>
     </style>
 
 </resources>

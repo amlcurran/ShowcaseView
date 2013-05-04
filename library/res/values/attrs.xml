@@ -1,13 +1,15 @@
 <resources>
+
     <declare-styleable name="ShowcaseView">
-        <attr name="backgroundColor" format="color|reference" />
-        <attr name="detailTextColor" format="color|reference" />
-        <attr name="titleTextColor" format="color|reference" />
-        <attr name="buttonBackgroundColor" format="color|reference" />
-        <attr name="buttonForegroundColor" format="color|reference" />
-        <attr name="buttonText" format="string|reference" />
+        <attr name="sv_backgroundColor" format="color|reference" />
+        <attr name="sv_detailTextColor" format="color|reference" />
+        <attr name="sv_titleTextColor" format="color|reference" />
+        <attr name="sv_buttonBackgroundColor" format="color|reference" />
+        <attr name="sv_buttonForegroundColor" format="color|reference" />
+        <attr name="sv_buttonText" format="string|reference" />
     </declare-styleable>
     <declare-styleable name="CustomTheme">
         <attr name="showcaseViewStyle" format="reference" />
     </declare-styleable>
+
 </resources>
