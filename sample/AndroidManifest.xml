@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.espiandev.showcaseview.sample"
-    android:versionCode="1"
-    android:versionName="1.0">
+  package="com.github.espiandev.showcaseview.sample"
+  android:versionCode="1"
+  android:versionName="1.0">
 
-    <uses-sdk
-        android:targetSdkVersion="17"
-        android:minSdkVersion="7" />
-    <application
-        android:label="@string/app_name"
-        android:icon="@drawable/ic_launcher">
-        <activity
-            android:name="SampleActivity"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".ActionItemsSampleActivity"
-            android:theme="@style/SampleTheme" />
-    </application>
+  <uses-sdk
+    android:targetSdkVersion="17"
+    android:minSdkVersion="7" />
+  <application
+    android:label="@string/app_name"
+    android:icon="@drawable/ic_launcher"
+    android:allowBackup="true">
+    <activity
+      android:name="com.github.espiandev.showcaseview.sample.SampleActivity"
+      android:label="@string/app_name">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+    <activity
+      android:name="com.github.espiandev.showcaseview.sample.ActionItemsSampleActivity"
+      android:theme="@style/SampleTheme" />
+  </application>
 </manifest>
