@@ -1,4 +1,4 @@
-package com.github.espiandev.showcaseview.sample;
+package com.github.espiandev.showcaseview.sample.v14;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.github.espiandev.showcaseview.ShowcaseView;
+import com.github.espiandev.showcaseview.sample.R;
 
 public class ActionItemsSampleActivity extends FragmentActivity {
 

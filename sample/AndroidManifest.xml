@@ -20,7 +20,7 @@
       </intent-filter>
     </activity>
     <activity
-      android:name="com.github.espiandev.showcaseview.sample.ActionItemsSampleActivity"
+      android:name=".v14.ActionItemsSampleActivity"
       android:theme="@style/SampleTheme" />
   </application>
 </manifest>
