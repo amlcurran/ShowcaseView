@@ -1,27 +1,12 @@
 package com.github.espiandev.showcaseview;
 
-import java.lang.reflect.Field;
-import java.util.concurrent.*;
-
-import android.os.AsyncTask;
-import android.os.StrictMode;
-import com.nineoldandroids.view.ViewHelper;
-
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.text.DynamicLayout;
@@ -29,13 +14,16 @@ import android.text.Layout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
+import android.view.*;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorSet;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.view.ViewHelper;
+
+import java.lang.reflect.Field;
+import java.util.concurrent.*;
 
 /**
  * A view which allows you to showcase areas of your app with an explanation.
