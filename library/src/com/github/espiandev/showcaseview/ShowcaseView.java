@@ -12,6 +12,7 @@ import android.text.Layout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.*;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -35,8 +36,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public static final int INSERT_TO_VIEW = 1;
 
     public static final int ITEM_ACTION_HOME = 0;
-    public static final int ITEM_TITLE_OR_SPINNER = 1;
-    public static final int ITEM_ACTION_ITEM = 2;
+    public static final int ITEM_TITLE = 1;
+    public static final int ITEM_SPINNER = 2;
+    public static final int ITEM_ACTION_ITEM = 3;
     public static final int ITEM_ACTION_OVERFLOW = 6;
 
     private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
@@ -67,6 +69,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private boolean mAlteredText = false;
 
     private final String buttonText;
+    private int showcaseRadiusMultiplier = 94;
 
     public ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
@@ -106,7 +109,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         }
         showcase = getContext().getResources().getDrawable(R.drawable.cling);
 
-        showcaseRadius = metricScale * 94;
+        showcaseRadius = metricScale * showcaseRadiusMultiplier;
         PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
         setOnTouchListener(this);
 
@@ -126,6 +129,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         mEraser.setColor(0xFFFFFF);
         mEraser.setAlpha(0);
         mEraser.setXfermode(mBlender);
+        mEraser.setAntiAlias(true);
 
         if (!mOptions.noButton && mEndButton.getParent() == null) {
             RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
@@ -219,84 +223,103 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 Class absAbv = abv.getSuperclass(); //AbsActionBarView class
 
                 switch (itemType) {
-
                     case ITEM_ACTION_HOME:
                         setShowcaseView(homeButton);
                         break;
-
-                    case ITEM_TITLE_OR_SPINNER:
-                        try {
-                            Field mTitleViewField = abv.getDeclaredField("mTitleView");
-                            mTitleViewField.setAccessible(true);
-                            View titleView = (View) mTitleViewField.get(p);
-                            if (titleView != null) {
-                                setShowcaseView(titleView);
-                                break;
-                            }
-                            Field mSpinnerField = abv.getDeclaredField("mSpinner");
-                            mSpinnerField.setAccessible(true);
-                            View mSpinnerView = (View) mSpinnerField.get(p);
-                            if (mSpinnerView != null) {
-                                setShowcaseView(mSpinnerView);
-                                break;
-                            }
-                        } catch (NoSuchFieldException e) {
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
+                    case ITEM_SPINNER:
+                        showcaseSpinner(p, abv);
                         break;
-
+                    case ITEM_TITLE:
+                        showcaseTitle(p, abv);
+                        break;
                     case ITEM_ACTION_ITEM:
                     case ITEM_ACTION_OVERFLOW:
-                        try {
-                            Field mAmpField = absAbv.getDeclaredField("mActionMenuPresenter");
-                            mAmpField.setAccessible(true);
-                            Object mAmp = mAmpField.get(p);
-                            if (itemType == ITEM_ACTION_OVERFLOW) {
-                                // Finds the overflow button associated with the ActionMenuPresenter
-                                Field mObField = mAmp.getClass().getDeclaredField("mOverflowButton");
-                                mObField.setAccessible(true);
-                                View mOb = (View) mObField.get(mAmp);
-                                if (mOb != null)
-                                    setShowcaseView(mOb);
-                            } else {
-                                // Want an ActionItem, so find it
-                                Field mAmvField = mAmp.getClass().getSuperclass().getDeclaredField("mMenuView");
-                                mAmvField.setAccessible(true);
-                                Object mAmv = mAmvField.get(mAmp);
-
-                                Field mChField;
-                                if (mAmv.getClass().toString().contains("com.actionbarsherlock")) {
-                                    // There are thousands of superclasses to traverse up
-                                    // Have to get superclasses because mChildren is private
-                                    mChField = mAmv.getClass().getSuperclass().getSuperclass()
-                                            .getSuperclass().getSuperclass().getDeclaredField("mChildren");
-                                } else
-                                    mChField = mAmv.getClass().getSuperclass().getSuperclass().getDeclaredField("mChildren");
-                                mChField.setAccessible(true);
-                                Object[] mChs = (Object[]) mChField.get(mAmv);
-                                for (Object mCh : mChs) {
-                                    if (mCh != null) {
-                                        View v = (View) mCh;
-                                        if (v.getId() == actionItemId)
-                                            setShowcaseView(v);
-                                    }
-                                }
-                            }
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchFieldException e) {
-                            e.printStackTrace();
-                        } catch (NullPointerException npe) {
-                            throw new RuntimeException("insertShowcaseViewWithType() must be called " +
-                                    "after or during onCreateOptionsMenu() of the host Activity");
-                        }
-
+                        showcaseActionItem(p, absAbv, itemType, actionItemId);
+                        break;
+                    default:
+                        Log.e("TAG", "Unknown item type");
                 }
             }
         });
 
+    }
+
+    private void showcaseActionItem(ViewParent p, Class absAbv, int itemType, int actionItemId) {
+        try {
+            Field mAmpField = absAbv.getDeclaredField("mActionMenuPresenter");
+            mAmpField.setAccessible(true);
+            Object mAmp = mAmpField.get(p);
+            if (itemType == ITEM_ACTION_OVERFLOW) {
+                // Finds the overflow button associated with the ActionMenuPresenter
+                Field mObField = mAmp.getClass().getDeclaredField("mOverflowButton");
+                mObField.setAccessible(true);
+                View mOb = (View) mObField.get(mAmp);
+                if (mOb != null)
+                    setShowcaseView(mOb);
+            } else {
+                // Want an ActionItem, so find it
+                Field mAmvField = mAmp.getClass().getSuperclass().getDeclaredField("mMenuView");
+                mAmvField.setAccessible(true);
+                Object mAmv = mAmvField.get(mAmp);
+
+                Field mChField;
+                if (mAmv.getClass().toString().contains("com.actionbarsherlock")) {
+                    // There are thousands of superclasses to traverse up
+                    // Have to get superclasses because mChildren is private
+                    mChField = mAmv.getClass().getSuperclass().getSuperclass()
+                            .getSuperclass().getSuperclass().getDeclaredField("mChildren");
+                } else
+                    mChField = mAmv.getClass().getSuperclass().getSuperclass().getDeclaredField("mChildren");
+                mChField.setAccessible(true);
+                Object[] mChs = (Object[]) mChField.get(mAmv);
+                for (Object mCh : mChs) {
+                    if (mCh != null) {
+                        View v = (View) mCh;
+                        if (v.getId() == actionItemId)
+                            setShowcaseView(v);
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (NullPointerException npe) {
+            throw new RuntimeException("insertShowcaseViewWithType() must be called " +
+                    "after or during onCreateOptionsMenu() of the host Activity");
+        }
+    }
+
+    private void showcaseSpinner(ViewParent p, Class abv) {
+        try {
+            Field mSpinnerField = abv.getDeclaredField("mSpinner");
+            mSpinnerField.setAccessible(true);
+            View mSpinnerView = (View) mSpinnerField.get(p);
+            if (mSpinnerView != null) {
+                setShowcaseView(mSpinnerView);
+            }
+        } catch (NoSuchFieldException e) {
+            Log.e("TAG", "Failed to find actionbar spinner", e);
+        } catch (IllegalAccessException e) {
+            Log.e("TAG", "Failed to access actionbar spinner", e);
+
+        }
+    }
+
+    private void showcaseTitle(ViewParent p, Class abv) {
+        try {
+            Field mTitleViewField = abv.getDeclaredField("mTitleView");
+            mTitleViewField.setAccessible(true);
+            View titleView = (View) mTitleViewField.get(p);
+            if (titleView != null) {
+                setShowcaseView(titleView);
+            }
+        } catch (NoSuchFieldException e) {
+            Log.e("TAG", "Failed to find actionbar title", e);
+        } catch (IllegalAccessException e) {
+            Log.e("TAG", "Failed to access actionbar title", e);
+
+        }
     }
 
     /**
@@ -538,6 +561,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         return distanceFromFocus > showcaseRadius;
 
+    }
+
+    public void setShowcaseRadius(int radius) {
+        showcaseRadiusMultiplier = radius;
     }
 
     public interface OnShowcaseEventListener {

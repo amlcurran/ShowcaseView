@@ -40,7 +40,7 @@ public class ActionItemsSampleActivity extends Activity {
         else if (itemId == R.id.menu_item1)
             sv.setShowcaseItem(ShowcaseView.ITEM_ACTION_ITEM, R.id.menu_item1, this);
         else if (itemId == R.id.menu_item2)
-            sv.setShowcaseItem(ShowcaseView.ITEM_TITLE_OR_SPINNER, 0, this);
+            sv.setShowcaseItem(ShowcaseView.ITEM_TITLE, 0, this);
         return true;
     }
 

@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.github.espiandev.showcaseview.ShowcaseView;
 import com.github.espiandev.showcaseview.sample.v14.ActionItemsSampleActivity;
+import com.github.espiandev.showcaseview.sample.v14.MultipleActionItemsSampleActivity;
 
 public class SampleActivity extends Activity implements View.OnClickListener,
         ShowcaseView.OnShowcaseEventListener {
@@ -24,6 +25,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 
         button = (Button) findViewById(R.id.buttonBlocked);
         button.setOnClickListener(this);
+        findViewById(R.id.buttonToMultipleItemsActivtiy).setOnClickListener(this);
 
         ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
         co.hideOnClickOutside = true;
@@ -36,10 +38,18 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 
     @Override
     public void onClick(View view) {
-        if (sv.isShown()) {
-            sv.animateGesture(0, 0, 0, -400);
-        } else {
-            startSdkLevelAppropriateActivity();
+
+        switch (view.getId()) {
+            case R.id.buttonBlocked:
+                if (sv.isShown()) {
+                    sv.animateGesture(0, 0, 0, -400);
+                } else {
+                    startSdkLevelAppropriateActivity();
+                }
+                break;
+            case R.id.buttonToMultipleItemsActivtiy:
+                startActivity(new Intent(this, MultipleActionItemsSampleActivity.class));
+                break;
         }
     }
 

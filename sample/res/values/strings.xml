@@ -4,4 +4,9 @@
     <string name="button_hide">Gesture up</string>
     <string name="button_show">Show showcase</string>
     <string name="button_blocked">Blocked button</string>
+    <string name="button_go_to_multiple_items_activity">Multiple Action Items</string>
+  <string name="showcase_spinner_title">Navigation Spinner</string>
+  <string name="showcase_spinner_message">Use this spinner to navigate to other areas of the app.</string>
+  <string name="showcase_overflow_title">Overflow Menu</string>
+  <string name="showcase_overflow_message">Access additional options here.</string>
 </resources>
