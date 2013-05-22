@@ -1,0 +1,77 @@
+package com.github.espiandev.showcaseview;
+
+import android.app.Activity;
+import android.view.View;
+import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ShowcaseViews {
+
+    private final List<ShowcaseView> views = new ArrayList<ShowcaseView>();
+    private final Activity activity;
+    private final int showcaseTemplateId;
+
+    private interface OnShowcaseAcknowledged {
+        void onShowCaseAcknowledged(ShowcaseView oldView);
+    }
+
+    public ShowcaseViews(Activity activity, int showcaseTemplateLayout) {
+        this.activity = activity;
+        this.showcaseTemplateId = showcaseTemplateLayout;
+    }
+
+    public void addView(ItemViewProperties properties) {
+        ShowcaseView showcaseView = new ShowcaseViewBuilder(activity, showcaseTemplateId).setShowcaseItem(properties.itemType, properties.id, activity)
+                .setText(properties.titleResId, properties.messageResId)
+                .setShowcaseIndicatorScale(properties.scale)
+                .build();
+        showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
+        views.add(showcaseView);
+    }
+
+    private View.OnClickListener createShowcaseViewDismissListener(final ShowcaseView showcaseView) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showcaseView.hide();
+                show();
+            }
+        };
+    }
+
+    public void show() {
+        if (views.isEmpty()) {
+            return;
+        }
+        final ShowcaseView view = views.get(0);
+        ((ViewGroup) activity.getWindow().getDecorView()).addView(view);
+        views.remove(0);
+    }
+
+    public static class ItemViewProperties {
+        public static final int ID_SPINNER = 0;
+        public static final int ID_TITLE = 1;
+        public static final int ID_OVERFLOW = 2;
+        private static final float DEFAULT_SCALE = 1f;
+
+        protected final int titleResId;
+        protected final int messageResId;
+        protected final int id;
+        protected final int itemType;
+        protected final float scale;
+
+        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType) {
+            this(id, titleResId, messageResId, itemType, DEFAULT_SCALE);
+        }
+
+        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale) {
+            this.id = id;
+            this.titleResId = titleResId;
+            this.messageResId = messageResId;
+            this.itemType = itemType;
+            this.scale = scale;
+        }
+    }
+}

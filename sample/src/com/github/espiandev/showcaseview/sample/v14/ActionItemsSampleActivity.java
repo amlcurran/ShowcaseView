@@ -1,14 +1,14 @@
 package com.github.espiandev.showcaseview.sample.v14;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.github.espiandev.showcaseview.ShowcaseView;
 import com.github.espiandev.showcaseview.sample.R;
 
-public class ActionItemsSampleActivity extends FragmentActivity {
+public class ActionItemsSampleActivity extends Activity {
 
     ShowcaseView sv;
     ShowcaseView.ConfigOptions mOptions = new ShowcaseView.ConfigOptions();
@@ -27,7 +27,6 @@ public class ActionItemsSampleActivity extends FragmentActivity {
 
         sv = ShowcaseView.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_OVERFLOW, R.id.menu_item1, this,
                 "ShowcaseView & action items", "Try touching action items to showcase them", mOptions);
-        //sv.setTextColors(Color.GREEN, Color.GRAY);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -40,7 +39,7 @@ public class ActionItemsSampleActivity extends FragmentActivity {
         else if (itemId == R.id.menu_item1)
             sv.setShowcaseItem(ShowcaseView.ITEM_ACTION_ITEM, R.id.menu_item1, this);
         else if (itemId == R.id.menu_item2)
-            sv.setShowcaseItem(ShowcaseView.ITEM_TITLE_OR_SPINNER, 0, this);
+            sv.setShowcaseItem(ShowcaseView.ITEM_TITLE, 0, this);
         return true;
     }
 
