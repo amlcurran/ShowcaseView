@@ -27,7 +27,6 @@ public class ActionItemsSampleActivity extends Activity {
 
         sv = ShowcaseView.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_OVERFLOW, R.id.menu_item1, this,
                 "ShowcaseView & action items", "Try touching action items to showcase them", mOptions);
-        //sv.setTextColors(Color.GREEN, Color.GRAY);
 
         return super.onCreateOptionsMenu(menu);
     }

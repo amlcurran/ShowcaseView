@@ -42,6 +42,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public static final int ITEM_ACTION_OVERFLOW = 6;
 
     private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
+    public static final int INNER_CIRCLE_RADIUS = 94;
 
     private float showcaseX = -1;
     private float showcaseY = -1;
@@ -69,7 +70,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private boolean mAlteredText = false;
 
     private final String buttonText;
-    private int showcaseRadiusMultiplier = 94;
+    private float scaleMultiplier = 1f;
 
     public ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
@@ -109,7 +110,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         }
         showcase = getContext().getResources().getDrawable(R.drawable.cling);
 
-        showcaseRadius = metricScale * showcaseRadiusMultiplier;
+        showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
         PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
         setOnTouchListener(this);
 
@@ -378,6 +379,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         //Draw the semi-transparent background
         c.drawColor(backColor);
 
+        //Draw to the scale specified
+        Matrix mm = new Matrix();
+        mm.postScale(scaleMultiplier, scaleMultiplier, showcaseX, showcaseY);
+        c.setMatrix(mm);
+
         //Erase the area for the ring
         c.drawCircle(showcaseX, showcaseY, showcaseRadius, mEraser);
 
@@ -557,14 +563,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             return true;
         }
 
-        if (!mOptions.block) return false;
-
-        return distanceFromFocus > showcaseRadius;
-
+        return mOptions.block && distanceFromFocus > showcaseRadius;
     }
 
-    public void setShowcaseRadius(int radius) {
-        showcaseRadiusMultiplier = radius;
+    public void setShowcaseIndicatorScale(float scaleMultiplier) {
+        this.scaleMultiplier = scaleMultiplier;
     }
 
     public interface OnShowcaseEventListener {

@@ -23,26 +23,22 @@ public class ShowcaseViews {
     }
 
     public void addView(ItemViewProperties properties) {
-        ShowcaseView viewTemplate = newInstance();
-        viewTemplate.setShowcaseItem(properties.itemType, properties.id, activity);
-        viewTemplate.setText(properties.titleResId, properties.messageResId);
-        viewTemplate.setShowcaseRadius(properties.radius);
-        overrideDefaultClickListener(viewTemplate);
-        views.add(viewTemplate);
+        ShowcaseView showcaseView = new ShowcaseViewBuilder(activity).setShowcaseItem(properties.itemType, properties.id, activity)
+                .setText(properties.titleResId, properties.messageResId)
+                .setShowcaseIndicatorScale(properties.scale)
+                .build();
+        showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
+        views.add(showcaseView);
     }
 
-    private ShowcaseView newInstance() {
-        return (ShowcaseView) activity.getLayoutInflater().inflate(showcaseTemplateId, null);
-    }
-
-    private void overrideDefaultClickListener(final ShowcaseView viewTemplate) {
-        viewTemplate.overrideButtonClick(new View.OnClickListener() {
+    private View.OnClickListener createShowcaseViewDismissListener(final ShowcaseView showcaseView) {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewTemplate.hide();
+                showcaseView.hide();
                 show();
             }
-        });
+        };
     }
 
     public void show() {
@@ -58,24 +54,24 @@ public class ShowcaseViews {
         public static final int ID_SPINNER = 0;
         public static final int ID_TITLE = 1;
         public static final int ID_OVERFLOW = 2;
-        private static final int DEFAULT_RADIUS = 94;
+        private static final float DEFAULT_SCALE = 1f;
 
         protected final int titleResId;
         protected final int messageResId;
         protected final int id;
         protected final int itemType;
-        protected final int radius;
+        protected final float scale;
 
         public ItemViewProperties(int id, int titleResId, int messageResId, int itemType) {
-            this(id, titleResId, messageResId, itemType, DEFAULT_RADIUS);
+            this(id, titleResId, messageResId, itemType, DEFAULT_SCALE);
         }
 
-        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, int radius) {
+        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale) {
             this.id = id;
             this.titleResId = titleResId;
             this.messageResId = messageResId;
             this.itemType = itemType;
-            this.radius = radius;
+            this.scale = scale;
         }
     }
 }
