@@ -1,14 +1,14 @@
 package com.github.espiandev.showcaseview.sample.v14;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.github.espiandev.showcaseview.ShowcaseView;
 import com.github.espiandev.showcaseview.sample.R;
 
-public class ActionItemsSampleActivity extends FragmentActivity {
+public class ActionItemsSampleActivity extends Activity {
 
     ShowcaseView sv;
     ShowcaseView.ConfigOptions mOptions = new ShowcaseView.ConfigOptions();
