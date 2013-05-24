@@ -22,5 +22,8 @@
     <activity
       android:name=".v14.ActionItemsSampleActivity"
       android:theme="@style/SampleTheme" />
+    <activity
+      android:name=".v14.MultipleActionItemsSampleActivity"
+      android:theme="@style/SampleTheme" />
   </application>
 </manifest>

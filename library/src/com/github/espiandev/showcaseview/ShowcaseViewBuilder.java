@@ -34,6 +34,11 @@ public class ShowcaseViewBuilder {
         return this;
     }
 
+    public ShowcaseViewBuilder setShowcaseIndicatorScale(float scale) {
+        showcaseView.setShowcaseIndicatorScale(scale);
+        return this;
+    }
+
     public ShowcaseViewBuilder overrideButtonClick(View.OnClickListener listener) {
         showcaseView.overrideButtonClick(listener);
         return this;
@@ -67,5 +72,9 @@ public class ShowcaseViewBuilder {
     public ShowcaseViewBuilder pointTo(float x, float y) {
         showcaseView.pointTo(x, y);
         return this;
+    }
+
+    public ShowcaseView build(){
+        return showcaseView;
     }
 }
