@@ -12,14 +12,25 @@ public class ShowcaseViews {
     private final List<ShowcaseView> views = new ArrayList<ShowcaseView>();
     private final Activity activity;
     private final int showcaseTemplateId;
+    private OnShowcaseAcknowledged showcaseAcknowledgedListener = new OnShowcaseAcknowledged() {
+        @Override
+        public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
+            //DEFAULT LISTENER - DOESN'T DO ANYTHING!
+        }
+    };
 
-    private interface OnShowcaseAcknowledged {
-        void onShowCaseAcknowledged(ShowcaseView oldView);
+    public interface OnShowcaseAcknowledged {
+        void onShowCaseAcknowledged(ShowcaseView showcaseView);
     }
 
     public ShowcaseViews(Activity activity, int showcaseTemplateLayout) {
         this.activity = activity;
         this.showcaseTemplateId = showcaseTemplateLayout;
+    }
+
+    public ShowcaseViews(Activity activity, int showcaseTemplateLayout, OnShowcaseAcknowledged acknowledgedListener) {
+        this(activity, showcaseTemplateLayout);
+        this.showcaseAcknowledgedListener = acknowledgedListener;
     }
 
     public void addView(ItemViewProperties properties) {
@@ -36,7 +47,11 @@ public class ShowcaseViews {
             @Override
             public void onClick(View v) {
                 showcaseView.hide();
-                show();
+                if (views.isEmpty()) {
+                    showcaseAcknowledgedListener.onShowCaseAcknowledged(showcaseView);
+                } else {
+                    show();
+                }
             }
         };
     }
@@ -48,6 +63,10 @@ public class ShowcaseViews {
         final ShowcaseView view = views.get(0);
         ((ViewGroup) activity.getWindow().getDecorView()).addView(view);
         views.remove(0);
+    }
+
+    public boolean hasViews(){
+        return !views.isEmpty();
     }
 
     public static class ItemViewProperties {
