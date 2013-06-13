@@ -1,5 +1,6 @@
 package com.github.espiandev.showcaseview;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -27,6 +28,7 @@ import static com.github.espiandev.showcaseview.anim.AnimationUtils.AnimationSta
 /**
  * A view which allows you to showcase areas of your app with an explanation.
  */
+@SuppressLint("NewApi")
 public class ShowcaseView extends RelativeLayout implements View.OnClickListener, View.OnTouchListener {
 
     public static final int TYPE_NO_LIMIT = 0;
@@ -640,6 +642,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     private void setConfigOptions(ConfigOptions options) {
         mOptions = options;
+        backColor=options.backColor;
+        titleTextColor = options.titleTextColor;
+        detailTextColor = options.detailTextColor;
     }
 
     private ConfigOptions getConfigOptions() {
@@ -810,6 +815,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public int shotType = TYPE_NO_LIMIT;
         public int insert = INSERT_TO_DECOR;
         public boolean hideOnClickOutside = false;
+        public int backColor = Color.argb(128, 80, 80, 80);
+        public int titleTextColor = Color.parseColor("#49C0EC");
+        public int detailTextColor = Color.WHITE;
     }
 
 }
