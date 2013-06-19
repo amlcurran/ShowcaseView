@@ -44,7 +44,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public static final int ITEM_ACTION_OVERFLOW = 6;
 
     private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
-    public static final int INNER_CIRCLE_RADIUS = 94;
+    public static  final int INNER_CIRCLE_RADIUS = 94;
 
     private float showcaseX = -1;
     private float showcaseY = -1;
@@ -71,7 +71,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private float[] mBestTextPosition;
     private boolean mAlteredText = false;
 
-    private final String buttonText;
+    private String buttonText;
     private float scaleMultiplier = 1f;
 
     public ShowcaseView(Context context) {
@@ -244,7 +244,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 }
             }
         });
-
     }
 
     private void showcaseActionItem(ViewParent p, Class absAbv, int itemType, int actionItemId) {
@@ -640,11 +639,15 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         AnimationUtils.createMovementAnimation(mHandy, x, y).start();
     }
 
-    private void setConfigOptions(ConfigOptions options) {
+    public void setConfigOptions(ConfigOptions options) {
         mOptions = options;
         backColor=options.backColor;
         titleTextColor = options.titleTextColor;
         detailTextColor = options.detailTextColor;
+        if(options.buttonText!=null)
+        	buttonText = options.buttonText;
+        showcaseRadius = options.circleRadius;
+        //this.invalidate();
     }
 
     private ConfigOptions getConfigOptions() {
@@ -818,6 +821,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public int backColor = Color.argb(128, 80, 80, 80);
         public int titleTextColor = Color.parseColor("#49C0EC");
         public int detailTextColor = Color.WHITE;
+        public String buttonText;
+        public int circleRadius=-1;
     }
 
 }
