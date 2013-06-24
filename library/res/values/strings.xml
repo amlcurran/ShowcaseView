@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="ok">OK</string>
+    
+    <!--Tutorial Buttons -->
+    <string name="begin_tut">Start the guided tour</string>
+    <string name="next_tut">Next</string>
+    <string name="skip_tut">Skip</string>
+    
 </resources>
