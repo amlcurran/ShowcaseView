@@ -7,6 +7,7 @@ import com.github.espiandev.showcaseview.ShowcaseView.OnShowcaseEventListener;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -16,11 +17,15 @@ public abstract class BaseTutorialActivity extends Activity implements
 		OnShowcaseEventListener {
 
 	private final static String PASSED_POSITION = "passedPos";
+	private final static String PASSED_ID = "passedId";
 	private final static String PASSED_RADIUS = "passedRadius";
 	private final static String PASSED_TITLE = "passedTitle";
 	private final static String PASSED_DESC = "passedDesc";
 	private final static String PASSED_TITLE_COLOR = "passedTitleColor";
 	private final static String PASSED_DESC_COLOR = "passedDescColor";
+	public static final String RESULT_DATA = "tutResult";
+	public static final String REDO = "redoTut";
+	public static final String OK = "okTut";
 
 	protected ShowcaseView mShowcaseView;
 	private Button skip;
@@ -38,7 +43,13 @@ public abstract class BaseTutorialActivity extends Activity implements
 			caller.putExtra(PASSED_DESC_COLOR, descColor);
 		ctx.startActivityForResult(caller, requestCode)	;
 	}
-
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		setResult(RESULT_CANCELED);
+		this.finish();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +65,6 @@ public abstract class BaseTutorialActivity extends Activity implements
 		
 		mShowcaseView.setOnShowcaseEventListener(this);
 	}
-
 
 	private void setParams(Intent intent) {
 		ConfigOptions co = new ConfigOptions();
@@ -74,7 +84,8 @@ public abstract class BaseTutorialActivity extends Activity implements
 			
 			
 			int[] position = intent.getExtras().getIntArray(PASSED_POSITION);
-			mShowcaseView.setShowcasePosition(position[0]+co.circleRadius, position[1]);
+			if(position!=null)
+				mShowcaseView.setShowcasePosition(position[0]+co.circleRadius, position[1]);
 			
 			String title = intent.getExtras().getString(PASSED_TITLE);
 			String desc = intent.getExtras().getString(PASSED_DESC);
@@ -89,7 +100,8 @@ public abstract class BaseTutorialActivity extends Activity implements
 	@Override
 	public void onShowcaseViewHide(ShowcaseView showcaseView) {
 		Intent returnIntent = new Intent();
-		this.setResult(RESULT_CANCELED,returnIntent);
+		returnIntent.putExtra(RESULT_DATA, OK);
+		this.setResult(RESULT_OK,returnIntent);
 		this.finish();
 	}
 
