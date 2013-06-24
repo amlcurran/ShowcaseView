@@ -50,6 +50,13 @@ public abstract class BaseTutorialActivity extends Activity implements
 		setResult(RESULT_CANCELED);
 		this.finish();
 	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		setResult(RESULT_CANCELED);
+		this.finish();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
