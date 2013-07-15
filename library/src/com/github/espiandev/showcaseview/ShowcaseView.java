@@ -141,7 +141,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             lps.height = LayoutParams.WRAP_CONTENT;
             lps.width = LayoutParams.WRAP_CONTENT;
             mEndButton.setLayoutParams(lps);
-            mEndButton.setText(buttonText != null ? buttonText : getResources().getString(R.string.ok));
+            mEndButton.setText(buttonText != null ? buttonText : getResources().getString(R.string.skip));
             if (!hasCustomClickListener) mEndButton.setOnClickListener(this);
             addView(mEndButton);
         }
@@ -499,6 +499,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
+        if (view.getId() == R.id.showcase_button) {
+            if (mEventListener != null) {
+                mEventListener.onShowcaseEndButtonClicked(this);
+            }
+        }
+
         // If the type is set to one-shot, store that it has shot
         if (mOptions.shotType == TYPE_ONE_SHOT) {
             SharedPreferences internal = getContext().getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE);
@@ -559,6 +565,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
 
         if (mOptions.hideOnClickOutside && distanceFromFocus > showcaseRadius) {
+            if (mEventListener != null) {
+                mEventListener.onShowcaseClickedOnOutside(this);}
             this.hide();
             return true;
         }
@@ -575,6 +583,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public void onShowcaseViewHide(ShowcaseView showcaseView);
 
         public void onShowcaseViewShow(ShowcaseView showcaseView);
+
+        public void onShowcaseEndButtonClicked(ShowcaseView showcaseView);
+
+        public void onShowcaseClickedOnOutside(ShowcaseView showcaseView);
 
     }
 
