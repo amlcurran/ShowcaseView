@@ -5,8 +5,15 @@
     <string name="button_show">Show Single Action Items</string>
     <string name="button_blocked">Blocked button</string>
     <string name="button_go_to_multiple_items_activity">Show Multiple Action Items</string>
+    <string name="button_go_to_multiple_showcases_activity">Show Multiple Showcases</string>
+
   <string name="showcase_spinner_title">Navigation Spinner</string>
   <string name="showcase_spinner_message">Use this spinner to navigate to other areas of the app.</string>
   <string name="showcase_overflow_title">Overflow Menu</string>
   <string name="showcase_overflow_message">Access additional options here.</string>
+
+    <string name="showcase_image_title">Look how cute it is!</string>
+    <string name="showcase_image_message">This is a lovely kitten.</string>
+    <string name="showcase_like_title">Like button</string>
+    <string name="showcase_like_message">Click the button if you like kittens.</string>
 </resources>
