@@ -50,7 +50,7 @@ public class ShowcaseViews {
     }
 
     private boolean showcaseActionBar(ItemViewProperties properties) {
-        return properties.itemType >= ItemViewProperties.ID_NOT_IN_ACTIONBAR;
+        return properties.itemType > ItemViewProperties.ID_NOT_IN_ACTIONBAR;
     }
 
     private View.OnClickListener createShowcaseViewDismissListener(final ShowcaseView showcaseView) {
