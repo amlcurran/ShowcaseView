@@ -100,6 +100,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     private void init() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            setLayerType(LAYER_TYPE_SOFTWARE,null);
+        else
+            setDrawingCacheEnabled(true);
+
         boolean hasShot = getContext().getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
                 .getBoolean("hasShot" + getConfigOptions().showcaseId, false);
         if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
@@ -373,37 +378,25 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             return;
         }
 
-        Bitmap b = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-
         //Draw the semi-transparent background
-        c.drawColor(backColor);
+        canvas.drawColor(backColor);
 
         //Draw to the scale specified
         Matrix mm = new Matrix();
         mm.postScale(scaleMultiplier, scaleMultiplier, showcaseX, showcaseY);
-        c.setMatrix(mm);
+        canvas.setMatrix(mm);
 
         //Erase the area for the ring
-        c.drawCircle(showcaseX, showcaseY, showcaseRadius, mEraser);
+        canvas.drawCircle(showcaseX, showcaseY, showcaseRadius, mEraser);
 
         boolean recalculateText = makeVoidedRect() || mAlteredText;
         mAlteredText = false;
 
         showcase.setBounds(voidedArea);
-        showcase.draw(c);
+        showcase.draw(canvas);
 
-        canvas.drawBitmap(b, 0, 0, null);
+        canvas.setMatrix(new Matrix());
 
-        // Clean up, as we no longer require these items.
-        try {
-            c.setBitmap(null);
-        } catch (NullPointerException npe) {
-            //TODO why does this NPE happen?
-            npe.printStackTrace();
-        }
-        b.recycle();
-        b = null;
 
         if (!TextUtils.isEmpty(mTitleText) || !TextUtils.isEmpty(mSubText)) {
             if (recalculateText)
