@@ -30,13 +30,13 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         buttonTop.setOnClickListener(this);
         buttonMiddle = (Button) findViewById(R.id.buttonToMultipleItemsActivtiy);
         buttonMiddle.setOnClickListener(this);
-        buttonDown = (Button) findViewById(R.id.buttonToMultipleShowcaseViewsActivtiy);
+        buttonDown = (Button) findViewById(R.id.buttonToMultipleShowcaseViewsActivity);
         buttonDown.setOnClickListener(this);
 
         ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
         co.hideOnClickOutside = true;
         sv = ShowcaseView.insertShowcaseView(R.id.buttonBlocked, this, "ShowcaseView Sample", "When the ShowcaseView is showing, " +
-                "pressing the buttonTop will show a gesture. When it is hidden " +
+                "pressing the button will show a gesture. When it is hidden " +
                 "it'll go to another Activity.", co);
         sv.setOnShowcaseEventListener(this);
 
@@ -54,7 +54,8 @@ public class SampleActivity extends Activity implements View.OnClickListener,
                     startSdkLevelAppropriateActivity(R.id.buttonBlocked);
                 }
                 break;
-            default:
+            case R.id.buttonToMultipleItemsActivtiy:
+            case R.id.buttonToMultipleShowcaseViewsActivity:
                 startSdkLevelAppropriateActivity(viewId);
                 break;
         }
@@ -64,7 +65,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
 
-            if(buttonId == R.id.buttonToMultipleShowcaseViewsActivtiy) {
+            if(buttonId == R.id.buttonToMultipleShowcaseViewsActivity) {
                 startActivity(new Intent(this,
                         MultipleShowcaseSampleActivity.class));
             } else {
@@ -77,7 +78,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         } else if(buttonId == R.id.buttonToMultipleItemsActivtiy) {
             startActivity(new Intent(this,
                     MultipleActionItemsSampleActivity.class));
-        } else if(buttonId == R.id.buttonToMultipleShowcaseViewsActivtiy) {
+        } else if(buttonId == R.id.buttonToMultipleShowcaseViewsActivity) {
             startActivity(new Intent(this,
                     MultipleShowcaseSampleActivity.class));
         }

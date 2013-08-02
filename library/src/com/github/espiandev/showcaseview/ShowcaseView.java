@@ -100,10 +100,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     private void init() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             setLayerType(LAYER_TYPE_SOFTWARE,null);
-        else
+        }
+        else {
             setDrawingCacheEnabled(true);
+        }
 
         boolean hasShot = getContext().getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
                 .getBoolean("hasShot" + getConfigOptions().showcaseId, false);

@@ -38,14 +38,19 @@ public class ShowcaseViews {
                 .setText(properties.titleResId, properties.messageResId)
                 .setShowcaseIndicatorScale(properties.scale);
 
-        if( properties.itemType >= 0)
+        if(showcaseActionBar(properties)) {
             builder.setShowcaseItem(properties.itemType, properties.id, activity);
-        else
-            builder.setShowcaseView( activity.findViewById(properties.id));
+        } else {
+            builder.setShowcaseView(activity.findViewById(properties.id));
+        }
 
         ShowcaseView showcaseView = builder.build();
         showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
         views.add(showcaseView);
+    }
+
+    private boolean showcaseActionBar(ItemViewProperties properties) {
+        return properties.itemType >= ItemViewProperties.ID_NOT_IN_ACTIONBAR;
     }
 
     private View.OnClickListener createShowcaseViewDismissListener(final ShowcaseView showcaseView) {

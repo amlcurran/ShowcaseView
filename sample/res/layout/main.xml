@@ -20,7 +20,7 @@
     android:visibility="gone"/>
 
   <Button
-    android:id="@+id/buttonToMultipleShowcaseViewsActivtiy"
+    android:id="@+id/buttonToMultipleShowcaseViewsActivity"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/button_go_to_multiple_showcases_activity"
