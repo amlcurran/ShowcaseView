@@ -66,21 +66,17 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
 
             if(buttonId == R.id.buttonToMultipleShowcaseViewsActivity) {
-                startActivity(new Intent(this,
-                        MultipleShowcaseSampleActivity.class));
+                startActivity(new Intent(this, MultipleShowcaseSampleActivity.class));
             } else {
                 Toast.makeText(this, "Your Android version is < Honeycomb. You need actionbar support to run this sample.", Toast.LENGTH_SHORT).show();
             }
         }
         else if(buttonId == R.id.buttonBlocked) {
-            startActivity(new Intent(this,
-                    ActionItemsSampleActivity.class));
+            startActivity(new Intent(this, ActionItemsSampleActivity.class));
         } else if(buttonId == R.id.buttonToMultipleItemsActivtiy) {
-            startActivity(new Intent(this,
-                    MultipleActionItemsSampleActivity.class));
+            startActivity(new Intent(this, MultipleActionItemsSampleActivity.class));
         } else if(buttonId == R.id.buttonToMultipleShowcaseViewsActivity) {
-            startActivity(new Intent(this,
-                    MultipleShowcaseSampleActivity.class));
+            startActivity(new Intent(this, MultipleShowcaseSampleActivity.class));
         }
     }
 

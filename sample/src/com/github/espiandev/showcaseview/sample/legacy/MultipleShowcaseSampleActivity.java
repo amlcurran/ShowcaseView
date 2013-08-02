@@ -51,6 +51,4 @@ public class MultipleShowcaseSampleActivity extends Activity {
         mViews.show();
     }
 
-
-
 }
