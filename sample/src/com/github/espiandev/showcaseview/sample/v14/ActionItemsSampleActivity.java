@@ -16,7 +16,7 @@ public class ActionItemsSampleActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sample);
+        setContentView(R.layout.activity_sample);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         mOptions.block = false;
     }

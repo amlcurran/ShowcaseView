@@ -23,7 +23,7 @@ public class MultipleActionItemsSampleActivity extends Activity implements Actio
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sample);
+        setContentView(R.layout.activity_sample);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         getActionBar().setListNavigationCallbacks(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, new String[]{"Item1", "Item2", "Item3"}), this);
