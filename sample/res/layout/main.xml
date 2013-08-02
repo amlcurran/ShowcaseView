@@ -1,21 +1,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:orientation="horizontal">
+  android:orientation="vertical"
+  android:gravity="center">
 
   <Button
     android:id="@+id/buttonBlocked"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/button_hide"
-    android:layout_marginTop="320dp"
-    android:layout_marginLeft="89dp" />
+    android:layout_marginTop="130dp"/>
 
   <Button
     android:id="@+id/buttonToMultipleItemsActivtiy"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/button_go_to_multiple_items_activity"
-    android:layout_marginTop="320dp"
-    android:layout_marginLeft="25dp" />
+    android:layout_marginTop="20dp"
+    android:visibility="gone"/>
+
 </LinearLayout>
