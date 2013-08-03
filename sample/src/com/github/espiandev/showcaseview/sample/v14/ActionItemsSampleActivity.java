@@ -26,7 +26,7 @@ public class ActionItemsSampleActivity extends Activity {
         getMenuInflater().inflate(R.menu.menu, menu);
 
         sv = ShowcaseView.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_OVERFLOW, R.id.menu_item1, this,
-                "ShowcaseView & action items", "Try touching action items to showcase them", mOptions);
+                R.string.showcase_simple_title, R.string.showcase_simple_message, mOptions);
 
         return super.onCreateOptionsMenu(menu);
     }

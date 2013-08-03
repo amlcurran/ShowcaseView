@@ -37,7 +37,7 @@ public class MultipleActionItemsSampleActivity extends Activity implements Actio
         ShowcaseViews views = new ShowcaseViews(this, R.layout.showcase_view_template, new ShowcaseViews.OnShowcaseAcknowledged() {
             @Override
             public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
-                 Toast.makeText(getApplicationContext(), "The last showcaseView was dismissed!", Toast.LENGTH_SHORT).show();
+                 Toast.makeText(getApplicationContext(), R.string.dismissed_message, Toast.LENGTH_SHORT).show();
             }
         });
         views.addView(new ItemViewProperties(ItemViewProperties.ID_SPINNER, R.string.showcase_spinner_title, R.string.showcase_spinner_message, ShowcaseView.ITEM_SPINNER, SHOWCASE_SPINNER_SCALE));
