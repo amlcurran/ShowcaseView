@@ -12,7 +12,7 @@ import com.github.espiandev.showcaseview.sample.R;
 public class MultipleShowcaseSampleActivity extends Activity {
 
     private static final float SHOWCASE_KITTEN_SCALE = 1.2f;
-    private static final float SHOWCASE_LIKE_SCALE = 0.4f;
+    private static final float SHOWCASE_LIKE_SCALE = 0.5f;
     ShowcaseView.ConfigOptions mOptions = new ShowcaseView.ConfigOptions();
     ShowcaseViews mViews;
 
@@ -24,7 +24,7 @@ public class MultipleShowcaseSampleActivity extends Activity {
         findViewById(R.id.buttonLike).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "PURRRRR!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.like_message, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -35,18 +35,16 @@ public class MultipleShowcaseSampleActivity extends Activity {
                 R.layout.showcase_view_template, new ShowcaseViews.OnShowcaseAcknowledged() {
             @Override
             public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
-                Toast.makeText(MultipleShowcaseSampleActivity.this, "The last showcaseView was dismissed!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MultipleShowcaseSampleActivity.this, R.string.dismissed_message, Toast.LENGTH_SHORT).show();
             }
         });
         mViews.addView( new ShowcaseViews.ItemViewProperties(R.id.image,
                 R.string.showcase_image_title,
                 R.string.showcase_image_message,
-                ShowcaseViews.ItemViewProperties.ID_NOT_IN_ACTIONBAR,
                 SHOWCASE_KITTEN_SCALE));
         mViews.addView( new ShowcaseViews.ItemViewProperties(R.id.buttonLike,
                 R.string.showcase_like_title,
                 R.string.showcase_like_message,
-                ShowcaseViews.ItemViewProperties.ID_NOT_IN_ACTIONBAR,
                 SHOWCASE_LIKE_SCALE));
         mViews.show();
     }

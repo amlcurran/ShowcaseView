@@ -94,6 +94,14 @@ public class ShowcaseViews {
         protected final int itemType;
         protected final float scale;
 
+        public ItemViewProperties(int id, int titleResId, int messageResId) {
+            this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE);
+        }
+
+        public ItemViewProperties(int id, int titleResId, int messageResId, float scale) {
+            this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, scale);
+        }
+
         public ItemViewProperties(int id, int titleResId, int messageResId, int itemType) {
             this(id, titleResId, messageResId, itemType, DEFAULT_SCALE);
         }

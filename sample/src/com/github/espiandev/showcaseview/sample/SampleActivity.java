@@ -35,9 +35,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 
         ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
         co.hideOnClickOutside = true;
-        sv = ShowcaseView.insertShowcaseView(R.id.buttonBlocked, this, "ShowcaseView Sample", "When the ShowcaseView is showing, " +
-                "pressing the button will show a gesture. When it is hidden " +
-                "it'll go to another Activity.", co);
+        sv = ShowcaseView.insertShowcaseView(R.id.buttonBlocked, this, R.string.showcase_main_title, R.string.showcase_main_message, co);
         sv.setOnShowcaseEventListener(this);
 
     }
@@ -62,13 +60,11 @@ public class SampleActivity extends Activity implements View.OnClickListener,
     }
 
     private void startSdkLevelAppropriateActivity(int buttonId) {
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-
             if(buttonId == R.id.buttonToMultipleShowcaseViewsActivity) {
                 startActivity(new Intent(this, MultipleShowcaseSampleActivity.class));
             } else {
-                Toast.makeText(this, "Your Android version is < Honeycomb. You need actionbar support to run this sample.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.error_message, Toast.LENGTH_SHORT).show();
             }
         }
         else if(buttonId == R.id.buttonBlocked) {
