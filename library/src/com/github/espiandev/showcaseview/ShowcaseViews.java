@@ -34,12 +34,23 @@ public class ShowcaseViews {
     }
 
     public void addView(ItemViewProperties properties) {
-        ShowcaseView showcaseView = new ShowcaseViewBuilder(activity, showcaseTemplateId).setShowcaseItem(properties.itemType, properties.id, activity)
+        ShowcaseViewBuilder builder = new ShowcaseViewBuilder(activity, showcaseTemplateId)
                 .setText(properties.titleResId, properties.messageResId)
-                .setShowcaseIndicatorScale(properties.scale)
-                .build();
+                .setShowcaseIndicatorScale(properties.scale);
+
+        if(showcaseActionBar(properties)) {
+            builder.setShowcaseItem(properties.itemType, properties.id, activity);
+        } else {
+            builder.setShowcaseView(activity.findViewById(properties.id));
+        }
+
+        ShowcaseView showcaseView = builder.build();
         showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
         views.add(showcaseView);
+    }
+
+    private boolean showcaseActionBar(ItemViewProperties properties) {
+        return properties.itemType > ItemViewProperties.ID_NOT_IN_ACTIONBAR;
     }
 
     private View.OnClickListener createShowcaseViewDismissListener(final ShowcaseView showcaseView) {
@@ -70,6 +81,8 @@ public class ShowcaseViews {
     }
 
     public static class ItemViewProperties {
+
+        public static final int ID_NOT_IN_ACTIONBAR = -1;
         public static final int ID_SPINNER = 0;
         public static final int ID_TITLE = 1;
         public static final int ID_OVERFLOW = 2;
@@ -80,6 +93,14 @@ public class ShowcaseViews {
         protected final int id;
         protected final int itemType;
         protected final float scale;
+
+        public ItemViewProperties(int id, int titleResId, int messageResId) {
+            this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE);
+        }
+
+        public ItemViewProperties(int id, int titleResId, int messageResId, float scale) {
+            this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, scale);
+        }
 
         public ItemViewProperties(int id, int titleResId, int messageResId, int itemType) {
             this(id, titleResId, messageResId, itemType, DEFAULT_SCALE);
