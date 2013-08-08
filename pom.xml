@@ -54,7 +54,7 @@
         <android.version>4.0.1.2</android.version>
         <android.platform>18</android.platform>
         <android-support.version>r7</android-support.version>
-        <android.maven.plugin>3.6.0</android.maven.plugin>
+        <android.maven.plugin>3.6.1</android.maven.plugin>
 
     </properties>
 
