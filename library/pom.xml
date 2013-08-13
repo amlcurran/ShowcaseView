@@ -24,12 +24,10 @@
         <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>support-v4</artifactId>
-            <version>${android-support.version}</version>
         </dependency>
         <dependency>
             <groupId>com.nineoldandroids</groupId>
             <artifactId>library</artifactId>
-            <version>2.4.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.android</groupId>
@@ -51,6 +49,32 @@
                         <platform>${android.platform}</platform>
                     </sdk>
                 </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <type>jar</type>
+                                    <file>${project.build.directory}/${project.build.finalName}.jar</file>
+                                </artifact>
+                                <artifact>
+                                    <type>aar</type>
+                                    <file>${project.basedir}/build/libs/${project.artifactId}-${project.version}.aar
+                                    </file>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 
