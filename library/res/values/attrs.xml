@@ -3,7 +3,11 @@
     <declare-styleable name="ShowcaseView">
         <attr name="sv_backgroundColor" format="color|reference" />
         <attr name="sv_detailTextColor" format="color|reference" />
+        <attr name="sv_detailTextShadowColor" format="color|reference" />
+        <attr name="sv_detailTextSize" format="dimension" />
         <attr name="sv_titleTextColor" format="color|reference" />
+        <attr name="sv_titleTextShadowColor" format="color|reference" />
+        <attr name="sv_titleTextSize" format="dimension" />
         <attr name="sv_buttonBackgroundColor" format="color|reference" />
         <attr name="sv_buttonForegroundColor" format="color|reference" />
         <attr name="sv_buttonText" format="string|reference" />

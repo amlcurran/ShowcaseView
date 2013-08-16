@@ -3,6 +3,11 @@
 
   <style name="CustomShowcaseTheme" parent="ShowcaseView.Light">
     <item name="sv_titleTextColor">#ffbb33</item>
+    <!-- <item name="sv_titleTextShadowColor">@android:color/transparent</item> -->
+    <!-- <item name="sv_titleTextSize">30sp</item> -->
+    <item name="sv_detailTextColor">@android:color/black</item>
+    <!-- <item name="sv_detailTextShadowColor">@android:color/transparent</item> -->
+    <!-- <item name="sv_detailTextSize">30sp</item> -->
     <item name="sv_backgroundColor">#33ffbb33</item>
     <item name="sv_buttonBackgroundColor">#CF3119</item>
     <item name="sv_buttonText">Close</item>
