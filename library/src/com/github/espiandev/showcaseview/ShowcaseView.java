@@ -100,10 +100,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     private void init() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            setLayerType(LAYER_TYPE_SOFTWARE,null);
-        }
-        else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            setLayerType(LAYER_TYPE_SOFTWARE, null);
+        } else {
             setDrawingCacheEnabled(true);
         }
 
@@ -140,13 +139,14 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         mEraser.setAntiAlias(true);
 
         if (!mOptions.noButton && mEndButton.getParent() == null) {
-            RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
-            lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-            lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            int margin = ((Number) (metricScale * 12)).intValue();
-            lps.setMargins(margin, margin, margin, margin);
-            lps.height = LayoutParams.WRAP_CONTENT;
-            lps.width = LayoutParams.WRAP_CONTENT;
+            RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
+            if (lps == null) {
+                lps = (LayoutParams) generateDefaultLayoutParams();
+                lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                int margin = ((Number) (metricScale * 12)).intValue();
+                lps.setMargins(margin, margin, margin, margin);
+            }
             mEndButton.setLayoutParams(lps);
             mEndButton.setText(buttonText != null ? buttonText : getResources().getString(R.string.ok));
             if (!hasCustomClickListener) mEndButton.setOnClickListener(this);
@@ -805,6 +805,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public int shotType = TYPE_NO_LIMIT;
         public int insert = INSERT_TO_DECOR;
         public boolean hideOnClickOutside = false;
+
+        /**
+         * Allow custom positioning of the button within the showcase view.
+         */
+        public LayoutParams buttonLayoutParams = null;
     }
 
 }
