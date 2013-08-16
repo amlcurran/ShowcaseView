@@ -510,7 +510,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         if (mEventListener != null) {
             mEventListener.onShowcaseViewHide(this);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && getConfigOptions().fadeOutDuration > 0) {
             fadeOutShowcase();
         } else {
             setVisibility(View.GONE);
@@ -518,7 +519,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     private void fadeOutShowcase() {
-        AnimationUtils.createFadeOutAnimation(this, new AnimationEndListener() {
+        AnimationUtils.createFadeOutAnimation(this, getConfigOptions().fadeOutDuration, new AnimationEndListener() {
             @Override
             public void onAnimationEnd() {
                 setVisibility(View.GONE);
@@ -530,7 +531,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         if (mEventListener != null) {
             mEventListener.onShowcaseViewShow(this);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && getConfigOptions().fadeInDuration > 0) {
             fadeInShowcase();
         } else {
             setVisibility(View.VISIBLE);
@@ -538,7 +539,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     private void fadeInShowcase() {
-        AnimationUtils.createFadeInAnimation(this, new AnimationStartListener() {
+        AnimationUtils.createFadeInAnimation(this, getConfigOptions().fadeInDuration, new AnimationStartListener() {
             @Override
             public void onAnimationStart() {
                 setVisibility(View.VISIBLE);
@@ -805,6 +806,16 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public int shotType = TYPE_NO_LIMIT;
         public int insert = INSERT_TO_DECOR;
         public boolean hideOnClickOutside = false;
+
+        /**
+         * Default duration for fade in animation. Set to 0 to disable.
+         */
+        public int fadeInDuration = AnimationUtils.DEFAULT_DURATION;
+
+        /**
+         * Default duration for fade out animation. Set to 0 to disable.
+         */
+        public int fadeOutDuration = AnimationUtils.DEFAULT_DURATION;
     }
 
 }
