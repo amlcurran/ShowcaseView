@@ -10,7 +10,8 @@ import com.nineoldandroids.view.ViewHelper;
 
 public class AnimationUtils {
 
-    private static final int DEFAULT_DURATION = 300;
+    public static final int DEFAULT_DURATION = 300;
+
     private static final String ALPHA = "alpha";
     private static final float INVISIBLE = 0f;
     private static final float VISIBLE = 1f;
