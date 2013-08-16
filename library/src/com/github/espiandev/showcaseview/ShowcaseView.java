@@ -63,7 +63,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private Rect voidedArea;
     private String mTitleText, mSubText;
     private int detailTextColor = -1;
+    private int detailTextShadowColor = -1;
+    private float detailTextSize = -1;
     private int titleTextColor = -1;
+    private int titleTextShadowColor = -1;
+    private float titleTextSize = -1;
     private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
     private float[] mBestTextPosition;
@@ -83,15 +87,20 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
+        metricScale = getContext().getResources().getDisplayMetrics().density;
+
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle, R.style.ShowcaseView);
         backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
         detailTextColor = styled.getColor(R.styleable.ShowcaseView_sv_detailTextColor, Color.WHITE);
+        detailTextSize = styled.getDimension(R.styleable.ShowcaseView_sv_detailTextSize, 16 * metricScale);
+        detailTextShadowColor = styled.getColor(R.styleable.ShowcaseView_sv_detailTextShadowColor, Color.DKGRAY);
         titleTextColor = styled.getColor(R.styleable.ShowcaseView_sv_titleTextColor, Color.parseColor("#49C0EC"));
+        titleTextShadowColor = styled.getColor(R.styleable.ShowcaseView_sv_titleTextShadowColor, Color.DKGRAY);
+        titleTextSize = styled.getDimension(R.styleable.ShowcaseView_sv_titleTextSize, 24 * metricScale);
         buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
         styled.recycle();
 
-        metricScale = getContext().getResources().getDisplayMetrics().density;
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
 
         ConfigOptions options = new ConfigOptions();
@@ -123,14 +132,14 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         mPaintTitle = new Paint();
         mPaintTitle.setColor(titleTextColor);
-        mPaintTitle.setShadowLayer(2.0f, 0f, 2.0f, Color.DKGRAY);
-        mPaintTitle.setTextSize(24 * metricScale);
+        mPaintTitle.setShadowLayer(2.0f, 0f, 2.0f, titleTextShadowColor);
+        mPaintTitle.setTextSize(titleTextSize);
         mPaintTitle.setAntiAlias(true);
 
         mPaintDetail = new TextPaint();
         mPaintDetail.setColor(detailTextColor);
-        mPaintDetail.setShadowLayer(2.0f, 0f, 2.0f, Color.DKGRAY);
-        mPaintDetail.setTextSize(16 * metricScale);
+        mPaintDetail.setShadowLayer(2.0f, 0f, 2.0f, detailTextShadowColor);
+        mPaintDetail.setTextSize(detailTextSize);
         mPaintDetail.setAntiAlias(true);
 
         mEraser = new Paint();
