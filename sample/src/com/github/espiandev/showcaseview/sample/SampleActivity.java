@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.github.espiandev.showcaseview.ShowcaseView;
+import com.github.espiandev.showcaseview.sample.fragments.ShowcaseFragmentActivity;
 import com.github.espiandev.showcaseview.sample.legacy.MultipleShowcaseSampleActivity;
 import com.github.espiandev.showcaseview.sample.v14.ActionItemsSampleActivity;
 import com.github.espiandev.showcaseview.sample.v14.MultipleActionItemsSampleActivity;
@@ -20,6 +21,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
     Button buttonTop;
     Button buttonMiddle;
     Button buttonDown;
+    Button buttonLowest;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,8 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         buttonMiddle.setOnClickListener(this);
         buttonDown = (Button) findViewById(R.id.buttonToMultipleShowcaseViewsActivity);
         buttonDown.setOnClickListener(this);
+        buttonLowest = (Button) findViewById(R.id.buttonToShowcaseFragmentActivity);
+        buttonLowest.setOnClickListener(this);
 
         ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
         co.hideOnClickOutside = true;
@@ -56,7 +60,15 @@ public class SampleActivity extends Activity implements View.OnClickListener,
             case R.id.buttonToMultipleShowcaseViewsActivity:
                 startSdkLevelAppropriateActivity(viewId);
                 break;
+            case R.id.buttonToShowcaseFragmentActivity:
+                startFragmentActivity();
+                break;
         }
+    }
+
+    private void startFragmentActivity() {
+        Intent startIntent = new Intent(this, ShowcaseFragmentActivity.class);
+        startActivity(startIntent);
     }
 
     private void startSdkLevelAppropriateActivity(int buttonId) {
@@ -81,6 +93,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         buttonTop.setText(R.string.button_show);
         buttonMiddle.setVisibility(View.VISIBLE);
         buttonDown.setVisibility(View.VISIBLE);
+        buttonLowest.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -88,5 +101,6 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         buttonTop.setText(R.string.button_hide);
         buttonMiddle.setVisibility(View.GONE);
         buttonDown.setVisibility(View.GONE);
+        buttonLowest.setVisibility(View.GONE);
     }
 }

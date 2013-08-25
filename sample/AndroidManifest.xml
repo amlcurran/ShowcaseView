@@ -29,5 +29,7 @@
       android:theme="@style/SampleTheme" />
     <activity
       android:name="com.github.espiandev.showcaseview.sample.legacy.MultipleShowcaseSampleActivity"/>
+    <activity
+      android:name="com.github.espiandev.showcaseview.sample.fragments.ShowcaseFragmentActivity"/>
   </application>
 </manifest>
