@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
@@ -164,7 +165,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             if (!hasCustomClickListener) mEndButton.setOnClickListener(this);
             addView(mEndButton);
         }
-
+        
     }
     
     public void setVisibilityListener(OnSetVisibilityListener onSetvisibilityListener) {
@@ -418,7 +419,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        if (showcaseX < 0 || showcaseY < 0 || isRedundant) {
+    	if (showcaseX < 0 || showcaseY < 0 || isRedundant) {
             super.dispatchDraw(canvas);
             return;
         }
