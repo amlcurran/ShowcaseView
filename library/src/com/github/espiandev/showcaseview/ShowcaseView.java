@@ -1,11 +1,13 @@
 package com.github.espiandev.showcaseview;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
+import android.opengl.Visibility;
 import android.os.Build;
 import android.text.DynamicLayout;
 import android.text.Layout;
@@ -46,6 +48,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     private float showcaseX = -1;
     private float showcaseY = -1;
+    private float showcaseXOffset = 0;
+    private float showcaseYOffset = 0;
     private float showcaseRadius = -1;
     private float metricScale = 1.0f;
     private float legacyShowcaseX = -1;
@@ -71,6 +75,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     private final String buttonText;
     private float scaleMultiplier = 1f;
+    private OnSetVisibilityListener mOnSetVisibilityListener;
+    
+    private View currentView;
+    
+    public interface OnSetVisibilityListener {
+        public void onSetVisibility();
+      }
 
     public ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
@@ -99,7 +110,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         setConfigOptions(options);
     }
 
-    private void init() {
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void init() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             setLayerType(LAYER_TYPE_SOFTWARE,null);
         }
@@ -111,7 +123,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 .getBoolean("hasShot" + getConfigOptions().showcaseId, false);
         if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
             // The showcase has already been shot once, so we don't need to do anything
-            setVisibility(View.GONE);
+    		setVisibility(View.GONE);
             isRedundant = true;
             return;
         }
@@ -154,6 +166,18 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         }
 
     }
+    
+    public void setVisibilityListener(OnSetVisibilityListener onSetvisibilityListener) {
+    	mOnSetVisibilityListener = onSetvisibilityListener;
+    }
+    
+    public void setVisibility (int visibility) {
+    	if (View.GONE != this.getVisibility()) {
+	    	super.setVisibility(visibility);
+	    	if (mOnSetVisibilityListener != null && View.GONE == this.getVisibility())
+	    		mOnSetVisibilityListener.onSetVisibility();
+    	}
+    }
 
     /**
      * Set the view to showcase
@@ -166,6 +190,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             return;
         }
         isRedundant = false;
+        currentView = view;
 
         view.post(new Runnable() {
             @Override
@@ -180,6 +205,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                     showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
                     showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
                 }
+                showcaseX += showcaseXOffset;
+                showcaseY += showcaseYOffset;
                 invalidate();
             }
         });
@@ -199,6 +226,22 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         showcaseY = y;
         init();
         invalidate();
+    }
+    
+    /**
+     * Set the showcase position offset
+     *
+     * @param x X co-ordinate
+     * @param y Y co-ordinate
+     */
+    public void setShowcaseOffset(float x, float y) {
+    	if (isRedundant) {
+    		return;
+    	}
+    	showcaseXOffset = x;
+    	showcaseYOffset = y;
+    	init();
+    	invalidate();
     }
 
     public void setShowcaseItem(final int itemType, final int actionItemId, final Activity activity) {
@@ -380,6 +423,21 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             return;
         }
 
+        
+        if (mOptions.insert == INSERT_TO_VIEW) {
+            showcaseX = (float) (currentView.getLeft() + currentView.getWidth() / 2);
+            showcaseY = (float) (currentView.getTop() + currentView.getHeight() / 2);
+        } else {
+            int[] coordinates = new int[2];
+            currentView.getLocationInWindow(coordinates);
+            showcaseX = (float) (coordinates[0] + currentView.getWidth() / 2);
+            showcaseY = (float) (coordinates[1] + currentView.getHeight() / 2);
+        }
+        showcaseX += showcaseXOffset;
+        showcaseY += showcaseYOffset;
+        invalidate();
+        
+
         //Draw the semi-transparent background
         canvas.drawColor(backColor);
 
@@ -391,7 +449,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         //Erase the area for the ring
         canvas.drawCircle(showcaseX, showcaseY, showcaseRadius, mEraser);
 
-        boolean recalculateText = makeVoidedRect() || mAlteredText;
+        makeVoidedRect();
+        boolean recalculateText = true;
         mAlteredText = false;
 
         showcase.setBounds(voidedArea);
@@ -456,7 +515,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         // This if statement saves resources by not recalculating voidedArea
         // if the X & Y coordinates haven't changed
-        if (voidedArea == null || (showcaseX != legacyShowcaseX || showcaseY != legacyShowcaseY)) {
+//        if (voidedArea == null || (showcaseX != legacyShowcaseX || showcaseY != legacyShowcaseY)) {
 
             int cx = (int) showcaseX, cy = (int) showcaseY;
             int dw = showcase.getIntrinsicWidth();
@@ -469,8 +528,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
             return true;
 
-        }
-        return false;
+//        }
+//        return false;
 
     }
 
@@ -492,7 +551,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 listener).start();
     }
 
-    @Override
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+	@Override
     public void onClick(View view) {
         // If the type is set to one-shot, store that it has shot
         if (mOptions.shotType == TYPE_ONE_SHOT) {
@@ -634,7 +694,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         AnimationUtils.createMovementAnimation(mHandy, x, y).start();
     }
 
-    private void setConfigOptions(ConfigOptions options) {
+    public void setConfigOptions(ConfigOptions options) {
         mOptions = options;
     }
 

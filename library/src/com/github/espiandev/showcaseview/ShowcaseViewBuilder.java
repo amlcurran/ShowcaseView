@@ -1,5 +1,7 @@
 package com.github.espiandev.showcaseview;
 
+import com.github.espiandev.showcaseview.ShowcaseView.ConfigOptions;
+
 import android.app.Activity;
 import android.view.View;
 
@@ -28,6 +30,11 @@ public class ShowcaseViewBuilder {
         showcaseView.setShowcasePosition(x, y);
         return this;
     }
+    
+    public ShowcaseViewBuilder setShowcaseOffset(float x, float y) {
+    	showcaseView.setShowcaseOffset(x, y);
+    	return this;
+    }
 
     public ShowcaseViewBuilder setShowcaseItem(int itemType, int actionItemId, Activity activity) {
         showcaseView.setShowcaseItem(itemType, actionItemId, activity);
@@ -37,6 +44,11 @@ public class ShowcaseViewBuilder {
     public ShowcaseViewBuilder setShowcaseIndicatorScale(float scale) {
         showcaseView.setShowcaseIndicatorScale(scale);
         return this;
+    }
+    
+    public ShowcaseViewBuilder setShowcaseConfigOptions(ConfigOptions configOptions) {
+    	showcaseView.setConfigOptions(configOptions);
+    	return this;
     }
 
     public ShowcaseViewBuilder overrideButtonClick(View.OnClickListener listener) {
