@@ -3,6 +3,7 @@
 
   <style name="CustomShowcaseTheme" parent="ShowcaseView.Light">
     <item name="sv_titleTextColor">#ffbb33</item>
+    <item name="sv_detailTextColor">#444</item>
     <item name="sv_backgroundColor">#33ffbb33</item>
     <item name="sv_buttonBackgroundColor">#CF3119</item>
     <item name="sv_buttonText">Close</item>
