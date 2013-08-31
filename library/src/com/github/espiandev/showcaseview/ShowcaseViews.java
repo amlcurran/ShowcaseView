@@ -40,6 +40,8 @@ public class ShowcaseViews {
 
         if(showcaseActionBar(properties)) {
             builder.setShowcaseItem(properties.itemType, properties.id, activity);
+        } else if (properties.id == null) {
+            builder.setShowcaseNoView();
         } else {
             builder.setShowcaseView(activity.findViewById(properties.id));
         }
@@ -90,23 +92,27 @@ public class ShowcaseViews {
 
         protected final int titleResId;
         protected final int messageResId;
-        protected final int id;
+        protected final Integer id;
         protected final int itemType;
         protected final float scale;
 
-        public ItemViewProperties(int id, int titleResId, int messageResId) {
+        public ItemViewProperties(int titleResId, int messageResId) {
+            this(null, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE);
+        }
+
+        public ItemViewProperties(Integer id, int titleResId, int messageResId) {
             this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE);
         }
 
-        public ItemViewProperties(int id, int titleResId, int messageResId, float scale) {
+        public ItemViewProperties(Integer id, int titleResId, int messageResId, float scale) {
             this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, scale);
         }
 
-        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType) {
+        public ItemViewProperties(Integer id, int titleResId, int messageResId, int itemType) {
             this(id, titleResId, messageResId, itemType, DEFAULT_SCALE);
         }
 
-        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale) {
+        public ItemViewProperties(Integer id, int titleResId, int messageResId, int itemType, float scale) {
             this.id = id;
             this.titleResId = titleResId;
             this.messageResId = messageResId;

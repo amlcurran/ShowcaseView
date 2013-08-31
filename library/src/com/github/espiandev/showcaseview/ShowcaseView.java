@@ -155,6 +155,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     }
 
+    public void setShowcaseNoView() {
+        setShowcasePosition(1000000, 1000000);
+    }
+
     /**
      * Set the view to showcase
      *
