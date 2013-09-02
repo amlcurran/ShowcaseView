@@ -829,7 +829,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
          * Default duration for fade out animation. Set to 0 to disable.
          */
         public int fadeOutDuration = AnimationUtils.DEFAULT_DURATION;
-         * Allow custom positioning of the button within the showcase view.
+        /** Allow custom positioning of the button within the showcase view.
          */
         public LayoutParams buttonLayoutParams = null;
     }
