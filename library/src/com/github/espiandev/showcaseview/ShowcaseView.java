@@ -86,15 +86,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private Bitmap mBleachedCling;
     private int mShowcaseColor;
 
-    public ShowcaseView(Context context) {
+    protected ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
     }
 
-    public ShowcaseView(Context context, AttributeSet attrs) {
-        this(context, attrs, R.styleable.CustomTheme_showcaseViewStyle);
-    }
-
-    public ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
+    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         // Get the attributes for the ShowcaseView
