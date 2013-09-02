@@ -4,16 +4,29 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.DynamicLayout;
 import android.text.Layout;
+import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
@@ -53,24 +66,25 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private boolean isRedundant = false;
     private boolean hasCustomClickListener = false;
     private ConfigOptions mOptions;
-    private Paint mPaintTitle, mEraser;
-    private TextPaint mPaintDetail;
+    private Paint  mEraser;
+    private TextPaint mPaintDetail, mPaintTitle;
     private int backColor;
     private Drawable showcase;
     private View mHandy;
     private final Button mEndButton;
     private OnShowcaseEventListener mEventListener;
     private Rect voidedArea;
-    private String mTitleText, mSubText;
-    private int detailTextColor = -1;
-    private int titleTextColor = -1;
+    private CharSequence mTitleText, mSubText;
     private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
     private float[] mBestTextPosition;
     private boolean mAlteredText = false;
+    private TextAppearanceSpan mDetailSpan, mTitleSpan;
 
     private final String buttonText;
     private float scaleMultiplier = 1f;
+    private Bitmap mBleachedCling;
+    private int mShowcaseColor;
 
     public ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
@@ -86,8 +100,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle, R.style.ShowcaseView);
         backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
-        detailTextColor = styled.getColor(R.styleable.ShowcaseView_sv_detailTextColor, Color.WHITE);
-        titleTextColor = styled.getColor(R.styleable.ShowcaseView_sv_titleTextColor, Color.parseColor("#49C0EC"));
+        mShowcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor("#33B5E5"));
+
+        int titleTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance, R.style.TextAppearance_ShowcaseView_Title);
+        int detailTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance, R.style.TextAppearance_ShowcaseView_Detail);
+        mTitleSpan = new TextAppearanceSpan(context, titleTextAppearance);
+        mDetailSpan = new TextAppearanceSpan(context, detailTextAppearance);
+
         buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
         styled.recycle();
 
@@ -115,22 +134,17 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             isRedundant = true;
             return;
         }
-        showcase = getContext().getResources().getDrawable(R.drawable.cling);
+        showcase = getContext().getResources().getDrawable(R.drawable.cling_bleached);
+        showcase.setColorFilter(mShowcaseColor, PorterDuff.Mode.MULTIPLY);
 
         showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
         PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
         setOnTouchListener(this);
 
-        mPaintTitle = new Paint();
-        mPaintTitle.setColor(titleTextColor);
-        mPaintTitle.setShadowLayer(2.0f, 0f, 2.0f, Color.DKGRAY);
-        mPaintTitle.setTextSize(24 * metricScale);
+        mPaintTitle = new TextPaint();
         mPaintTitle.setAntiAlias(true);
 
         mPaintDetail = new TextPaint();
-        mPaintDetail.setColor(detailTextColor);
-        mPaintDetail.setShadowLayer(2.0f, 0f, 2.0f, Color.DKGRAY);
-        mPaintDetail.setTextSize(16 * metricScale);
         mPaintDetail.setAntiAlias(true);
 
         mEraser = new Paint();
@@ -405,16 +419,24 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 mBestTextPosition = getBestTextPosition(canvas.getWidth(), canvas.getHeight());
 
             if (!TextUtils.isEmpty(mTitleText)) {
-                //TODO: use a dynamic detail layout
-                canvas.drawText(mTitleText, mBestTextPosition[0], mBestTextPosition[1], mPaintTitle);
+                canvas.save();
+                if (recalculateText) {
+                mDynamicTitleLayout = new DynamicLayout(mTitleText, mPaintTitle,
+                        (int) mBestTextPosition[2], Layout.Alignment.ALIGN_NORMAL,
+                        1.0f, 1.0f, true);
+                }
+                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] - 24 * metricScale);
+                mDynamicTitleLayout.draw(canvas);
+                canvas.restore();
             }
 
             if (!TextUtils.isEmpty(mSubText)) {
                 canvas.save();
-                if (recalculateText)
+                if (recalculateText) {
                     mDynamicDetailLayout = new DynamicLayout(mSubText, mPaintDetail,
                             ((Number) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
                             1.2f, 1.0f, true);
+                }
                 canvas.translate(mBestTextPosition[0], mBestTextPosition[1] + 12 * metricScale);
                 mDynamicDetailLayout.draw(canvas);
                 canvas.restore();
@@ -574,19 +596,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     }
 
-    public ShowcaseView setTextColors(int titleTextColor, int detailTextColor) {
-        this.titleTextColor = titleTextColor;
-        this.detailTextColor = detailTextColor;
-        if (mPaintTitle != null) {
-            mPaintTitle.setColor(titleTextColor);
-        }
-        if (mPaintDetail != null) {
-            mPaintDetail.setColor(detailTextColor);
-        }
-        invalidate();
-        return this;
-    }
-
     public void setText(int titleTextResId, int subTextResId) {
         String titleText = getContext().getResources().getString(titleTextResId);
         String subText = getContext().getResources().getString(subTextResId);
@@ -594,8 +603,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     public void setText(String titleText, String subText) {
-        mTitleText = titleText;
-        mSubText = subText;
+        SpannableString ssbTitle = new SpannableString(titleText);
+        ssbTitle.setSpan(mTitleSpan, 0, ssbTitle.length(), 0);
+        mTitleText = ssbTitle;
+        SpannableString ssbDetail = new SpannableString(subText);
+        ssbDetail.setSpan(mDetailSpan, 0, ssbDetail.length(), 0);
+        mSubText = ssbDetail;
         mAlteredText = true;
         invalidate();
     }

@@ -49,10 +49,10 @@ public class ShowcaseViewBuilder {
         return this;
     }
 
-    public ShowcaseViewBuilder setTextColors(int titleTextColor, int detailTextColor) {
-        showcaseView.setTextColors(titleTextColor, detailTextColor);
-        return this;
-    }
+//    public ShowcaseViewBuilder setTextColors(int titleTextColor, int detailTextColor) {
+//        showcaseView.setTextColors(titleTextColor, detailTextColor);
+//        return this;
+//    }
 
     public ShowcaseViewBuilder setText(String titleText, String subText) {
         showcaseView.setText(titleText, subText);
