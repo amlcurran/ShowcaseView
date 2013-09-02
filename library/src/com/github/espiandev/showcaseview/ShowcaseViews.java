@@ -40,7 +40,7 @@ public class ShowcaseViews {
 
         if(showcaseActionBar(properties)) {
             builder.setShowcaseItem(properties.itemType, properties.id, activity);
-        } else if (properties.id == null) {
+        } else if (properties.id == ItemViewProperties.ID_NO_SHOWCASE) {
             builder.setShowcaseNoView();
         } else {
             builder.setShowcaseView(activity.findViewById(properties.id));
@@ -84,6 +84,7 @@ public class ShowcaseViews {
 
     public static class ItemViewProperties {
 
+        public static final int ID_NO_SHOWCASE = -2202;
         public static final int ID_NOT_IN_ACTIONBAR = -1;
         public static final int ID_SPINNER = 0;
         public static final int ID_TITLE = 1;
@@ -92,27 +93,27 @@ public class ShowcaseViews {
 
         protected final int titleResId;
         protected final int messageResId;
-        protected final Integer id;
+        protected final int id;
         protected final int itemType;
         protected final float scale;
 
         public ItemViewProperties(int titleResId, int messageResId) {
-            this(null, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE);
+            this(ID_NO_SHOWCASE, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE);
         }
 
-        public ItemViewProperties(Integer id, int titleResId, int messageResId) {
+        public ItemViewProperties(int id, int titleResId, int messageResId) {
             this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE);
         }
 
-        public ItemViewProperties(Integer id, int titleResId, int messageResId, float scale) {
+        public ItemViewProperties(int id, int titleResId, int messageResId, float scale) {
             this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, scale);
         }
 
-        public ItemViewProperties(Integer id, int titleResId, int messageResId, int itemType) {
+        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType) {
             this(id, titleResId, messageResId, itemType, DEFAULT_SCALE);
         }
 
-        public ItemViewProperties(Integer id, int titleResId, int messageResId, int itemType, float scale) {
+        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale) {
             this.id = id;
             this.titleResId = titleResId;
             this.messageResId = messageResId;
