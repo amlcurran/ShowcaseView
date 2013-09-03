@@ -105,6 +105,11 @@ public class ShowcaseViews {
 	    	}
 	    }
     }
+    
+    public void removeAllViews() {
+    	hideAll();
+    	views.clear();
+    }
 
     public static class ItemViewProperties {
 
