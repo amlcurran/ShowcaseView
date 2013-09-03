@@ -34,7 +34,7 @@ public class ShowcaseViews {
     }
 
     public void addView(ItemViewProperties properties) {
-        ShowcaseViewBuilder builder = new ShowcaseViewBuilder(activity, showcaseTemplateId)
+        ShowcaseViewBuilder builder = new ShowcaseViewBuilder(activity)
                 .setText(properties.titleResId, properties.messageResId)
                 .setShowcaseIndicatorScale(properties.scale);
 
