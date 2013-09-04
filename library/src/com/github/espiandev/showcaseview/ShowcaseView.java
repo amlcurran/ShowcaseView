@@ -214,7 +214,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     /**
-     * Set a specific position to showcase
+     * Set a specific position to showcase //TODO: Create addShowcasePosition(float x, float y) to accept multiple showcases 
      *
      * @param x X co-ordinate
      * @param y Y co-ordinate
@@ -230,7 +230,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
     
     /**
-     * Set the showcase position offset
+     * Set the showcase position offset //TODO: Roll into an object representing the ShowcasePosition coordinates
      *
      * @param x X co-ordinate
      * @param y Y co-ordinate
@@ -466,6 +466,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
             if (!TextUtils.isEmpty(mTitleText)) {
                 //TODO: use a dynamic detail layout
+            	//TODO: Draw in custom font: http://www.java2s.com/Code/Android/2D-Graphics/Drawtextwithcustomfont.htm
                 canvas.drawText(mTitleText, mBestTextPosition[0], mBestTextPosition[1], mPaintTitle);
             }
 
@@ -518,12 +519,14 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         // if the X & Y coordinates haven't changed
 //        if (voidedArea == null || (showcaseX != legacyShowcaseX || showcaseY != legacyShowcaseY)) {
 
-            int cx = (int) showcaseX, cy = (int) showcaseY;
+            int cx = (int) showcaseX, cy = (int) showcaseY; 
             int dw = showcase.getIntrinsicWidth();
             int dh = showcase.getIntrinsicHeight();
 
             voidedArea = new Rect(cx - dw / 2, cy - dh / 2, cx + dw / 2, cy + dh / 2);
-
+            
+            // TODO Subtract area of OK button so it doesn't overlap it
+            
             legacyShowcaseX = showcaseX;
             legacyShowcaseY = showcaseY;
 
