@@ -581,6 +581,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             return true;
         }
 
+        if (mOptions.blockAll) {
+            return true;
+        }
+
         return mOptions.block && distanceFromFocus > showcaseRadius;
     }
 
@@ -815,7 +819,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     public static class ConfigOptions {
-        public boolean block = true, noButton = false;
+        public boolean blockAll = true, block = true, noButton = false;
         public int showcaseId = 0;
         public int shotType = TYPE_NO_LIMIT;
         public int insert = INSERT_TO_DECOR;
