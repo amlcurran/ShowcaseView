@@ -644,6 +644,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
      * @param y Y-coordinate to point to
      */
     public void pointTo(float x, float y) {
+		final View mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
         AnimationUtils.createMovementAnimation(mHandy, x, y).start();
     }
 
