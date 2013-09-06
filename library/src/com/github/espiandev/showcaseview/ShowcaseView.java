@@ -4,11 +4,9 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
-import android.opengl.Visibility;
 import android.os.Build;
 import android.text.DynamicLayout;
 import android.text.Layout;
@@ -32,6 +30,8 @@ import static com.github.espiandev.showcaseview.anim.AnimationUtils.AnimationSta
  */
 public class ShowcaseView extends RelativeLayout implements View.OnClickListener, View.OnTouchListener {
 
+	public static final String TAG = "ShowcaseView";
+	
     public static final int TYPE_NO_LIMIT = 0;
     public static final int TYPE_ONE_SHOT = 1;
 
@@ -73,6 +73,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private DynamicLayout mDynamicDetailLayout;
     private float[] mBestTextPosition;
     private boolean mAlteredText = false;
+    private Typeface titleTypeface;
+    private Typeface detailTypeface;
 
     private final String buttonText;
     private float scaleMultiplier = 1f;
@@ -95,6 +97,34 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
+        // Load the custom title font
+        try {
+            Log.d(TAG, "Attempting to load title font: ");
+            Log.d(TAG, mOptions.titleFontAssetName);
+        	titleTypeface = Typeface.createFromAsset(context.getAssets(), mOptions.titleFontAssetName);
+            Log.d(TAG, "TITLE FONT: ");
+            Log.d(TAG, mOptions.titleFontAssetName);
+
+        } catch (Exception e) {
+        	// Pretend that never happened, and use the default font
+            Log.d(TAG, "TITLE FONT: ");
+            Log.d(TAG, "default font");
+        }
+        
+        // Load the custom detail font
+        try {
+            Log.d(TAG, "Attempting to load detail font: ");
+            Log.d(TAG, mOptions.detailFontAssetName);
+        	detailTypeface = Typeface.createFromAsset(context.getAssets(), mOptions.detailFontAssetName);
+            Log.d(TAG, "DETAIL FONT: ");
+            Log.d(TAG, mOptions.detailFontAssetName);
+
+        } catch (Exception e) {
+        	// Pretend that never happened, and use the default font
+            Log.d(TAG, "DETAIL FONT: ");
+            Log.d(TAG, "default font");
+        }
+        
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle, R.style.ShowcaseView);
         backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
@@ -139,12 +169,20 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         mPaintTitle.setShadowLayer(2.0f, 0f, 2.0f, Color.DKGRAY);
         mPaintTitle.setTextSize(24 * metricScale);
         mPaintTitle.setAntiAlias(true);
-
+        if (null != titleTypeface) {
+        	// Use custom font
+        	mPaintTitle.setTypeface(titleTypeface);
+        } 
+        
         mPaintDetail = new TextPaint();
         mPaintDetail.setColor(detailTextColor);
         mPaintDetail.setShadowLayer(2.0f, 0f, 2.0f, Color.DKGRAY);
         mPaintDetail.setTextSize(16 * metricScale);
         mPaintDetail.setAntiAlias(true);
+        if (null != detailTypeface) {
+        	// Use custom font
+        	mPaintTitle.setTypeface(detailTypeface);
+        } 
 
         mEraser = new Paint();
         mEraser.setColor(0xFFFFFF);
@@ -870,6 +908,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public int shotType = TYPE_NO_LIMIT;
         public int insert = INSERT_TO_DECOR;
         public boolean hideOnClickOutside = false;
+        public String titleFontAssetName = null;
+        public String detailFontAssetName = null;
 
         /**
          * Default duration for fade in animation. Set to 0 to disable.
