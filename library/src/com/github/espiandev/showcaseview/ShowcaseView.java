@@ -97,34 +97,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
-        // Load the custom title font
-        try {
-            Log.d(TAG, "Attempting to load title font: ");
-            Log.d(TAG, mOptions.titleFontAssetName);
-        	titleTypeface = Typeface.createFromAsset(context.getAssets(), mOptions.titleFontAssetName);
-            Log.d(TAG, "TITLE FONT: ");
-            Log.d(TAG, mOptions.titleFontAssetName);
-
-        } catch (Exception e) {
-        	// Pretend that never happened, and use the default font
-            Log.d(TAG, "TITLE FONT: ");
-            Log.d(TAG, "default font");
-        }
-        
-        // Load the custom detail font
-        try {
-            Log.d(TAG, "Attempting to load detail font: ");
-            Log.d(TAG, mOptions.detailFontAssetName);
-        	detailTypeface = Typeface.createFromAsset(context.getAssets(), mOptions.detailFontAssetName);
-            Log.d(TAG, "DETAIL FONT: ");
-            Log.d(TAG, mOptions.detailFontAssetName);
-
-        } catch (Exception e) {
-        	// Pretend that never happened, and use the default font
-            Log.d(TAG, "DETAIL FONT: ");
-            Log.d(TAG, "default font");
-        }
-        
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle, R.style.ShowcaseView);
         backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
@@ -150,6 +122,28 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             setDrawingCacheEnabled(true);
         }
 
+        try {
+            // Load the custom title font
+        	titleTypeface = Typeface.createFromAsset(getContext().getAssets(), mOptions.titleFontAssetName);
+            Log.d(TAG, String.format("TITLE FONT: ", mOptions.titleFontAssetName));
+
+        } catch (Exception e) {
+        	// Pretend that never happened, and use the default font
+            Log.d(TAG, "TITLE FONT: default font");
+        }
+        
+        try {
+            // Load the custom detail font
+        	detailTypeface = Typeface.createFromAsset(getContext().getAssets(), mOptions.detailFontAssetName);
+            Log.d(TAG, String.format("TITLE FONT: ", mOptions.detailFontAssetName));
+
+        } catch (Exception e) {
+        	// Pretend that never happened, and use the default font
+            Log.d(TAG, "DETAIL FONT: default font");
+        }
+        
+
+        
         boolean hasShot = getContext().getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
                 .getBoolean("hasShot" + getConfigOptions().showcaseId, false);
         if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
@@ -159,7 +153,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             return;
         }
         showcase = getContext().getResources().getDrawable(R.drawable.cling);
-
+        
         showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
         PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
         setOnTouchListener(this);
@@ -181,7 +175,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         mPaintDetail.setAntiAlias(true);
         if (null != detailTypeface) {
         	// Use custom font
-        	mPaintTitle.setTypeface(detailTypeface);
+        	mPaintDetail.setTypeface(detailTypeface);
         } 
 
         mEraser = new Paint();
