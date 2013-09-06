@@ -902,7 +902,17 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public int shotType = TYPE_NO_LIMIT;
         public int insert = INSERT_TO_DECOR;
         public boolean hideOnClickOutside = false;
+        /**
+         * This is the path/name of the TTF font asset you want to use with the Title text.
+         * The asset must be in the main project in /git/projectname/assets/...
+         * The path root is the assets directory.
+         */
         public String titleFontAssetName = null;
+        /**
+         * This is the path/name of the TTF font asset you want to use with the Detail text.
+         * The asset must be in the main project in /git/projectname/assets/...
+         * The path root is the assets directory.
+         */
         public String detailFontAssetName = null;
 
         /**
