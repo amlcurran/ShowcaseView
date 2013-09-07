@@ -60,19 +60,17 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private ConfigOptions mOptions;
     private Paint mPaintTitle, mEraser;
     private TextPaint mPaintDetail;
-    private int backColor;
-    private Drawable showcase;
+    private Drawable showcaseGlowOverlay;
     private View mHandy;
     private final Button mEndButton;
     private OnShowcaseEventListener mEventListener;
     private Rect voidedArea;
     private String mTitleText, mSubText;
-    private int detailTextColor = -1;
-    private int titleTextColor = -1;
     private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
     private float[] mBestTextPosition;
     private boolean mAlteredText = false;
+
     private Typeface titleTypeface;
     private Typeface detailTypeface;
 
@@ -99,9 +97,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle, R.style.ShowcaseView);
-        backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
-        detailTextColor = styled.getColor(R.styleable.ShowcaseView_sv_detailTextColor, Color.WHITE);
-        titleTextColor = styled.getColor(R.styleable.ShowcaseView_sv_titleTextColor, Color.parseColor("#49C0EC"));
+        mOptions.backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, mOptions.backColor);
+        mOptions.detailTextColor = styled.getColor(R.styleable.ShowcaseView_sv_detailTextColor, mOptions.detailTextColor);
+        mOptions.titleTextColor = styled.getColor(R.styleable.ShowcaseView_sv_titleTextColor, mOptions.titleTextColor);
         buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
         styled.recycle();
 
@@ -122,28 +120,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             setDrawingCacheEnabled(true);
         }
 
-        try {
-            // Load the custom title font
-        	titleTypeface = Typeface.createFromAsset(getContext().getAssets(), mOptions.titleFontAssetName);
-            Log.d(TAG, String.format("TITLE FONT: ", mOptions.titleFontAssetName));
-
-        } catch (Exception e) {
-        	// Pretend that never happened, and use the default font
-            Log.d(TAG, "TITLE FONT: default font");
-        }
         
-        try {
-            // Load the custom detail font
-        	detailTypeface = Typeface.createFromAsset(getContext().getAssets(), mOptions.detailFontAssetName);
-            Log.d(TAG, String.format("TITLE FONT: ", mOptions.detailFontAssetName));
-
-        } catch (Exception e) {
-        	// Pretend that never happened, and use the default font
-            Log.d(TAG, "DETAIL FONT: default font");
-        }
-        
-
-        
+        // See if this showcase is eligible for display
         boolean hasShot = getContext().getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
                 .getBoolean("hasShot" + getConfigOptions().showcaseId, false);
         if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
@@ -152,38 +130,52 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             isRedundant = true;
             return;
         }
-        showcase = getContext().getResources().getDrawable(R.drawable.cling);
+        showcaseGlowOverlay = getContext().getResources().getDrawable(R.drawable.cling);
         
         showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
-        PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
+        
+        // Load the custom title font
+        try { titleTypeface = Typeface.createFromAsset(getContext().getAssets(), mOptions.titleFontAssetName); } 
+        catch (Exception e) { Log.d(TAG, "TITLE FONT: default font"); }
+        
+        // Load the custom detail font
+        try { detailTypeface = Typeface.createFromAsset(getContext().getAssets(), mOptions.detailFontAssetName); } 
+        catch (Exception e) { Log.d(TAG, "DETAIL FONT: default font"); }
+        
+
+        // Set a listener
         setOnTouchListener(this);
 
+        // Create title painter
         mPaintTitle = new Paint();
-        mPaintTitle.setColor(titleTextColor);
-        mPaintTitle.setShadowLayer(2.0f, 0f, 2.0f, Color.DKGRAY);
-        mPaintTitle.setTextSize(24 * metricScale);
+        mPaintTitle.setColor(mOptions.titleTextColor);
+        mPaintTitle.setShadowLayer(2.0f, 0f, 2.0f, mOptions.shadowColor);
+        mPaintTitle.setTextSize(mOptions.titleTextSize * metricScale);
         mPaintTitle.setAntiAlias(true);
         if (null != titleTypeface) {
-        	// Use custom font
         	mPaintTitle.setTypeface(titleTypeface);
         } 
         
+        // Create detail painter
         mPaintDetail = new TextPaint();
-        mPaintDetail.setColor(detailTextColor);
-        mPaintDetail.setShadowLayer(2.0f, 0f, 2.0f, Color.DKGRAY);
-        mPaintDetail.setTextSize(16 * metricScale);
+        mPaintDetail.setColor(mOptions.detailTextColor);
+        mPaintDetail.setShadowLayer(2.0f, 0f, 2.0f, mOptions.shadowColor);
+        mPaintDetail.setTextSize(mOptions.detailTextSize * metricScale);
         mPaintDetail.setAntiAlias(true);
         if (null != detailTypeface) {
-        	// Use custom font
         	mPaintDetail.setTypeface(detailTypeface);
         } 
 
+        // Create eraser
+        PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
         mEraser = new Paint();
         mEraser.setColor(0xFFFFFF);
         mEraser.setAlpha(0);
         mEraser.setXfermode(mBlender);
         mEraser.setAntiAlias(true);
-
+        
+        
+        // Draw OK button
         if (!mOptions.noButton && mEndButton.getParent() == null) {
             RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
             lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -197,7 +189,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             if (!hasCustomClickListener) mEndButton.setOnClickListener(this);
             addView(mEndButton);
         }
-        
+
     }
     
     public void setVisibilityListener(OnSetVisibilityListener onSetvisibilityListener) {
@@ -472,7 +464,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         
 
         //Draw the semi-transparent background
-        canvas.drawColor(backColor);
+        canvas.drawColor(mOptions.backColor);
 
         //Draw to the scale specified
         Matrix mm = new Matrix();
@@ -486,8 +478,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         boolean recalculateText = true;
         mAlteredText = false;
 
-        showcase.setBounds(voidedArea);
-        showcase.draw(canvas);
+        showcaseGlowOverlay.setBounds(voidedArea);
+        showcaseGlowOverlay.draw(canvas);
 
         canvas.setMatrix(new Matrix());
 
@@ -498,7 +490,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
             if (!TextUtils.isEmpty(mTitleText)) {
                 //TODO: use a dynamic detail layout
-            	//TODO: Draw in custom font: http://www.java2s.com/Code/Android/2D-Graphics/Drawtextwithcustomfont.htm
                 canvas.drawText(mTitleText, mBestTextPosition[0], mBestTextPosition[1], mPaintTitle);
             }
 
@@ -535,7 +526,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         //float spaceRight = canvasW - voidedArea.right;
 
         //TODO: currently only considers above or below showcase, deal with left or right
-        return new float[]{24 * metricScale, spaceTop > spaceBottom ? 128 * metricScale : 24 * metricScale + voidedArea.bottom, canvasW - 48 * metricScale};
+        return new float[]{	mOptions.titleTextSize * metricScale, 
+        					spaceTop > spaceBottom ? 128 * metricScale : mOptions.titleTextSize * metricScale + voidedArea.bottom, 
+        					canvasW - 48 * metricScale};
 
     }
 
@@ -552,8 +545,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 //        if (voidedArea == null || (showcaseX != legacyShowcaseX || showcaseY != legacyShowcaseY)) {
 
             int cx = (int) showcaseX, cy = (int) showcaseY; 
-            int dw = showcase.getIntrinsicWidth();
-            int dh = showcase.getIntrinsicHeight();
+            int dw = showcaseGlowOverlay.getIntrinsicWidth();
+            int dh = showcaseGlowOverlay.getIntrinsicHeight();
 
             voidedArea = new Rect(cx - dw / 2, cy - dh / 2, cx + dw / 2, cy + dh / 2);
             
@@ -671,13 +664,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     public ShowcaseView setTextColors(int titleTextColor, int detailTextColor) {
-        this.titleTextColor = titleTextColor;
-        this.detailTextColor = detailTextColor;
+        mOptions.titleTextColor = titleTextColor;
+        mOptions.detailTextColor = detailTextColor;
         if (mPaintTitle != null) {
-            mPaintTitle.setColor(titleTextColor);
+            mPaintTitle.setColor(mOptions.titleTextColor);
         }
         if (mPaintDetail != null) {
-            mPaintDetail.setColor(detailTextColor);
+            mPaintDetail.setColor(mOptions.detailTextColor);
         }
         invalidate();
         return this;
@@ -707,6 +700,32 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         AnimationUtils.hide(mHandy);
 
         return mHandy;
+    }
+
+    /**
+     * Get the cartoony arrow for custom gestures
+     * @param directionPolarCoordinate direction the arrow should point (e.g. 0 = right, 90 = up, 180 = left, 270 = down)
+     * @return
+     */
+    public View getArrow(int directionPolarCoordinate) {
+    	// round and round and round
+    	directionPolarCoordinate %= 360;
+
+    	// Orient the arrow
+    	int arrowGlyph = R.layout.arrow_left;
+    	if (directionPolarCoordinate < 45 || directionPolarCoordinate > 315) {
+    		arrowGlyph = R.layout.arrow_right;
+    	} else if (directionPolarCoordinate >= 45 && directionPolarCoordinate <= 135) {
+    		arrowGlyph = R.layout.arrow_up;
+    	} else if (directionPolarCoordinate >= 225 && directionPolarCoordinate <= 315) {
+    		arrowGlyph = R.layout.arrow_down;
+    	} 
+    	
+        final View mArrowy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(arrowGlyph, null);
+        addView(mArrowy);
+        AnimationUtils.hide(mArrowy);
+
+        return mArrowy;
     }
 
     /**
@@ -924,6 +943,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
          * Default duration for fade out animation. Set to 0 to disable.
          */
         public int fadeOutDuration = AnimationUtils.DEFAULT_DURATION;
+        public int shadowColor = Color.DKGRAY;
+        public int backColor = Color.argb(128, 80, 80, 80);
+        public int detailTextColor = Color.WHITE;
+        public int titleTextColor = Color.parseColor("#49C0EC");
+        public int titleTextSize = 24;
+        public int detailTextSize = 16;
+    }
     }
 
 }
