@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import com.github.espiandev.showcaseview.anim.AnimationUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import static com.github.espiandev.showcaseview.anim.AnimationUtils.AnimationEndListener;
 import static com.github.espiandev.showcaseview.anim.AnimationUtils.AnimationStartListener;
@@ -47,14 +48,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     public static final int INNER_CIRCLE_RADIUS = 94;
 
-    private float showcaseX = -1;
-    private float showcaseY = -1;
-    private float showcaseXOffset = 0;
-    private float showcaseYOffset = 0;
-    private float showcaseRadius = -1;
+    private ArrayList<ShowcasePosition> showcases = new ArrayList<ShowcasePosition>();
     private float metricScale = 1.0f;
-    private float legacyShowcaseX = -1;
-    private float legacyShowcaseY = -1;
     private boolean isRedundant = false;
     private boolean hasCustomClickListener = false;
     private ConfigOptions mOptions;
@@ -132,7 +127,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         }
         showcaseGlowOverlay = getContext().getResources().getDrawable(R.drawable.cling);
         
-        showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
         
         // Load the custom title font
         try { titleTypeface = Typeface.createFromAsset(getContext().getAssets(), mOptions.titleFontAssetName); } 
@@ -143,6 +137,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         catch (Exception e) { Log.d(TAG, "DETAIL FONT: default font"); }
         
 
+        // Compute each showcase radius
+        for (ShowcasePosition showcase : showcases) {
+	        if (-1 == showcase.showcaseRadius) {
+	        	showcase.showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
+	        }
+        }
+        
         // Set a listener
         setOnTouchListener(this);
 
@@ -217,28 +218,62 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         isRedundant = false;
         currentView = view;
 
+        // If there is more than one showcase, overwrite
+        if (showcases.size() > 1) {
+        	showcases.clear();
+        	showcases.add(new ShowcasePosition());
+        }
+        
         view.post(new Runnable() {
             @Override
             public void run() {
                 init();
-                if (mOptions.insert == INSERT_TO_VIEW) {
-                    showcaseX = (float) (view.getLeft() + view.getWidth() / 2);
-                    showcaseY = (float) (view.getTop() + view.getHeight() / 2);
-                } else {
-                    int[] coordinates = new int[2];
-                    view.getLocationInWindow(coordinates);
-                    showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
-                    showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
+                
+                // Compute showcase positions for each showcase
+                for (int ii = 0; ii < showcases.size(); ++ii) {
+	                if (mOptions.insert == INSERT_TO_VIEW) {
+	                    showcases.get(ii).showcaseX = (float) (view.getLeft() + view.getWidth() / 2);
+	                    showcases.get(ii).showcaseY = (float) (view.getTop() + view.getHeight() / 2);
+	                } else {
+	                    int[] coordinates = new int[2];
+	                    view.getLocationInWindow(coordinates);
+	                    showcases.get(ii).showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
+	                    showcases.get(ii).showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
+	                }
+	                showcases.get(ii).showcaseX += showcases.get(ii).showcaseXOffset;
+	                showcases.get(ii).showcaseY += showcases.get(ii).showcaseYOffset;
                 }
-                showcaseX += showcaseXOffset;
-                showcaseY += showcaseYOffset;
                 invalidate();
             }
         });
     }
 
     /**
-     * Set a specific position to showcase //TODO: Create addShowcasePosition(float x, float y) to accept multiple showcases 
+     * Set a specific position to showcase  
+     *
+     * @param x X co-ordinate
+     * @param y Y co-ordinate
+     */
+    public void addShowcasePosition(float x, float y) {
+        // Check for redundant coordinates
+    	for (ShowcasePosition showcase : showcases) {
+        	if (showcase.showcaseX == x && showcase.showcaseY == y) {
+                return;
+            }
+        }
+    	
+    	ShowcasePosition thisPosition = new ShowcasePosition();
+    	thisPosition.showcaseX = x;
+    	thisPosition.showcaseY = y;
+    	showcases.add(thisPosition);
+    	
+        init();
+        invalidate();
+    }
+    
+
+    /**
+     * Set a specific position to showcase. Clears out all other showcases for this view
      *
      * @param x X co-ordinate
      * @param y Y co-ordinate
@@ -247,8 +282,16 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         if (isRedundant) {
             return;
         }
-        showcaseX = x;
-        showcaseY = y;
+
+        // Clear out all the other showcases
+        showcases.clear();
+        
+        // Add this showcase in
+    	ShowcasePosition thisPosition = new ShowcasePosition();
+    	thisPosition.showcaseX = x;
+    	thisPosition.showcaseY = y;
+    	showcases.add(thisPosition);
+        
         init();
         invalidate();
     }
@@ -950,6 +993,22 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public int titleTextSize = 24;
         public int detailTextSize = 16;
     }
+
+    /**
+     * Specifies position of a showcase.
+     * @author masyukun@gmail.com
+     */
+    public static class ShowcasePosition {
+    	View view = null;
+    	public float showcaseX = -1;
+        public float showcaseY = -1;
+        public float showcaseXOffset = 0;
+        public float showcaseYOffset = 0;
+        public float showcaseRadius = -1;
+        public float legacyShowcaseX = -1;
+        public float legacyShowcaseY = -1;
+        public int innerCircleRadius = -1;
+        
     }
 
 }
