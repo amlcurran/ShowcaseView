@@ -114,9 +114,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle, R.style.ShowcaseView);
-        mOptions.backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, mOptions.backColor);
-        mOptions.detailTextColor = styled.getColor(R.styleable.ShowcaseView_sv_detailTextColor, mOptions.detailTextColor);
-        mOptions.titleTextColor = styled.getColor(R.styleable.ShowcaseView_sv_titleTextColor, mOptions.titleTextColor);
         mShowcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor("#33B5E5"));
 
         int titleTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance, R.style.TextAppearance_ShowcaseView_Title);
@@ -133,6 +130,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         ConfigOptions options = new ConfigOptions();
         options.showcaseId = getId();
         setConfigOptions(options);
+        mOptions.backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, mOptions.backColor);
+        mOptions.detailTextColor = styled.getColor(R.styleable.ShowcaseView_sv_detailTextColor, mOptions.detailTextColor);
+        mOptions.titleTextColor = styled.getColor(R.styleable.ShowcaseView_sv_titleTextColor, mOptions.titleTextColor);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
