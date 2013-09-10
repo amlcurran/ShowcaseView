@@ -6,6 +6,7 @@
   <string name="button_blocked">Blocked button</string>
   <string name="button_go_to_multiple_items_activity">Show Multiple Action Items</string>
   <string name="button_go_to_multiple_showcases_activity">Show Multiple Showcases</string>
+  <string name="button_go_to_showcase_fragment_activity">Show Fragment Activity</string>
   <string name="button_like">Like it!</string>
   <string name="error_message">"Your Android version is &lt; Honeycomb. You need actionbar support to run this sample."</string>
   <string name="like_message">PURRRRR!</string>
@@ -22,4 +23,8 @@
   <string name="showcase_image_message">This is a lovely kitten.</string>
   <string name="showcase_like_title">Like button</string>
   <string name="showcase_like_message">Click the button if you like kittens.</string>
+  <string name="showcase_fragment_title">ShowcaseView and Fragments?</string>
+  <string name="showcase_fragment_message">Click the button to find out whether this works with Fragments, too.</string>
+  <string name="does_really_work_with_fragments">Show toast</string>
+  <string name="it_does_work">It does work with Fragments. :)</string>
 </resources>

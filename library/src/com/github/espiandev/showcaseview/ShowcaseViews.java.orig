@@ -37,12 +37,13 @@ public class ShowcaseViews {
         this.showcaseAcknowledgedListener = acknowledgedListener;
     }
 
-    public void addView(ItemViewProperties properties) {
-        addView(properties, null);
-    }
-    
+<<<<<<< HEAD
     public void addView(ItemViewProperties properties, ConfigOptions configOptions) {
         ShowcaseViewBuilder builder = new ShowcaseViewBuilder(activity, showcaseTemplateId)
+=======
+    public void addView(ItemViewProperties properties) {
+        ShowcaseViewBuilder builder = new ShowcaseViewBuilder(activity)
+>>>>>>> original/master
                 .setText(properties.titleResId, properties.messageResId)
                 .setShowcaseIndicatorScale(properties.scale)
         		.setShowcaseOffset(properties.xOffset, properties.yOffset)
@@ -58,10 +59,9 @@ public class ShowcaseViews {
 
         ShowcaseView showcaseView = builder.build();
         showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
-
         showcaseView.setVisibilityListener(showcaseViewOnSetVisibilityListener);
-        showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
         
+        showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
         views.add(showcaseView);
     }
 
@@ -151,10 +151,6 @@ public class ShowcaseViews {
 
         public ItemViewProperties(int id, int titleResId, int messageResId, int itemType) {
             this(id, titleResId, messageResId, itemType, DEFAULT_SCALE, NO_X_OFFSET, NO_Y_OFFSET);
-        }
-        
-        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale) {
-            this(id, titleResId, messageResId, itemType, scale, NO_X_OFFSET, NO_Y_OFFSET);
         }
         
         public ItemViewProperties(int id, int titleResId, int messageResId, float xOffset, float yOffset) {

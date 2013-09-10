@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.espiandev</groupId>
         <artifactId>showcaseview-parent</artifactId>
-        <version>3.2.0</version>
+        <version>3.5.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>com.github.espiandev</groupId>
             <artifactId>showcaseview-library</artifactId>
-            <version>${project.version}</version>
+            <version>3.5.0</version>
             <type>apklib</type>
         </dependency>
     </dependencies>
