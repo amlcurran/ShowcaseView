@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.DynamicLayout;
@@ -997,7 +998,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public int titleTextColor = Color.parseColor("#49C0EC");
         public int titleTextSize = 24;
         public int detailTextSize = 16;
-    }
     }
 
 }
