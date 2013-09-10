@@ -37,6 +37,10 @@ public class ShowcaseViews {
         this.showcaseAcknowledgedListener = acknowledgedListener;
     }
 
+    public void addView(ItemViewProperties properties) {
+    	addView(properties, null);
+    }
+
     public void addView(ItemViewProperties properties, ConfigOptions configOptions) {
         ShowcaseViewBuilder builder = new ShowcaseViewBuilder(activity, showcaseTemplateId)
                 .setText(properties.titleResId, properties.messageResId)
@@ -46,15 +50,18 @@ public class ShowcaseViews {
 
         if(showcaseActionBar(properties)) {
             builder.setShowcaseItem(properties.itemType, properties.id, activity);
+        } else if (properties.id == ItemViewProperties.ID_NO_SHOWCASE) {
+            builder.setShowcaseNoView();
         } else {
             builder.setShowcaseView(activity.findViewById(properties.id));
         }
 
         ShowcaseView showcaseView = builder.build();
         showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
+
         showcaseView.setVisibilityListener(showcaseViewOnSetVisibilityListener);
-        
         showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
+
         views.add(showcaseView);
     }
 
@@ -69,6 +76,8 @@ public class ShowcaseViews {
                 showcaseView.hide();
                 if (views.isEmpty()) {
                     showcaseAcknowledgedListener.onShowCaseAcknowledged(showcaseView);
+                } else {
+                    show();
                 }
             }
         };
@@ -113,6 +122,7 @@ public class ShowcaseViews {
 
     public static class ItemViewProperties {
 
+        public static final int ID_NO_SHOWCASE = -2202;
         public static final int ID_NOT_IN_ACTIONBAR = -1;
         public static final int ID_SPINNER = 0;
         public static final int ID_TITLE = 1;
@@ -128,6 +138,10 @@ public class ShowcaseViews {
         protected final float scale;
         protected final float xOffset;
         protected final float yOffset;
+
+        public ItemViewProperties(int titleResId, int messageResId) {
+            this(ID_NO_SHOWCASE, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE);
+        }
 
         public ItemViewProperties(int id, int titleResId, int messageResId) {
             this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE, NO_X_OFFSET, NO_Y_OFFSET);

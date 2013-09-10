@@ -21,6 +21,11 @@ public class ShowcaseViewBuilder {
         this.showcaseView = (ShowcaseView) activity.getLayoutInflater().inflate(showcaseLayoutViewId, null);
     }
 
+    public ShowcaseViewBuilder setShowcaseNoView() {
+        showcaseView.setShowcaseNoView();
+        return this;
+    }
+
     public ShowcaseViewBuilder setShowcaseView(View view) {
         showcaseView.setShowcaseView(view);
         return this;
@@ -47,7 +52,9 @@ public class ShowcaseViewBuilder {
     }
     
     public ShowcaseViewBuilder setShowcaseConfigOptions(ConfigOptions configOptions) {
-    	showcaseView.setConfigOptions(configOptions);
+    	if (null != configOptions) {
+    		showcaseView.setConfigOptions(configOptions);
+    	}
     	return this;
     }
 
@@ -61,10 +68,10 @@ public class ShowcaseViewBuilder {
         return this;
     }
 
-    public ShowcaseViewBuilder setTextColors(int titleTextColor, int detailTextColor) {
-        showcaseView.setTextColors(titleTextColor, detailTextColor);
-        return this;
-    }
+//    public ShowcaseViewBuilder setTextColors(int titleTextColor, int detailTextColor) {
+//        showcaseView.setTextColors(titleTextColor, detailTextColor);
+//        return this;
+//    }
 
     public ShowcaseViewBuilder setText(String titleText, String subText) {
         showcaseView.setText(titleText, subText);
