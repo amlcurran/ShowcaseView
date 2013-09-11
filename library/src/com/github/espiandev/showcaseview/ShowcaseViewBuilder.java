@@ -67,10 +67,10 @@ public class ShowcaseViewBuilder {
         showcaseView.animateGesture(offsetStartX, offsetStartY, offsetEndX, offsetEndY);
         return this;
     }
-
+    
+    @Deprecated
     public ShowcaseViewBuilder setTextColors(int titleTextColor, int detailTextColor) {
-        showcaseView.setTextColors(titleTextColor, detailTextColor);
-        return this;
+    	return this;
     }
 
     public ShowcaseViewBuilder setText(String titleText, String subText) {
