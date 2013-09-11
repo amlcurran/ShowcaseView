@@ -58,9 +58,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public static final int ITEM_ACTION_ITEM = 3;
     public static final int ITEM_ACTION_OVERFLOW = 6;
 
-    private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     public static final int INNER_CIRCLE_RADIUS = 94;
-
+    private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
+    private static final String DEFAULT_SHOWCASE_COLOR = "#33B5E5";
+    private static final int OK_BUTTON_HEIGHT = 12;
+    
     private float showcaseX = -1;
     private float showcaseY = -1;
     private float showcaseXOffset = 0;
@@ -114,8 +116,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle, R.style.ShowcaseView);
-        mShowcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor("#33B5E5"));
-
+        mShowcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor(DEFAULT_SHOWCASE_COLOR));
+        
         int titleTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance, R.style.TextAppearance_ShowcaseView_Title);
         int detailTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance, R.style.TextAppearance_ShowcaseView_Detail);
         mTitleSpan = new TextAppearanceSpan(context, titleTextAppearance);
@@ -130,9 +132,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         ConfigOptions options = new ConfigOptions();
         options.showcaseId = getId();
         setConfigOptions(options);
-        mOptions.backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, mOptions.backColor);
-        mOptions.detailTextColor = styled.getColor(R.styleable.ShowcaseView_sv_detailTextColor, mOptions.detailTextColor);
-        mOptions.titleTextColor = styled.getColor(R.styleable.ShowcaseView_sv_titleTextColor, mOptions.titleTextColor);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -172,9 +171,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         // Create title painter
         mPaintTitle = new TextPaint();
-        mPaintTitle.setColor(mOptions.titleTextColor);
-        mPaintTitle.setShadowLayer(2.0f, 0f, 2.0f, mOptions.shadowColor);
-        mPaintTitle.setTextSize(mOptions.titleTextSize * metricScale);
         mPaintTitle.setAntiAlias(true);
         if (null != titleTypeface) {
         	mPaintTitle.setTypeface(titleTypeface);
@@ -182,9 +178,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         
         // Create detail painter
         mPaintDetail = new TextPaint();
-        mPaintDetail.setColor(mOptions.detailTextColor);
-        mPaintDetail.setShadowLayer(2.0f, 0f, 2.0f, mOptions.shadowColor);
-        mPaintDetail.setTextSize(mOptions.detailTextSize * metricScale);
         mPaintDetail.setAntiAlias(true);
         if (null != detailTypeface) {
         	mPaintDetail.setTypeface(detailTypeface);
@@ -206,7 +199,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 lps = (LayoutParams) generateDefaultLayoutParams();
                 lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                int margin = ((Number) (metricScale * 12)).intValue();
+                int margin = ((Number) (metricScale * OK_BUTTON_HEIGHT)).intValue();
                 lps.setMargins(margin, margin, margin, margin);
             }
             mEndButton.setLayoutParams(lps);
@@ -491,10 +484,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         showcaseY += showcaseYOffset;
         invalidate();
         
-
-        //Draw the semi-transparent background
-        canvas.drawColor(mOptions.backColor);
-
+        // Draw the semi-transparent background
+        int[] attrs = {R.attr.sv_overlayBackgroundColor};
+        TypedArray styled = getContext().obtainStyledAttributes(R.style.ShowcaseView, attrs);
+        int overlayColor = styled.getColor(0, Color.BLACK);
+        canvas.drawColor(overlayColor);
+        styled.recycle();
+        
         //Draw to the scale specified
         Matrix mm = new Matrix();
         mm.postScale(scaleMultiplier, scaleMultiplier, showcaseX, showcaseY);
@@ -535,7 +531,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                             ((Number) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
                             1.2f, 1.0f, true);
                 }
-                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] + 12 * metricScale);
+                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] + OK_BUTTON_HEIGHT * metricScale);
                 mDynamicDetailLayout.draw(canvas);
                 canvas.restore();
 
@@ -695,19 +691,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         public void onShowcaseViewShow(ShowcaseView showcaseView);
 
-    }
-
-    public ShowcaseView setTextColors(int titleTextColor, int detailTextColor) {
-        mOptions.titleTextColor = titleTextColor;
-        mOptions.detailTextColor = detailTextColor;
-        if (mPaintTitle != null) {
-            mPaintTitle.setColor(mOptions.titleTextColor);
-        }
-        if (mPaintDetail != null) {
-            mPaintDetail.setColor(mOptions.detailTextColor);
-        }
-        invalidate();
-        return this;
     }
 
     public void setText(int titleTextResId, int subTextResId) {
@@ -992,12 +975,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         /** Allow custom positioning of the button within the showcase view.
          */
         public LayoutParams buttonLayoutParams = null;
-        public int shadowColor = Color.DKGRAY;
-        public int backColor = Color.argb(128, 80, 80, 80);
-        public int detailTextColor = Color.WHITE;
-        public int titleTextColor = Color.parseColor("#49C0EC");
         public int titleTextSize = 24;
         public int detailTextSize = 16;
+        
     }
 
 }
