@@ -13,10 +13,11 @@
     </style>
 
     <style name="ShowcaseView.Light">
-        <item name="sv_titleTextAppearance">@style/TextAppearance.ShowcaseView.Title</item>
+        <item name="sv_titleTextAppearance">@style/TextAppearance.ShowcaseView.Title.Light</item>
         <item name="sv_detailTextAppearance">@style/TextAppearance.ShowcaseView.Detail.Light</item>
         <item name="sv_backgroundColor">#3333B5E5</item>
         <item name="sv_buttonText">@string/ok</item>
+        <item name="sv_overlayBackgroundColor">#80BABABA</item>
     </style>
 
     <style name="ShowcaseView">
@@ -24,6 +25,7 @@
         <item name="sv_detailTextAppearance">@style/TextAppearance.ShowcaseView.Detail</item>
         <item name="sv_backgroundColor">#3333B5E5</item>
         <item name="sv_buttonText">@string/ok</item>
+        <item name="sv_overlayBackgroundColor">#C0000000</item>
     </style>
 
     <style name="TextAppearance.ShowcaseView.Title" parent="android:style/TextAppearance.Large">

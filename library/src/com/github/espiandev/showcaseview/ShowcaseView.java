@@ -59,17 +59,23 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public static final int ITEM_ACTION_ITEM = 3;
     public static final int ITEM_ACTION_OVERFLOW = 6;
 
-    private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     public static final int INNER_CIRCLE_RADIUS = 94;
-
+    private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
+    private static final String DEFAULT_SHOWCASE_COLOR = "#33B5E5";
+    private static final int OK_BUTTON_HEIGHT = 12;
+    
     private ArrayList<ShowcasePosition> showcases = new ArrayList<ShowcasePosition>();
     private float metricScale = 1.0f;
     private boolean isRedundant = false;
     private boolean hasCustomClickListener = false;
     private ConfigOptions mOptions;
+
+    private Paint mPaintTitle, mEraser;
+    private TextPaint mPaintDetail;
+    private Drawable showcaseGlowOverlay;
+
     private Paint  mEraser;
     private TextPaint mPaintDetail, mPaintTitle;
-    private int backColor;
     private Drawable showcaseGlowOverlay;
     private View mHandy;
     private final Button mEndButton;
@@ -88,6 +94,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private final String buttonText;
     private float scaleMultiplier = 1f;
 
+    private int mShowcaseColor;
     private OnSetVisibilityListener mOnSetVisibilityListener;
     
     private View currentView;
@@ -104,15 +111,17 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
     }
 
-    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
+    public ShowcaseView(Context context, AttributeSet attrs) {
+        this(context, attrs, R.styleable.CustomTheme_showcaseViewStyle);
+    }
+
+    public ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle, R.style.ShowcaseView);
-        mOptions.backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, mOptions.backColor);
-        mOptions.detailTextColor = styled.getColor(R.styleable.ShowcaseView_sv_detailTextColor, mOptions.detailTextColor);
-        mOptions.titleTextColor = styled.getColor(R.styleable.ShowcaseView_sv_titleTextColor, mOptions.titleTextColor);
-
+        mShowcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor(DEFAULT_SHOWCASE_COLOR));
+        
         int titleTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance, R.style.TextAppearance_ShowcaseView_Title);
         int detailTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance, R.style.TextAppearance_ShowcaseView_Detail);
         mTitleSpan = new TextAppearanceSpan(context, titleTextAppearance);
@@ -131,10 +140,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private void init() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            setLayerType(LAYER_TYPE_SOFTWARE,null);
-        }
-        else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            setLayerType(LAYER_TYPE_SOFTWARE, null);
+        } else {
             setDrawingCacheEnabled(true);
         }
 
@@ -148,9 +156,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             isRedundant = true;
             return;
         }
-
-        showcaseGlowOverlay = getContext().getResources().getDrawable(R.drawable.cling);
-		showcaseGlowOverlay.setColorFilter(mShowcaseColor, PorterDuff.Mode.MULTIPLY);
+        showcaseGlowOverlay = getContext().getResources().getDrawable(R.drawable.cling_bleached);
+        showcaseGlowOverlay.setColorFilter(mShowcaseColor, PorterDuff.Mode.MULTIPLY);
         
         
         // Load the custom title font
@@ -174,9 +181,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         // Create title painter
         mPaintTitle = new TextPaint();
-        mPaintTitle.setColor(mOptions.titleTextColor);
-        mPaintTitle.setShadowLayer(2.0f, 0f, 2.0f, mOptions.shadowColor);
-        mPaintTitle.setTextSize(mOptions.titleTextSize * metricScale);
         mPaintTitle.setAntiAlias(true);
         if (null != titleTypeface) {
         	mPaintTitle.setTypeface(titleTypeface);
@@ -184,9 +188,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         
         // Create detail painter
         mPaintDetail = new TextPaint();
-        mPaintDetail.setColor(mOptions.detailTextColor);
-        mPaintDetail.setShadowLayer(2.0f, 0f, 2.0f, mOptions.shadowColor);
-        mPaintDetail.setTextSize(mOptions.detailTextSize * metricScale);
         mPaintDetail.setAntiAlias(true);
         if (null != detailTypeface) {
         	mPaintDetail.setTypeface(detailTypeface);
@@ -208,7 +209,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 lps = (LayoutParams) generateDefaultLayoutParams();
                 lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                int margin = ((Number) (metricScale * 12)).intValue();
+                int margin = ((Number) (metricScale * OK_BUTTON_HEIGHT)).intValue();
                 lps.setMargins(margin, margin, margin, margin);
             }
             mEndButton.setLayoutParams(lps);
@@ -223,16 +224,16 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     	mOnSetVisibilityListener = onSetvisibilityListener;
     }
     
+    public void setShowcaseNoView() {
+        setShowcasePosition(1000000, 1000000);
+    }
+    
     public void setVisibility (int visibility) {
     	if (View.GONE != this.getVisibility()) {
 	    	super.setVisibility(visibility);
 	    	if (mOnSetVisibilityListener != null && View.GONE == this.getVisibility())
 	    		mOnSetVisibilityListener.onSetVisibility();
     	}
-    }
-
-    public void setShowcaseNoView() {
-        setShowcasePosition(1000000, 1000000);
     }
 
     /**
@@ -327,7 +328,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
     
     /**
-     * Set the showcase position offset //TODO: Roll into an object representing the ShowcasePosition coordinates
+     * Set the showcase position offset
      *
      * @param x X co-ordinate
      * @param y Y co-ordinate
@@ -535,10 +536,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         showcaseY += showcaseYOffset;
         invalidate();
         
-
-        //Draw the semi-transparent background
-        canvas.drawColor(mOptions.backColor);
-
+        // Draw the semi-transparent background
+        int[] attrs = {R.attr.sv_overlayBackgroundColor};
+        TypedArray styled = getContext().obtainStyledAttributes(R.style.ShowcaseView, attrs);
+        int overlayColor = styled.getColor(0, Color.BLACK);
+        canvas.drawColor(overlayColor);
+        styled.recycle();
+        
         //Draw to the scale specified
         Matrix mm = new Matrix();
         mm.postScale(scaleMultiplier, scaleMultiplier, showcaseX, showcaseY);
@@ -547,8 +551,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         //Erase the area for the ring
         canvas.drawCircle(showcaseX, showcaseY, showcaseRadius, mEraser);
 
-        makeVoidedRect();
-        boolean recalculateText = true;
+        boolean recalculateText = makeVoidedRect() || mAlteredText;
         mAlteredText = false;
 
         showcaseGlowOverlay.setBounds(voidedArea);
@@ -580,7 +583,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                             ((Number) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
                             1.2f, 1.0f, true);
                 }
-                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] + 12 * metricScale);
+                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] + OK_BUTTON_HEIGHT * metricScale);
                 mDynamicDetailLayout.draw(canvas);
                 canvas.restore();
 
@@ -623,23 +626,21 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         // This if statement saves resources by not recalculating voidedArea
         // if the X & Y coordinates haven't changed
-//        if (voidedArea == null || (showcaseX != legacyShowcaseX || showcaseY != legacyShowcaseY)) {
+        if (voidedArea == null || (showcaseX != legacyShowcaseX || showcaseY != legacyShowcaseY)) {
 
             int cx = (int) showcaseX, cy = (int) showcaseY; 
             int dw = showcaseGlowOverlay.getIntrinsicWidth();
             int dh = showcaseGlowOverlay.getIntrinsicHeight();
 
             voidedArea = new Rect(cx - dw / 2, cy - dh / 2, cx + dw / 2, cy + dh / 2);
-            
-            // TODO Subtract area of OK button so it doesn't overlap it
-            
+
             legacyShowcaseX = showcaseX;
             legacyShowcaseY = showcaseY;
 
             return true;
 
-//        }
-//        return false;
+        }
+        return false;
 
     }
 
@@ -742,19 +743,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         public void onShowcaseViewShow(ShowcaseView showcaseView);
 
-    }
-
-    public ShowcaseView setTextColors(int titleTextColor, int detailTextColor) {
-        mOptions.titleTextColor = titleTextColor;
-        mOptions.detailTextColor = detailTextColor;
-        if (mPaintTitle != null) {
-            mPaintTitle.setColor(mOptions.titleTextColor);
-        }
-        if (mPaintDetail != null) {
-            mPaintDetail.setColor(mOptions.detailTextColor);
-        }
-        invalidate();
-        return this;
     }
 
     public void setText(int titleTextResId, int subTextResId) {
@@ -1003,6 +991,15 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     public static class ConfigOptions {
         public boolean block = true, noButton = false;
+        /**
+         * If you want to use more than one Showcase with the {@link ConfigOptions#shotType} {@link ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique value for every different Showcase you want to use.
+         */
+        public int showcaseId = 0;
+
+        /**
+         * If you want to use more than one Showcase with {@link ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique {@link ConfigOptions#showcaseId} value for every different Showcase you want to use.
+         */
+        public int shotType = TYPE_NO_LIMIT;
         public int insert = INSERT_TO_DECOR;
         public boolean hideOnClickOutside = false;
         /**
@@ -1019,16 +1016,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public String detailFontAssetName = null;
 
         /**
-         * If you want to use more than one Showcase with the {@link ConfigOptions#shotType} {@link ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique value for every different Showcase you want to use.
-         */
-        public int showcaseId = 0;
-
-        /**
-         * If you want to use more than one Showcase with {@link ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique {@link ConfigOptions#showcaseId} value for every different Showcase you want to use.
-         */
-        public int shotType = TYPE_NO_LIMIT;
-        
-        /**
          * Default duration for fade in animation. Set to 0 to disable.
          */
         public int fadeInDuration = AnimationUtils.DEFAULT_DURATION;
@@ -1037,18 +1024,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
          * Default duration for fade out animation. Set to 0 to disable.
          */
         public int fadeOutDuration = AnimationUtils.DEFAULT_DURATION;
-        public int shadowColor = Color.DKGRAY;
-        public int backColor = Color.argb(128, 80, 80, 80);
-        public int detailTextColor = Color.WHITE;
-        public int titleTextColor = Color.parseColor("#49C0EC");
-        public int titleTextSize = 24;
-        public int detailTextSize = 16;
         /** Allow custom positioning of the button within the showcase view.
          */
         public LayoutParams buttonLayoutParams = null;
-    }
-
-    /**
+        public int titleTextSize = 24;
+        public int detailTextSize = 16;
+        
      * Specifies position of a showcase.
      * @author masyukun@gmail.com
      */

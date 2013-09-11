@@ -52,9 +52,9 @@ public class ShowcaseViewBuilder {
     }
     
     public ShowcaseViewBuilder setShowcaseConfigOptions(ConfigOptions configOptions) {
-    	if (null != configOptions) {
-    		showcaseView.setConfigOptions(configOptions);
-    	}
+        if (null != configOptions) {
+    	   showcaseView.setConfigOptions(configOptions);
+        }
     	return this;
     }
 
@@ -67,11 +67,11 @@ public class ShowcaseViewBuilder {
         showcaseView.animateGesture(offsetStartX, offsetStartY, offsetEndX, offsetEndY);
         return this;
     }
-
-//    public ShowcaseViewBuilder setTextColors(int titleTextColor, int detailTextColor) {
-//        showcaseView.setTextColors(titleTextColor, detailTextColor);
-//        return this;
-//    }
+    
+    @Deprecated
+    public ShowcaseViewBuilder setTextColors(int titleTextColor, int detailTextColor) {
+    	return this;
+    }
 
     public ShowcaseViewBuilder setText(String titleText, String subText) {
         showcaseView.setText(titleText, subText);

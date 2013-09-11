@@ -38,7 +38,7 @@ public class ShowcaseViews {
     }
 
     public void addView(ItemViewProperties properties) {
-    	addView(properties, null);
+        addView(properties, null);
     }
 
     public void addView(ItemViewProperties properties, ConfigOptions configOptions) {
@@ -76,8 +76,6 @@ public class ShowcaseViews {
                 showcaseView.hide();
                 if (views.isEmpty()) {
                     showcaseAcknowledgedListener.onShowCaseAcknowledged(showcaseView);
-                } else {
-                    show();
                 }
             }
         };
@@ -153,6 +151,10 @@ public class ShowcaseViews {
 
         public ItemViewProperties(int id, int titleResId, int messageResId, int itemType) {
             this(id, titleResId, messageResId, itemType, DEFAULT_SCALE, NO_X_OFFSET, NO_Y_OFFSET);
+        }
+        
+        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale) {
+            this(id, titleResId, messageResId, itemType, scale, NO_X_OFFSET, NO_Y_OFFSET);
         }
         
         public ItemViewProperties(int id, int titleResId, int messageResId, float xOffset, float yOffset) {
