@@ -10,7 +10,8 @@
         <attr name="sv_detailTextAppearance" format="reference" />
         <attr name="sv_titleTextAppearance" format="reference" />
         <attr name="sv_showcaseColor" format="color|reference" />
-    </declare-styleable>
+        <attr name="sv_overlayBackgroundColor" format="color|reference" />
+        </declare-styleable>
     <declare-styleable name="CustomTheme">
         <attr name="showcaseViewStyle" format="reference" />
     </declare-styleable>

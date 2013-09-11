@@ -1,5 +1,7 @@
 package com.github.espiandev.showcaseview;
 
+import com.github.espiandev.showcaseview.ShowcaseView.ConfigOptions;
+
 import android.app.Activity;
 import android.view.View;
 
@@ -33,6 +35,11 @@ public class ShowcaseViewBuilder {
         showcaseView.setShowcasePosition(x, y);
         return this;
     }
+    
+    public ShowcaseViewBuilder setShowcaseOffset(float x, float y) {
+    	showcaseView.setShowcaseOffset(x, y);
+    	return this;
+    }
 
     public ShowcaseViewBuilder setShowcaseItem(int itemType, int actionItemId, Activity activity) {
         showcaseView.setShowcaseItem(itemType, actionItemId, activity);
@@ -42,6 +49,13 @@ public class ShowcaseViewBuilder {
     public ShowcaseViewBuilder setShowcaseIndicatorScale(float scale) {
         showcaseView.setShowcaseIndicatorScale(scale);
         return this;
+    }
+    
+    public ShowcaseViewBuilder setShowcaseConfigOptions(ConfigOptions configOptions) {
+	if (null != configOptions) {
+    	   showcaseView.setConfigOptions(configOptions);
+	}
+    	return this;
     }
 
     public ShowcaseViewBuilder overrideButtonClick(View.OnClickListener listener) {
@@ -53,11 +67,11 @@ public class ShowcaseViewBuilder {
         showcaseView.animateGesture(offsetStartX, offsetStartY, offsetEndX, offsetEndY);
         return this;
     }
-
-//    public ShowcaseViewBuilder setTextColors(int titleTextColor, int detailTextColor) {
-//        showcaseView.setTextColors(titleTextColor, detailTextColor);
-//        return this;
-//    }
+    
+    @Deprecated
+    public ShowcaseViewBuilder setTextColors(int titleTextColor, int detailTextColor) {
+    	return this;
+    }
 
     public ShowcaseViewBuilder setText(String titleText, String subText) {
         showcaseView.setText(titleText, subText);
