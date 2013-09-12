@@ -58,7 +58,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public static final int ITEM_SPINNER = 2;
     public static final int ITEM_ACTION_ITEM = 3;
     public static final int ITEM_ACTION_OVERFLOW = 6;
-
+    
+    private static final int OVERLAY_TYPE_DEFAULT = -1;
+    public static final int OVERLAY_TYPE_NONE = 0;
+    public static final int OVERLAY_TYPE_HAND = 1;
+    public static final int OVERLAY_TYPE_ARROW = 2;
+    public static final int OVERLAY_TYPE_SHOWCASE = 3;
+    
     public static final int INNER_CIRCLE_RADIUS = 94;
     private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     private static final String DEFAULT_SHOWCASE_COLOR = "#33B5E5";
@@ -70,17 +76,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private boolean hasCustomClickListener = false;
     private ConfigOptions mOptions;
 
-    private Paint mPaintTitle, mEraser;
-    private TextPaint mPaintDetail;
-    private Drawable showcaseGlowOverlay;
-
     private Paint  mEraser;
     private TextPaint mPaintDetail, mPaintTitle;
-    private Drawable showcaseGlowOverlay;
     private View mHandy;
+    private View mArrowy;
     private final Button mEndButton;
     private OnShowcaseEventListener mEventListener;
-    private Rect voidedArea;
     private CharSequence mTitleText, mSubText;
     private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
@@ -94,7 +95,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private final String buttonText;
     private float scaleMultiplier = 1f;
 
-    private int mShowcaseColor;
     private OnSetVisibilityListener mOnSetVisibilityListener;
     
     private View currentView;
@@ -156,9 +156,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             isRedundant = true;
             return;
         }
-        showcaseGlowOverlay = getContext().getResources().getDrawable(R.drawable.cling_bleached);
-        showcaseGlowOverlay.setColorFilter(mShowcaseColor, PorterDuff.Mode.MULTIPLY);
-        
         
         // Load the custom title font
         try { titleTypeface = Typeface.createFromAsset(getContext().getAssets(), mOptions.titleFontAssetName); } 
@@ -337,8 +334,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     	if (isRedundant) {
     		return;
     	}
-    	showcaseXOffset = x;
-    	showcaseYOffset = y;
+    	
+    	//TODO: ugh, deal with this
+    	showcases.get(0).showcaseXOffset = x;
+    	showcases.get(0).showcaseYOffset = y;
     	init();
     	invalidate();
     }
@@ -517,24 +516,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-    	if (showcaseX < 0 || showcaseY < 0 || isRedundant) {
-            super.dispatchDraw(canvas);
-            return;
-        }
 
-        
-        if (mOptions.insert == INSERT_TO_VIEW) {
-            showcaseX = (float) (currentView.getLeft() + currentView.getWidth() / 2);
-            showcaseY = (float) (currentView.getTop() + currentView.getHeight() / 2);
-        } else {
-            int[] coordinates = new int[2];
-            currentView.getLocationInWindow(coordinates);
-            showcaseX = (float) (coordinates[0] + currentView.getWidth() / 2);
-            showcaseY = (float) (coordinates[1] + currentView.getHeight() / 2);
-        }
-        showcaseX += showcaseXOffset;
-        showcaseY += showcaseYOffset;
-        invalidate();
+    	for (ShowcasePosition showcase : showcases) {
+	    	if (showcase.showcaseX < 0 || showcase.showcaseY < 0 || isRedundant) {
+	            super.dispatchDraw(canvas);
+	            return;
+	        }
+    	}
         
         // Draw the semi-transparent background
         int[] attrs = {R.attr.sv_overlayBackgroundColor};
@@ -543,53 +531,87 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         canvas.drawColor(overlayColor);
         styled.recycle();
         
-        //Draw to the scale specified
-        Matrix mm = new Matrix();
-        mm.postScale(scaleMultiplier, scaleMultiplier, showcaseX, showcaseY);
-        canvas.setMatrix(mm);
+    	// Cycle through all the showcases on this screen
+    	for (ShowcasePosition showcase : showcases) {
+	        if (mOptions.insert == INSERT_TO_VIEW) {
+	        	showcase.showcaseX = (float) (showcase.view.getLeft() + showcase.view.getWidth() / 2);
+	            showcase.showcaseY = (float) (showcase.view.getTop() + showcase.view.getHeight() / 2);
+	        } else {
+	            int[] coordinates = new int[2];
+	            showcase.view.getLocationInWindow(coordinates);
+	            showcase.showcaseX = (float) (coordinates[0] + showcase.view.getWidth() / 2);
+	            showcase.showcaseY = (float) (coordinates[1] + showcase.view.getHeight() / 2);
+	        }
+	        showcase.showcaseX += showcase.showcaseXOffset;
+	        showcase.showcaseY += showcase.showcaseYOffset;
+	        invalidate();
+        
+	        //Draw to the scale specified
+	        Matrix mm = new Matrix();
+	        mm.postScale(scaleMultiplier, scaleMultiplier, showcase.showcaseX, showcase.showcaseY);
+	        canvas.setMatrix(mm);
+	
+	        //Erase the area for the ring
+	        canvas.drawCircle(showcase.showcaseX, showcase.showcaseY, showcase.showcaseRadius, mEraser);
 
-        //Erase the area for the ring
-        canvas.drawCircle(showcaseX, showcaseY, showcaseRadius, mEraser);
+	        // Draw overlay
+	        Drawable overlay = null;
+	        switch (showcase.overlayType) {
+	        case OVERLAY_TYPE_ARROW:
+	        	overlay = getArrow(21); //TODO : Fix the chicken and egg
+	        	break;
+	        
+	        case OVERLAY_TYPE_HAND:
+	        	overlay = getHandDrawable();
+	        	break;
+	        	
+	        case OVERLAY_TYPE_DEFAULT:
+	        case OVERLAY_TYPE_SHOWCASE:
+	        	default:
+		            overlay = getContext().getResources().getDrawable(R.drawable.cling_bleached);
+		            overlay.setColorFilter(mShowcaseColor, PorterDuff.Mode.MULTIPLY);
+		            break;
+		            
+	        }
 
-        boolean recalculateText = makeVoidedRect() || mAlteredText;
-        mAlteredText = false;
+    		showcase.voidedOverlayArea = makeVoidedRect(showcase, overlay);
+    		overlay.setBounds(showcase.voidedOverlayArea);
+	        overlay.draw(canvas);
+	        
+	        canvas.setMatrix(new Matrix());
+  
 
-        showcaseGlowOverlay.setBounds(voidedArea);
-        showcaseGlowOverlay.draw(canvas);
-
-        canvas.setMatrix(new Matrix());
-
-
-        if (!TextUtils.isEmpty(mTitleText) || !TextUtils.isEmpty(mSubText)) {
-            if (recalculateText)
-                mBestTextPosition = getBestTextPosition(canvas.getWidth(), canvas.getHeight());
-
-            if (!TextUtils.isEmpty(mTitleText)) {
-                canvas.save();
-                if (recalculateText) {
-                mDynamicTitleLayout = new DynamicLayout(mTitleText, mPaintTitle,
-                        (int) mBestTextPosition[2], Layout.Alignment.ALIGN_NORMAL,
-                        1.0f, 1.0f, true);
-                }
-                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] - 24 * metricScale);
-                mDynamicTitleLayout.draw(canvas);
-                canvas.restore();
-            }
-
-            if (!TextUtils.isEmpty(mSubText)) {
-                canvas.save();
-                if (recalculateText) {
-                    mDynamicDetailLayout = new DynamicLayout(mSubText, mPaintDetail,
-                            ((Number) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
-                            1.2f, 1.0f, true);
-                }
-                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] + OK_BUTTON_HEIGHT * metricScale);
-                mDynamicDetailLayout.draw(canvas);
-                canvas.restore();
-
-            }
-        }
-
+	        if (!TextUtils.isEmpty(mTitleText) || !TextUtils.isEmpty(mSubText)) {
+	            if (mAlteredText)
+	                mBestTextPosition = getBestTextPosition(showcase.voidedOverlayArea, canvas.getWidth(), canvas.getHeight());
+	
+	            if (!TextUtils.isEmpty(mTitleText)) {
+	                canvas.save();
+	                if (mAlteredText) {
+	                mDynamicTitleLayout = new DynamicLayout(mTitleText, mPaintTitle,
+	                        (int) mBestTextPosition[2], Layout.Alignment.ALIGN_NORMAL,
+	                        1.0f, 1.0f, true);
+	                }
+	                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] - 24 * metricScale);
+	                mDynamicTitleLayout.draw(canvas);
+	                canvas.restore();
+	            }
+	
+	            if (!TextUtils.isEmpty(mSubText)) {
+	                canvas.save();
+	                if (mAlteredText) {
+	                    mDynamicDetailLayout = new DynamicLayout(mSubText, mPaintDetail,
+	                            ((Number) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
+	                            1.2f, 1.0f, true);
+	                }
+	                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] + OK_BUTTON_HEIGHT * metricScale);
+	                mDynamicDetailLayout.draw(canvas);
+	                canvas.restore();
+	
+	            }
+	        }
+    	}
+    	
         super.dispatchDraw(canvas);
 
     }
@@ -601,7 +623,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
      * @param canvasH height of the screen
      * @return
      */
-    private float[] getBestTextPosition(int canvasW, int canvasH) {
+    private float[] getBestTextPosition(Rect voidedArea, int canvasW, int canvasH) {
 
         //if the width isn't much bigger than the voided area, just consider top & bottom
         float spaceTop = voidedArea.top;
@@ -620,34 +642,47 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
      * Creates a {@link Rect} which represents the area the showcase covers. Used to calculate
      * where best to place the text
      *
-     * @return true if voidedArea has changed, false otherwise.
+     * @return Rect of "voided" area of the overlay
      */
-    private boolean makeVoidedRect() {
+    private Rect makeVoidedRect(ShowcasePosition showcase, Drawable overlay) {
 
-        // This if statement saves resources by not recalculating voidedArea
-        // if the X & Y coordinates haven't changed
-        if (voidedArea == null || (showcaseX != legacyShowcaseX || showcaseY != legacyShowcaseY)) {
+        int cx = (int) showcase.showcaseX; 
+        int cy = (int) showcase.showcaseY;
+    	int dw, dh;
+        
+        Rect voidedArea = null;
+    	
+    	switch (showcase.overlayType) {
+    	case OVERLAY_TYPE_ARROW:
+            dw = overlay.getIntrinsicWidth();
+            dh = overlay.getIntrinsicHeight();
+            voidedArea = new Rect( cx - dw / 2, cy - dh / 2, 
+                                   cx + dw / 2, cy + dh / 2 );
+    		break;
+    		
+    	case OVERLAY_TYPE_HAND:
+    		//TODO this
+    		break;
+    		
+    	default:
+            dw = overlay.getIntrinsicWidth();
+            dh = overlay.getIntrinsicHeight();
+            voidedArea = new Rect( cx - dw / 2, cy - dh / 2, 
+                                   cx + dw / 2, cy + dh / 2 );
+    		break;
+    	}
 
-            int cx = (int) showcaseX, cy = (int) showcaseY; 
-            int dw = showcaseGlowOverlay.getIntrinsicWidth();
-            int dh = showcaseGlowOverlay.getIntrinsicHeight();
-
-            voidedArea = new Rect(cx - dw / 2, cy - dh / 2, cx + dw / 2, cy + dh / 2);
-
-            legacyShowcaseX = showcaseX;
-            legacyShowcaseY = showcaseY;
-
-            return true;
-
-        }
-        return false;
+    	
+    	
+        // Draw a box around the showcase overlay
+        return voidedArea;
 
     }
 
     public void animateGesture(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) {
         mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
         addView(mHandy);
-        moveHand(offsetStartX, offsetStartY, offsetEndX, offsetEndY, new AnimationEndListener() {
+        moveHand(showcases.get(0), offsetStartX, offsetStartY, offsetEndX, offsetEndY, new AnimationEndListener() {
             @Override
             public void onAnimationEnd() {
                 removeView(mHandy);
@@ -655,8 +690,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         });
     }
 
-    private void moveHand(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY, AnimationEndListener listener) {
-        AnimationUtils.createMovementAnimation(mHandy, showcaseX, showcaseY,
+    private void moveHand(ShowcasePosition showcase, float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY, AnimationEndListener listener) {
+        AnimationUtils.createMovementAnimation(mHandy, showcase.showcaseX, showcase.showcaseY,
                 offsetStartX, offsetStartY,
                 offsetEndX, offsetEndY,
                 listener).start();
@@ -721,16 +756,24 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
-        float xDelta = Math.abs(motionEvent.getRawX() - showcaseX);
-        float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
-        double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
+    	double distanceFromFocus;
+    	
+    	for (ShowcasePosition showcase : showcases) {
+            float xDelta = Math.abs(motionEvent.getRawX() - showcase.showcaseX);
+            float yDelta = Math.abs(motionEvent.getRawY() - showcase.showcaseY);
+            distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
 
-        if (mOptions.hideOnClickOutside && distanceFromFocus > showcaseRadius) {
-            this.hide();
-            return true;
-        }
+            if (mOptions.hideOnClickOutside && distanceFromFocus > showcase.showcaseRadius) {
+                this.hide();
+                return true;
+            }
+            
+            if (mOptions.block && distanceFromFocus > showcase.showcaseRadius) {
+            	return true;
+            }
+    	}
 
-        return mOptions.block && distanceFromFocus > showcaseRadius;
+        return false;
     }
 
     public void setShowcaseIndicatorScale(float scaleMultiplier) {
@@ -774,13 +817,17 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         return mHandy;
     }
+    
+    public Drawable getHandDrawable() {
+        return getContext().getResources().getDrawable( R.layout.handy );
+    }
 
     /**
      * Get the cartoony arrow for custom gestures
      * @param directionPolarCoordinate direction the arrow should point (e.g. 0 = right, 90 = up, 180 = left, 270 = down)
      * @return
      */
-    public View getArrow(int directionPolarCoordinate) {
+    public Drawable getArrow(int directionPolarCoordinate) {
     	// round and round and round
     	directionPolarCoordinate %= 360;
 
@@ -794,11 +841,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     		arrowGlyph = R.layout.arrow_down;
     	} 
     	
-        final View mArrowy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(arrowGlyph, null);
-        addView(mArrowy);
-        AnimationUtils.hide(mArrowy);
-
-        return mArrowy;
+        return getContext().getResources().getDrawable( arrowGlyph );
     }
 
     /**
@@ -1029,9 +1072,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public LayoutParams buttonLayoutParams = null;
         public int titleTextSize = 24;
         public int detailTextSize = 16;
-        
-     * Specifies position of a showcase.
-     * @author masyukun@gmail.com
+    }
+    
+    /**
+     *  Specifies position of a showcase.
      */
     public static class ShowcasePosition {
     	View view = null;
@@ -1043,6 +1087,20 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public float legacyShowcaseX = -1;
         public float legacyShowcaseY = -1;
         public int innerCircleRadius = -1;
+        /**
+         * Type of graphic overlay to display. 
+         * e.g. OVERLAY_TYPE_NONE, OVERLAY_TYPE_HAND, OVERLAY_TYPE_ARROW, OVERLAY_TYPE_SHOWCASE
+         */
+        public int overlayType = OVERLAY_TYPE_DEFAULT;
+        Rect voidedOverlayArea;
+        /**
+         * Polar coordinate of direction arrow should point.
+         */
+        private int overlayArrowRotation = 0;
+        
+        public ShowcasePosition() {
+        	voidedOverlayArea = new Rect();
+        }
     }
-
 }
+
