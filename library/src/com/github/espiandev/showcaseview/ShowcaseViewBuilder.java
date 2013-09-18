@@ -93,6 +93,11 @@ public class ShowcaseViewBuilder {
         return this;
     }
     
+    public ShowcaseViewBuilder setRadius(float radius) {
+    	showcaseView.setRadius(radius);
+    	return this;
+    }
+    
     public ShowcaseViewBuilder addShowcase() {
     	showcaseView.addShowcase();
     	return this;

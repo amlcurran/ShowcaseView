@@ -64,6 +64,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public static final int OVERLAY_TYPE_HAND = 1;
     public static final int OVERLAY_TYPE_ARROW = 2;
     public static final int OVERLAY_TYPE_SHOWCASE = 3;
+    public static final int TEXT_POSITION_DEFAULT = 0;
+    public static final int TEXT_POSITION_HORZ = 1;
     
     public static final int INNER_CIRCLE_RADIUS = 94;
     private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
@@ -598,8 +600,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	        // Draw overlay
 	        Drawable overlay = null;
-	        switch (showcase.overlayType) {
+	        switch (mOptions.overlayType) {
 	        case OVERLAY_TYPE_ARROW:
+	        	
 	        	overlay = getArrow(showcase.overlayArrowRotation); //TODO : Fix the chicken and egg
 	        	break;
 	        
@@ -624,9 +627,14 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
   
 
 	        if (!TextUtils.isEmpty(showcase.mTitleText) || !TextUtils.isEmpty(showcase.mSubText)) {
-	            if (showcase.mAlteredText)
-	                mBestTextPosition = getBestTextPosition(showcase.voidedOverlayArea, canvas.getWidth(), canvas.getHeight());
-	
+	            if (showcase.mAlteredText) {
+	            	if (TEXT_POSITION_HORZ == mOptions.textPositioning) {
+		                mBestTextPosition = getBestTextPositionHorz(showcase, canvas.getWidth(), canvas.getHeight());
+	            	} else {
+		                mBestTextPosition = getBestTextPosition(showcase.voidedOverlayArea, canvas.getWidth(), canvas.getHeight());
+	            	}
+	            }
+	            
 	            if (!TextUtils.isEmpty(showcase.mTitleText)) {
 	                canvas.save();
 	                if (showcase.mAlteredText) {
@@ -673,9 +681,29 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         //float spaceLeft = voidedArea.left;
         //float spaceRight = canvasW - voidedArea.right;
 
-        //TODO: currently only considers above or below showcase, deal with left or right
         return new float[]{	mOptions.titleTextSize * metricScale, 
         					spaceTop > spaceBottom ? 128 * metricScale : mOptions.titleTextSize * metricScale + voidedArea.bottom, 
+        					canvasW - 48 * metricScale};
+
+    }
+
+    /**
+     * Calculates where to position text horizontally
+     *
+     * @param canvasW width of the screen
+     * @param canvasH height of the screen
+     * @return
+     */
+    private float[] getBestTextPositionHorz(ShowcasePosition showcase, int canvasW, int canvasH) {
+
+        //if the width isn't much bigger than the voided area, just consider top & bottom
+        float spaceTop = showcase.voidedOverlayArea.top;
+        float spaceBottom = canvasH - showcase.voidedOverlayArea.bottom - 64 * metricScale; //64dip considers the OK button
+        float spaceLeft = showcase.voidedOverlayArea.left;
+        float spaceRight = canvasW - showcase.voidedOverlayArea.right;
+
+        return new float[]{	mOptions.titleTextSize * metricScale, 
+        					spaceTop > spaceBottom ? 128 * metricScale : mOptions.titleTextSize * metricScale + showcase.voidedOverlayArea.bottom, 
         					canvasW - 48 * metricScale};
 
     }
@@ -694,11 +722,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         
         Rect voidedArea = null;
     	
-    	switch (showcase.overlayType) {
+    	switch (mOptions.overlayType) {
     	case OVERLAY_TYPE_ARROW:
             dw = overlay.getIntrinsicWidth();
             dh = overlay.getIntrinsicHeight();
-            voidedArea = new Rect( cx - dw / 2, cy - dh / 2, 
+            voidedArea = new Rect( cx - dw / 2, cy - dh / 2, //TODO Offset arrow is pointing at center of showcase 
                                    cx + dw / 2, cy + dh / 2 );
     		break;
     		
@@ -890,16 +918,31 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     	directionPolarCoordinate %= 360;
 
     	// Orient the arrow
-    	int arrowGlyph = R.layout.arrow_left;
+    	int arrowGlyph = R.drawable.arrow_left;
     	if (directionPolarCoordinate < 45 || directionPolarCoordinate > 315) {
-    		arrowGlyph = R.layout.arrow_right;
+    		arrowGlyph = R.drawable.arrow_right;
     	} else if (directionPolarCoordinate >= 45 && directionPolarCoordinate <= 135) {
-    		arrowGlyph = R.layout.arrow_up;
+    		arrowGlyph = R.drawable.arrow_right_up;
     	} else if (directionPolarCoordinate >= 225 && directionPolarCoordinate <= 315) {
-    		arrowGlyph = R.layout.arrow_down;
+    		arrowGlyph = R.drawable.arrow_down;
     	} 
     	
         return getContext().getResources().getDrawable( arrowGlyph );
+    }
+    
+    /**
+     * Pass in a showcase using an arrow, and this method will determine how the arrow should be oriented.
+     * @param showcase
+     * @return int polar coordinate
+     */
+    private int determineArrowOrientation(ShowcasePosition showcase) {
+    	int oriented = 0;
+    	
+//    	showcase.
+    	
+    	
+    	
+    	return oriented;
     }
 
     /**
@@ -922,6 +965,27 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public void pointTo(float x, float y) {
 		final View mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
         AnimationUtils.createMovementAnimation(mHandy, x, y).start();
+    }
+    
+    /**
+     * Set the showcase's radius. Default: ShowcaseView.INNER_CIRCLE_RADIUS
+     * @param r
+     */
+    public void setRadius(float r) {
+    	// Multiple showcase support
+    	ShowcasePosition showcase;
+    	if (null == showcases) {
+    		// Sanity checking
+    		showcases = new ArrayList<ShowcasePosition>();
+    		
+    	} else if (showcases.size() <= 0) {
+        	// Add a new showcase if there aren't any
+    		showcases.add(new ShowcasePosition());
+    	} 
+
+    	// Set the showcase radius
+    	showcase = showcases.get( showcases.size() - 1 );
+    	showcase.showcaseRadius = r;
     }
 
     public void setConfigOptions(ConfigOptions options) {
@@ -1158,6 +1222,16 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public LayoutParams buttonLayoutParams = null;
         public int titleTextSize = 24;
         public int detailTextSize = 16;
+        /**
+         * Type of graphic overlay to display. 
+         * e.g. OVERLAY_TYPE_NONE, OVERLAY_TYPE_HAND, OVERLAY_TYPE_ARROW, OVERLAY_TYPE_SHOWCASE
+         */
+        public int overlayType = OVERLAY_TYPE_DEFAULT;
+        /**
+         * Type of text positioning to use in relation to showcases
+         * e.g. TEXT_POSITION_HORZ, TEXT_POSITION_DEFAULT
+         */
+        public int textPositioning = TEXT_POSITION_DEFAULT;
     }
     
     /**
@@ -1173,11 +1247,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public float legacyShowcaseX = -1;
         public float legacyShowcaseY = -1;
         public int innerCircleRadius = -1;
-        /**
-         * Type of graphic overlay to display. 
-         * e.g. OVERLAY_TYPE_NONE, OVERLAY_TYPE_HAND, OVERLAY_TYPE_ARROW, OVERLAY_TYPE_SHOWCASE
-         */
-        public int overlayType = OVERLAY_TYPE_DEFAULT;
         Rect voidedOverlayArea;
         /**
          * Polar coordinate of direction arrow should point.

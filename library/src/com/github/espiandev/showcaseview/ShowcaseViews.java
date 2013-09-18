@@ -84,6 +84,7 @@ public class ShowcaseViews {
 				builder.setText(thisView.titleResId, thisView.messageResId)
 				.setShowcaseIndicatorScale(thisView.scale)
 				.setShowcaseOffset(thisView.xOffset, thisView.yOffset)
+				.setRadius(thisView.highlightRadius)
 				.setShowcaseConfigOptions(configOptions);
 
 				if(showcaseActionBar(thisView)) {
@@ -98,7 +99,9 @@ public class ShowcaseViews {
 				// Add a new showcase to this ShowcaseView object
 				builder.addShowcase();
 				
-				builder.setText(thisView.titleResId, thisView.messageResId);
+				builder.setText(thisView.titleResId, thisView.messageResId)
+				.setShowcaseOffset(thisView.xOffset, thisView.yOffset)
+				.setRadius(thisView.highlightRadius);
 
 				if(showcaseActionBar(thisView)) {
 					builder.setShowcaseItem(thisView.itemType, thisView.id, activity);
@@ -185,6 +188,7 @@ public class ShowcaseViews {
 		private static final float DEFAULT_SCALE = 1f;
 		private static final float NO_X_OFFSET = 0;
 		private static final float NO_Y_OFFSET = 0;
+		private static final float INNER_CIRCLE_RADIUS = ShowcaseView.INNER_CIRCLE_RADIUS;
 
 		protected final int titleResId;
 		protected final int messageResId;
@@ -193,36 +197,41 @@ public class ShowcaseViews {
 		protected final float scale;
 		protected final float xOffset;
 		protected final float yOffset;
+		protected final float highlightRadius;
 
 		public ItemViewProperties(int titleResId, int messageResId) {
 			this(ID_NO_SHOWCASE, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE);
 		}
 
 		public ItemViewProperties(int id, int titleResId, int messageResId) {
-			this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE, NO_X_OFFSET, NO_Y_OFFSET);
+			this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE, NO_X_OFFSET, NO_Y_OFFSET, INNER_CIRCLE_RADIUS);
 		}
 
 		public ItemViewProperties(int id, int titleResId, int messageResId, float scale) {
-			this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, scale, NO_X_OFFSET, NO_Y_OFFSET);
+			this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, scale, NO_X_OFFSET, NO_Y_OFFSET, INNER_CIRCLE_RADIUS);
 		}
 
 		public ItemViewProperties(int id, int titleResId, int messageResId, int itemType) {
-			this(id, titleResId, messageResId, itemType, DEFAULT_SCALE, NO_X_OFFSET, NO_Y_OFFSET);
+			this(id, titleResId, messageResId, itemType, DEFAULT_SCALE, NO_X_OFFSET, NO_Y_OFFSET, INNER_CIRCLE_RADIUS);
 		}
 
 		public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale) {
-			this(id, titleResId, messageResId, itemType, scale, NO_X_OFFSET, NO_Y_OFFSET);
+			this(id, titleResId, messageResId, itemType, scale, NO_X_OFFSET, NO_Y_OFFSET, INNER_CIRCLE_RADIUS);
 		}
 
 		public ItemViewProperties(int id, int titleResId, int messageResId, float xOffset, float yOffset) {
-			this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE, xOffset, yOffset);
+			this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE, xOffset, yOffset, INNER_CIRCLE_RADIUS);
 		}
 
 		public ItemViewProperties(int id, int titleResId, int messageResId, float scale, float xOffset, float yOffset) {
-			this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, scale, xOffset, yOffset);
+			this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, scale, xOffset, yOffset, INNER_CIRCLE_RADIUS);
 		}
 
-		public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale, float xOffset, float yOffset) {
+		public ItemViewProperties(int id, int titleResId, int messageResId, float scale, float xOffset, float yOffset, float highlightRadius) {
+			this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, scale, xOffset, yOffset, highlightRadius);
+		}
+
+		public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale, float xOffset, float yOffset, float highlightRadius) {
 			this.id = id;
 			this.titleResId = titleResId;
 			this.messageResId = messageResId;
@@ -230,6 +239,7 @@ public class ShowcaseViews {
 			this.scale = scale;
 			this.xOffset = xOffset;
 			this.yOffset = yOffset;
+			this.highlightRadius = highlightRadius;
 		}
 	}
 }
