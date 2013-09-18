@@ -602,8 +602,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	        Drawable overlay = null;
 	        switch (mOptions.overlayType) {
 	        case OVERLAY_TYPE_ARROW:
-	        	
-	        	overlay = getArrow(showcase.overlayArrowRotation); //TODO : Fix the chicken and egg
+	        	showcase.overlayArrowRotation = determineArrowOrientation(showcase, canvas.getWidth(), canvas.getHeight());
+	        	overlay = getArrow(showcase.overlayArrowRotation);
 	        	break;
 	        
 	        case OVERLAY_TYPE_HAND:
@@ -935,12 +935,16 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
      * @param showcase
      * @return int polar coordinate
      */
-    private int determineArrowOrientation(ShowcasePosition showcase) {
+    private int determineArrowOrientation(ShowcasePosition showcase, int canvasX, int canvasY) {
     	int oriented = 0;
     	
-//    	showcase.
-    	
-    	
+    	if (TEXT_POSITION_HORZ == mOptions.textPositioning) {
+    		// horz
+    		oriented = (showcase.showcaseX > (canvasX / 2)) ? 0 : 180;
+    	} else {
+    		// vert
+    		oriented = (showcase.showcaseY > (canvasY / 2)) ? 270 : 90;
+    	}
     	
     	return oriented;
     }
