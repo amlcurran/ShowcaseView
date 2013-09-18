@@ -941,6 +941,21 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     	if (TEXT_POSITION_HORZ == mOptions.textPositioning) {
     		// horz
     		oriented = (showcase.showcaseX > (canvasX / 2)) ? 0 : 180;
+    	} else if (TEXT_POSITION_DEFAULT == mOptions.textPositioning) {
+    	//TODO: DEBUG
+    		// http://www.engineeringtoolbox.com/converting-cartesian-polar-coordinates-d_1347.html
+    		// any direction
+    		float originAdjustmentX = canvasX / 2; // center of screen
+    		float originAdjustmentY = canvasY / 2; // center of screen
+    		
+    		// Adjust Android coordinates to Cartesian coordinates
+    		double x = showcase.showcaseX - originAdjustmentX;
+    		double y = showcase.showcaseY - originAdjustmentY;
+    		
+    		// Convert Cartesian coordinates to polar coordinate (angle in degrees)
+    		double theta = Math.atan(y / x);
+    		
+    		oriented = (int)theta;
     	} else {
     		// vert
     		oriented = (showcase.showcaseY > (canvasY / 2)) ? 270 : 90;
