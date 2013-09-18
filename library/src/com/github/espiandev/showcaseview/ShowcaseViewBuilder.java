@@ -92,6 +92,11 @@ public class ShowcaseViewBuilder {
         showcaseView.pointTo(x, y);
         return this;
     }
+    
+    public ShowcaseViewBuilder addShowcase() {
+    	showcaseView.addShowcase();
+    	return this;
+    }
 
     public ShowcaseView build(){
         return showcaseView;

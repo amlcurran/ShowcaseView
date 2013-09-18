@@ -82,11 +82,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private View mArrowy;
     private final Button mEndButton;
     private OnShowcaseEventListener mEventListener;
-    private CharSequence mTitleText, mSubText;
     private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
     private float[] mBestTextPosition;
-    private boolean mAlteredText = false;
     private TextAppearanceSpan mDetailSpan, mTitleSpan;
 
     private Typeface titleTypeface;
@@ -246,11 +244,21 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         isRedundant = false;
         currentView = view;
 
-        // If there is more than one showcase, overwrite
-        if (showcases.size() > 1) {
-        	showcases.clear();
-        	showcases.add(new ShowcasePosition());
-        }
+    	// Multiple showcase support
+    	ShowcasePosition showcase;
+    	if (null == showcases) {
+    		// Sanity checking
+    		showcases = new ArrayList<ShowcasePosition>();
+    		
+    	} else if (showcases.size() <= 0) {
+        	// Add a new showcase if there aren't any
+    		showcases.add(new ShowcasePosition());
+    	} 
+
+    	// Add the view to the showcase
+    	showcase = showcases.get( showcases.size() - 1 );
+        showcase.view = view;
+        
         
         view.post(new Runnable() {
             @Override
@@ -259,18 +267,25 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 
                 // Compute showcase positions for each showcase
                 for (int ii = 0; ii < showcases.size(); ++ii) {
+                	ShowcasePosition thisShowcase = showcases.get(ii);
 	                if (mOptions.insert == INSERT_TO_VIEW) {
-	                    showcases.get(ii).showcaseX = (float) (view.getLeft() + view.getWidth() / 2);
-	                    showcases.get(ii).showcaseY = (float) (view.getTop() + view.getHeight() / 2);
+	                    thisShowcase.showcaseX = (float) (view.getLeft() + view.getWidth() / 2);
+	                    thisShowcase.showcaseY = (float) (view.getTop() + view.getHeight() / 2);
 	                } else {
 	                    int[] coordinates = new int[2];
-	                    view.getLocationInWindow(coordinates);
-	                    showcases.get(ii).showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
-	                    showcases.get(ii).showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
+	                    if (null != thisShowcase.view) {
+	                    	Log.d(TAG, "KABOOM! 5");
+	                    	thisShowcase.view.getLocationInWindow(coordinates);
+		                    thisShowcase.showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
+		                    thisShowcase.showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
+	                    } else {
+	                    	Log.d(TAG, "NON-KABOOM! 2");
+	                    }
 	                }
-	                showcases.get(ii).showcaseX += showcases.get(ii).showcaseXOffset;
-	                showcases.get(ii).showcaseY += showcases.get(ii).showcaseYOffset;
+	                thisShowcase.showcaseX += thisShowcase.showcaseXOffset;
+	                thisShowcase.showcaseY += thisShowcase.showcaseYOffset;
                 }
+                
                 invalidate();
             }
         });
@@ -311,14 +326,23 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             return;
         }
 
-        // Clear out all the other showcases
-        showcases.clear();
+    	// Multiple showcase support
+    	ShowcasePosition showcase;
+    	if (null == showcases) {
+    		// Sanity checking
+    		showcases = new ArrayList<ShowcasePosition>();
+    		
+    	} else if (showcases.size() <= 0) {
+        	// Add a new showcase if there aren't any
+    		showcases.add(new ShowcasePosition());
+    	} 
+
+    	// Get the last showcase in the list
+    	showcase = showcases.get( showcases.size() - 1 );
         
-        // Add this showcase in
-    	ShowcasePosition thisPosition = new ShowcasePosition();
-    	thisPosition.showcaseX = x;
-    	thisPosition.showcaseY = y;
-    	showcases.add(thisPosition);
+        // Set the position
+    	showcase.showcaseX = x;
+    	showcase.showcaseY = y;
         
         init();
         invalidate();
@@ -334,10 +358,23 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     	if (isRedundant) {
     		return;
     	}
+
+    	// Multiple showcase support
+    	ShowcasePosition showcase;
+    	if (null == showcases) {
+    		// Sanity checking
+    		showcases = new ArrayList<ShowcasePosition>();
+    		
+    	} else if (showcases.size() <= 0) {
+        	// Add a new showcase if there aren't any
+    		showcases.add(new ShowcasePosition());
+    	} 
+
+    	// Get the last showcase in the list
+    	showcase = showcases.get( showcases.size() - 1 );
+    	showcase.showcaseXOffset = x;
+    	showcase.showcaseYOffset = y;
     	
-    	//TODO: ugh, deal with this
-    	showcases.get(0).showcaseXOffset = x;
-    	showcases.get(0).showcaseYOffset = y;
     	init();
     	invalidate();
     }
@@ -538,27 +575,32 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	            showcase.showcaseY = (float) (showcase.view.getTop() + showcase.view.getHeight() / 2);
 	        } else {
 	            int[] coordinates = new int[2];
-	            showcase.view.getLocationInWindow(coordinates);
-	            showcase.showcaseX = (float) (coordinates[0] + showcase.view.getWidth() / 2);
-	            showcase.showcaseY = (float) (coordinates[1] + showcase.view.getHeight() / 2);
+	            if (null != showcase.view) {
+	            	Log.d(TAG, "KABOOM! 6");
+		            showcase.view.getLocationInWindow(coordinates);
+		            showcase.showcaseX = (float) (coordinates[0] + showcase.view.getWidth() / 2);
+		            showcase.showcaseY = (float) (coordinates[1] + showcase.view.getHeight() / 2);
+	            } else {
+	            	Log.d(TAG, "NON-KABOOM! 1");
+	            }
 	        }
 	        showcase.showcaseX += showcase.showcaseXOffset;
 	        showcase.showcaseY += showcase.showcaseYOffset;
 	        invalidate();
         
-	        //Draw to the scale specified
+	        // Draw to the scale specified
 	        Matrix mm = new Matrix();
 	        mm.postScale(scaleMultiplier, scaleMultiplier, showcase.showcaseX, showcase.showcaseY);
 	        canvas.setMatrix(mm);
 	
-	        //Erase the area for the ring
+	        // Erase the area for the ring
 	        canvas.drawCircle(showcase.showcaseX, showcase.showcaseY, showcase.showcaseRadius, mEraser);
 
 	        // Draw overlay
 	        Drawable overlay = null;
 	        switch (showcase.overlayType) {
 	        case OVERLAY_TYPE_ARROW:
-	        	overlay = getArrow(21); //TODO : Fix the chicken and egg
+	        	overlay = getArrow(showcase.overlayArrowRotation); //TODO : Fix the chicken and egg
 	        	break;
 	        
 	        case OVERLAY_TYPE_HAND:
@@ -581,14 +623,14 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	        canvas.setMatrix(new Matrix());
   
 
-	        if (!TextUtils.isEmpty(mTitleText) || !TextUtils.isEmpty(mSubText)) {
-	            if (mAlteredText)
+	        if (!TextUtils.isEmpty(showcase.mTitleText) || !TextUtils.isEmpty(showcase.mSubText)) {
+	            if (showcase.mAlteredText)
 	                mBestTextPosition = getBestTextPosition(showcase.voidedOverlayArea, canvas.getWidth(), canvas.getHeight());
 	
-	            if (!TextUtils.isEmpty(mTitleText)) {
+	            if (!TextUtils.isEmpty(showcase.mTitleText)) {
 	                canvas.save();
-	                if (mAlteredText) {
-	                mDynamicTitleLayout = new DynamicLayout(mTitleText, mPaintTitle,
+	                if (showcase.mAlteredText) {
+	                mDynamicTitleLayout = new DynamicLayout(showcase.mTitleText, mPaintTitle,
 	                        (int) mBestTextPosition[2], Layout.Alignment.ALIGN_NORMAL,
 	                        1.0f, 1.0f, true);
 	                }
@@ -597,10 +639,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	                canvas.restore();
 	            }
 	
-	            if (!TextUtils.isEmpty(mSubText)) {
+	            if (!TextUtils.isEmpty(showcase.mSubText)) {
 	                canvas.save();
-	                if (mAlteredText) {
-	                    mDynamicDetailLayout = new DynamicLayout(mSubText, mPaintDetail,
+	                if (showcase.mAlteredText) {
+	                    mDynamicDetailLayout = new DynamicLayout(showcase.mSubText, mPaintDetail,
 	                            ((Number) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
 	                            1.2f, 1.0f, true);
 	                }
@@ -795,13 +837,29 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     public void setText(String titleText, String subText) {
+    	// Multiple showcase support
+    	ShowcasePosition showcase;
+    	if (null == showcases) {
+    		// Sanity checking
+    		showcases = new ArrayList<ShowcasePosition>();
+    		
+    	} else if (showcases.size() <= 0) {
+        	// Add a new showcase if there aren't any
+    		showcases.add(new ShowcasePosition());
+    	} 
+
+    	// Add the view to the showcase
+    	showcase = showcases.get( showcases.size() - 1 );
+        
         SpannableString ssbTitle = new SpannableString(titleText);
         ssbTitle.setSpan(mTitleSpan, 0, ssbTitle.length(), 0);
-        mTitleText = ssbTitle;
+        showcase.mTitleText = ssbTitle;
+        
         SpannableString ssbDetail = new SpannableString(subText);
         ssbDetail.setSpan(mDetailSpan, 0, ssbDetail.length(), 0);
-        mSubText = ssbDetail;
-        mAlteredText = true;
+        showcase.mSubText = ssbDetail;
+        
+        showcase.mAlteredText = true;
         invalidate();
     }
 
@@ -1031,6 +1089,34 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public static ShowcaseView insertShowcaseView(float x, float y, Activity activity) {
         return insertShowcaseView(x, y, activity, null, null, null);
     }
+    
+    /**
+     * Adds a new ShowcasePosition to this ShowcaseView.
+     * <ul>
+     *   <li>If you are putting multiple show cases on the same screen (the same ShowcaseView) you need to run this between each ItemViewProperties object.</li> 
+     *   <li>Or you can put them all in an ArrayList and run ShowcaseViews.addView on that.</li>
+     * </ul>
+     * <p>All setting operations will now apply to this new ShowcasePosition.</p>
+     */
+    public void addShowcase() {
+    	showcases.add(new ShowcasePosition());
+    }
+    
+    /**
+     * Remove the last showcase added to this ShowcaseView object.
+     * @return ShowcasePosition the last object to be added is popped off the stack. <br/>Returns null if the Showcase list is empty.
+     */
+    public ShowcasePosition removeShowcase() {
+    	if (showcases.size() <= 0) {
+    		return null;
+    	}
+    	
+    	// Pop the last showcase off the end of the list
+		ShowcasePosition thisShowcase = showcases.get( showcases.size() - 1 );
+		showcases.remove( thisShowcase );
+		
+		return thisShowcase;
+    }
 
     public static class ConfigOptions {
         public boolean block = true, noButton = false;
@@ -1095,8 +1181,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         Rect voidedOverlayArea;
         /**
          * Polar coordinate of direction arrow should point.
+         * (e.g. 0 = right, 90 = up, 180 = left, 270 = down)
          */
         private int overlayArrowRotation = 0;
+        private CharSequence mTitleText, mSubText;
+        private boolean mAlteredText = false;
         
         public ShowcasePosition() {
         	voidedOverlayArea = new Rect();
