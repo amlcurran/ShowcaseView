@@ -726,12 +726,47 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     	case OVERLAY_TYPE_ARROW:
             dw = overlay.getIntrinsicWidth();
             dh = overlay.getIntrinsicHeight();
-            voidedArea = new Rect( cx - dw / 2, cy - dh / 2, //TODO Offset arrow is pointing at center of showcase 
-                                   cx + dw / 2, cy + dh / 2 );
+            
+            int halfRadius = (int)(showcase.showcaseRadius / 2);
+
+        	if (showcase.overlayArrowRotation < 45 || showcase.overlayArrowRotation > 315) {
+        		//right
+        		//   ___________
+        		//  |           |
+        		//  |          _|_
+        		//  |_________/_| \       
+        		//           |     |
+        		//            \___/
+        		voidedArea = new Rect( 	cx - dw - halfRadius, cy - dh - halfRadius, 
+                        				cx - halfRadius,      cy - halfRadius       );
+        	} else if (showcase.overlayArrowRotation >= 45 && showcase.overlayArrowRotation <= 135) {
+        		//up
+        		voidedArea = new Rect( 	cx - dw / 2, cy - dh / 2, 
+                        				cx + dw / 2, cy + dh / 2 );
+        	} else if (showcase.overlayArrowRotation >= 225 && showcase.overlayArrowRotation <= 315) {
+        		//down
+        		voidedArea = new Rect( cx - dw / 2, cy - dh / 2, 
+                        cx + dw / 2, cy + dh / 2 );
+        	} else {
+        		//left
+        		//     ___________
+        		//    |           |
+        		//   _|_          |
+        		//  / |_\_________|      
+        		// |     |
+        		//  \___/
+        		voidedArea = new Rect( 	cx + halfRadius,      cy - dh - halfRadius, 
+        								cx + dw + halfRadius, cy - halfRadius       );
+        	}
+
     		break;
     		
     	case OVERLAY_TYPE_HAND:
     		//TODO this
+            dw = overlay.getIntrinsicWidth();
+            dh = overlay.getIntrinsicHeight();
+            voidedArea = new Rect( cx - dw / 2, cy - dh / 2, 
+                                   cx + dw / 2, cy + dh / 2 );
     		break;
     		
     	default:
