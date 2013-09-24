@@ -215,6 +215,10 @@ public class ShowcaseViews {
 			this(id, titleResId, messageResId, itemType, DEFAULT_SCALE, NO_X_OFFSET, NO_Y_OFFSET, INNER_CIRCLE_RADIUS);
 		}
 
+		public ItemViewProperties(int id, int titleResId, int messageResId, float highlightRadius, int itemType) {
+			this(id, titleResId, messageResId, itemType, DEFAULT_SCALE, NO_X_OFFSET, NO_Y_OFFSET, highlightRadius);
+		}
+
 		public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale) {
 			this(id, titleResId, messageResId, itemType, scale, NO_X_OFFSET, NO_Y_OFFSET, INNER_CIRCLE_RADIUS);
 		}
