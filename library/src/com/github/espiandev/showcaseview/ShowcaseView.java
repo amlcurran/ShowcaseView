@@ -5,13 +5,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.RadialGradient;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -80,10 +81,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private boolean hasCustomClickListener = false;
     private ConfigOptions mOptions;
 
-    private Paint  mEraser;
     private TextPaint mPaintDetail, mPaintTitle;
     private View mHandy;
-    private View mArrowy;
     private final Button mEndButton;
     private OnShowcaseEventListener mEventListener;
     private DynamicLayout mDynamicTitleLayout;
@@ -99,13 +98,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     private OnSetVisibilityListener mOnSetVisibilityListener;
     
-    private View currentView;
-    
     public interface OnSetVisibilityListener {
         public void onSetVisibility();
       }
 
-    private Bitmap mBleachedCling;
     private int mShowcaseColor;
 
     
@@ -192,14 +188,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         	mPaintDetail.setTypeface(detailTypeface);
         } 
 
-        // Create eraser
-        PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
-        mEraser = new Paint();
-        mEraser.setColor(0xFFFFFF);
-        mEraser.setAlpha(0);
-        mEraser.setXfermode(mBlender);
-        mEraser.setAntiAlias(true);
-        
         
         // Draw OK button
         if (!mOptions.noButton && mEndButton.getParent() == null) {
@@ -246,7 +234,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             return;
         }
         isRedundant = false;
-        currentView = view;
 
     	// Multiple showcase support
     	ShowcasePosition showcase;
@@ -597,9 +584,21 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	        mm.postScale(scaleMultiplier, scaleMultiplier, showcase.showcaseX, showcase.showcaseY);
 	        canvas.setMatrix(mm);
 	
-	        // Erase the area for the ring
-	        canvas.drawCircle(showcase.showcaseX, showcase.showcaseY, showcase.showcaseRadius, mEraser);
+      
+	        // Create glowy-maker (radial gradient)
+	        RadialGradient gradient = new android.graphics.RadialGradient(
+	                showcase.showcaseX, showcase.showcaseY,
+	                showcase.showcaseRadius, new int[]{0xFF888888, 0xFF888888, 0xFF888888, 0xFF000000, 0x00000000}, null,
+	                android.graphics.Shader.TileMode.CLAMP);
 
+	        // Draw transparent circle into tempBitmap
+	        Paint mGlowyater = new Paint();
+	        mGlowyater.setShader(gradient);
+	        mGlowyater.setColor(0xFF888888);
+	        mGlowyater.setXfermode(new PorterDuffXfermode(Mode.DST_OUT));
+	        canvas.drawCircle(showcase.showcaseX, showcase.showcaseY, showcase.showcaseRadius, mGlowyater);
+
+	        
 	        // Draw overlay
 	        switch (mOptions.overlayType) {
 	        case OVERLAY_TYPE_ARROW:
@@ -694,8 +693,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         //if the width isn't much bigger than the voided area, just consider top & bottom
         float spaceTop = showcase.voidedOverlayArea.top;
         float spaceBottom = canvasH - showcase.voidedOverlayArea.bottom - 64 * metricScale; //64dip considers the OK button
-        //float spaceLeft = voidedArea.left;
-        //float spaceRight = canvasW - voidedArea.right;
 
         return new Object[]{Float.valueOf(mOptions.titleTextSize * metricScale), 
         					Float.valueOf(spaceTop > spaceBottom ? 128 * metricScale : mOptions.titleTextSize * metricScale + showcase.voidedOverlayArea.bottom), 
@@ -811,14 +808,28 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     		break;
     		
     	case OVERLAY_TYPE_HAND:
-    		//TODO this
+    		//    ___  
+    		//   /___\       
+    		//  |     |
+    		//  |\___/|
+    		//  |     |
+    		//  |     |
+    		//  |     |
+    		//  |     |
+    		//  |_____|
             dw = showcase.overlay.getIntrinsicWidth();
             dh = showcase.overlay.getIntrinsicHeight();
-            voidedArea = new Rect( cx - dw / 2, cy - dh / 2, 
-                                   cx + dw / 2, cy + dh / 2 );
+            voidedArea = new Rect( cx - (dw / 2), cy, 
+                                   cx + (dw / 2), cy + dh );
     		break;
     		
     	default:
+    		//   _________
+    		//  |   ___   |
+    		//  |  /   \  |      
+    		//  | |     | |
+    		//  |  \___/  |
+    		//  |_________|
             dw = showcase.overlay.getIntrinsicWidth();
             dh = showcase.overlay.getIntrinsicHeight();
             voidedArea = new Rect( cx - dw / 2, cy - dh / 2, 
