@@ -81,6 +81,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private boolean hasCustomClickListener = false;
     private ConfigOptions mOptions;
 
+    private Paint mEraser;
     private TextPaint mPaintDetail, mPaintTitle;
     private View mHandy;
     private final Button mEndButton;
@@ -572,19 +573,33 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	        canvas.setMatrix(mm);
 	
       
-	        // Create glowy-maker (radial gradient)
-	        RadialGradient gradient = new android.graphics.RadialGradient(
-	                showcase.showcaseX, showcase.showcaseY,
-	                showcase.getShowcaseRadius(), new int[]{0xFF888888, 0xFF888888, 0xFF888888, 0xFF000000, 0x00000000}, null,
-	                android.graphics.Shader.TileMode.CLAMP);
+	       
+	        if (mOptions.showcaseHighlightHasHardEdge) {
+	        	// Create eraser
+	        	PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
+	        	mEraser = new Paint();
+	        	mEraser.setColor(0xFFFFFF);
+	        	mEraser.setAlpha(0);
+	        	mEraser.setXfermode(mBlender);
+	        	mEraser.setAntiAlias(true);
+	        	
+	        	canvas.drawCircle(showcase.showcaseX, showcase.showcaseY, showcase.getShowcaseRadius(), mEraser);
 
-	        // Draw transparent circle into tempBitmap
-	        Paint mGlowyater = new Paint();
-	        mGlowyater.setShader(gradient);
-	        mGlowyater.setColor(0xFF888888);
-	        mGlowyater.setXfermode(new PorterDuffXfermode(Mode.DST_OUT));
-	        canvas.drawCircle(showcase.showcaseX, showcase.showcaseY, showcase.getShowcaseRadius(), mGlowyater);
+	        } else {
+	        	 // Create glowy-maker (radial gradient)
+		        RadialGradient gradient = new android.graphics.RadialGradient(
+		                showcase.showcaseX, showcase.showcaseY,
+		                showcase.getShowcaseRadius(), new int[]{0xFF888888, 0xFF888888, 0xFF888888, 0xFF000000, 0x00000000}, null,
+		                android.graphics.Shader.TileMode.CLAMP);
 
+		        // Draw transparent circle into tempBitmap
+		        Paint mGlowyater = new Paint();
+		        mGlowyater.setShader(gradient);
+		        mGlowyater.setColor(0xFF888888);
+		        mGlowyater.setXfermode(new PorterDuffXfermode(Mode.DST_OUT));
+
+	        	canvas.drawCircle(showcase.showcaseX, showcase.showcaseY, showcase.getShowcaseRadius(), mGlowyater);
+	        }
 	        
 	        // Draw overlay
 	        switch (mOptions.overlayType) {
@@ -1337,6 +1352,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
          * e.g. TEXT_POSITION_HORZ, TEXT_POSITION_DEFAULT
          */
         public int textPositioning = TEXT_POSITION_DEFAULT;
+        public boolean showcaseHighlightHasHardEdge = true;
     }
     
     /**
