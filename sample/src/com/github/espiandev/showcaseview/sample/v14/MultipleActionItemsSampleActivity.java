@@ -48,8 +48,11 @@ public class MultipleActionItemsSampleActivity extends Activity implements Actio
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
