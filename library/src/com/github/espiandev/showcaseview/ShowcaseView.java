@@ -1374,7 +1374,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
          * Polar coordinate of direction arrow should point.
          * (e.g. 0 = right, 90 = up, 180 = left, 270 = down)
          */
-        private float showcaseRadius = 2f;//INNER_CIRCLE_RADIUS;
+        private float showcaseRadius = INNER_CIRCLE_RADIUS;
         private int overlayArrowRotation = 0;
         private CharSequence mTitleText, mSubText;
         private boolean mAlteredText = false;
