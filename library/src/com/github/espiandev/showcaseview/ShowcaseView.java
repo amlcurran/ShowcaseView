@@ -437,7 +437,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                             ((Number) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
                             1.2f, 1.0f, true);
                 }
-                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] + 12 * metricScale);
+                canvas.translate(mBestTextPosition[0] , mBestTextPosition[1] + 12 * metricScale + (mDynamicTitleLayout.getLineBottom(mDynamicTitleLayout.getLineCount()-1)-mDynamicTitleLayout.getLineBottom(0)));
                 mDynamicDetailLayout.draw(canvas);
                 canvas.restore();
 
