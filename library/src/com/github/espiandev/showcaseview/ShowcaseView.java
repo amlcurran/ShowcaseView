@@ -1,21 +1,25 @@
 package com.github.espiandev.showcaseview;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.RadialGradient;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.DynamicLayout;
 import android.text.Layout;
+import android.text.Layout.Alignment;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -33,6 +37,7 @@ import android.widget.RelativeLayout;
 import com.github.espiandev.showcaseview.anim.AnimationUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import static com.github.espiandev.showcaseview.anim.AnimationUtils.AnimationEndListener;
 import static com.github.espiandev.showcaseview.anim.AnimationUtils.AnimationStartListener;
@@ -42,6 +47,8 @@ import static com.github.espiandev.showcaseview.anim.AnimationUtils.AnimationSta
  */
 public class ShowcaseView extends RelativeLayout implements View.OnClickListener, View.OnTouchListener {
 
+	public static final String TAG = "ShowcaseView";
+	
     public static final int TYPE_NO_LIMIT = 0;
     public static final int TYPE_ONE_SHOT = 1;
 
@@ -53,51 +60,67 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public static final int ITEM_SPINNER = 2;
     public static final int ITEM_ACTION_ITEM = 3;
     public static final int ITEM_ACTION_OVERFLOW = 6;
-
-    private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
+    
+    private static final int OVERLAY_TYPE_DEFAULT = -1;
+    public static final int OVERLAY_TYPE_NONE = 0;
+    public static final int OVERLAY_TYPE_HAND = 1;
+    public static final int OVERLAY_TYPE_ARROW = 2;
+    public static final int OVERLAY_TYPE_SHOWCASE = 3;
+    public static final int TEXT_POSITION_DEFAULT = 0;
+    public static final int TEXT_POSITION_HORZ = 1;
+    public static final int TEXT_POSITION_VERT = 2;
+    
     public static final int INNER_CIRCLE_RADIUS = 94;
-
-    private float showcaseX = -1;
-    private float showcaseY = -1;
-    private float showcaseRadius = -1;
-    private float metricScale = 1.0f;
-    private float legacyShowcaseX = -1;
-    private float legacyShowcaseY = -1;
+    private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
+    private static final String DEFAULT_SHOWCASE_COLOR = "#33B5E5";
+    private static final int OK_BUTTON_HEIGHT = 12;
+    
+    private ArrayList<ShowcasePosition> showcases = new ArrayList<ShowcasePosition>();
+    private static float metricScale = 1.0f;
     private boolean isRedundant = false;
     private boolean hasCustomClickListener = false;
     private ConfigOptions mOptions;
-    private Paint  mEraser;
+
+    private Paint mEraser;
     private TextPaint mPaintDetail, mPaintTitle;
-    private int backColor;
-    private Drawable showcase;
     private View mHandy;
     private final Button mEndButton;
     private OnShowcaseEventListener mEventListener;
-    private Rect voidedArea;
-    private CharSequence mTitleText, mSubText;
     private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
-    private float[] mBestTextPosition;
-    private boolean mAlteredText = false;
+    private Object[] mBestTextPosition;
     private TextAppearanceSpan mDetailSpan, mTitleSpan;
+
+    private Typeface titleTypeface;
+    private Typeface detailTypeface;
 
     private final String buttonText;
     private float scaleMultiplier = 1f;
-    private Bitmap mBleachedCling;
+
+    private OnSetVisibilityListener mOnSetVisibilityListener;
+    
+    public interface OnSetVisibilityListener {
+        public void onSetVisibility();
+      }
+
     private int mShowcaseColor;
 
+    
     protected ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
     }
 
-    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
+    public ShowcaseView(Context context, AttributeSet attrs) {
+        this(context, attrs, R.styleable.CustomTheme_showcaseViewStyle);
+    }
+
+    public ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle, R.style.ShowcaseView);
-        backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
-        mShowcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor("#33B5E5"));
-
+        mShowcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor(DEFAULT_SHOWCASE_COLOR));
+        
         int titleTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance, R.style.TextAppearance_ShowcaseView_Title);
         int detailTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance, R.style.TextAppearance_ShowcaseView_Detail);
         mTitleSpan = new TextAppearanceSpan(context, titleTextAppearance);
@@ -114,47 +137,60 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         setConfigOptions(options);
     }
 
-    private void init() {
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void init() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             setLayerType(LAYER_TYPE_SOFTWARE, null);
         } else {
             setDrawingCacheEnabled(true);
         }
 
+        
+        // See if this showcase is eligible for display
         boolean hasShot = getContext().getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
                 .getBoolean("hasShot" + getConfigOptions().showcaseId, false);
         if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
             // The showcase has already been shot once, so we don't need to do anything
-            setVisibility(View.GONE);
+    		setVisibility(View.GONE);
             isRedundant = true;
             return;
         }
-        showcase = getContext().getResources().getDrawable(R.drawable.cling_bleached);
-        showcase.setColorFilter(mShowcaseColor, PorterDuff.Mode.MULTIPLY);
+        
+        // Load the custom title font
+        try { titleTypeface = Typeface.createFromAsset(getContext().getAssets(), mOptions.titleFontAssetName); } 
+        catch (Exception e) { Log.d(TAG, "TITLE FONT: default font"); }
+        
+        // Load the custom detail font
+        try { detailTypeface = Typeface.createFromAsset(getContext().getAssets(), mOptions.detailFontAssetName); } 
+        catch (Exception e) { Log.d(TAG, "DETAIL FONT: default font"); }
+        
 
-        showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
-        PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
+        // Set a listener
         setOnTouchListener(this);
 
+        // Create title painter
         mPaintTitle = new TextPaint();
         mPaintTitle.setAntiAlias(true);
-
+        if (null != titleTypeface) {
+        	mPaintTitle.setTypeface(titleTypeface);
+        } 
+        
+        // Create detail painter
         mPaintDetail = new TextPaint();
         mPaintDetail.setAntiAlias(true);
+        if (null != detailTypeface) {
+        	mPaintDetail.setTypeface(detailTypeface);
+        } 
 
-        mEraser = new Paint();
-        mEraser.setColor(0xFFFFFF);
-        mEraser.setAlpha(0);
-        mEraser.setXfermode(mBlender);
-        mEraser.setAntiAlias(true);
-
+        
+        // Draw OK button
         if (!mOptions.noButton && mEndButton.getParent() == null) {
             RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
             if (lps == null) {
                 lps = (LayoutParams) generateDefaultLayoutParams();
                 lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                int margin = ((Number) (metricScale * 12)).intValue();
+                int margin = ((Number) (metricScale * OK_BUTTON_HEIGHT)).intValue();
                 lps.setMargins(margin, margin, margin, margin);
             }
             mEndButton.setLayoutParams(lps);
@@ -164,9 +200,21 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         }
 
     }
-
+    
+    public void setVisibilityListener(OnSetVisibilityListener onSetvisibilityListener) {
+    	mOnSetVisibilityListener = onSetvisibilityListener;
+    }
+    
     public void setShowcaseNoView() {
         setShowcasePosition(1000000, 1000000);
+    }
+    
+    public void setVisibility (int visibility) {
+    	if (View.GONE != this.getVisibility()) {
+	    	super.setVisibility(visibility);
+	    	if (mOnSetVisibilityListener != null && View.GONE == this.getVisibility())
+	    		mOnSetVisibilityListener.onSetVisibility();
+    	}
     }
 
     /**
@@ -181,26 +229,76 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         }
         isRedundant = false;
 
+    	// Multiple showcase support
+    	ShowcasePosition showcase;
+    	if (null == showcases) {
+    		// Sanity checking
+    		showcases = new ArrayList<ShowcasePosition>();
+    		
+    	} else if (showcases.size() <= 0) {
+        	// Add a new showcase if there aren't any
+    		showcases.add(new ShowcasePosition());
+    	} 
+
+    	// Add the view to the showcase
+    	showcase = showcases.get( showcases.size() - 1 );
+        showcase.view = view;
+        
+        
         view.post(new Runnable() {
             @Override
             public void run() {
                 init();
-                if (mOptions.insert == INSERT_TO_VIEW) {
-                    showcaseX = (float) (view.getLeft() + view.getWidth() / 2);
-                    showcaseY = (float) (view.getTop() + view.getHeight() / 2);
-                } else {
-                    int[] coordinates = new int[2];
-                    view.getLocationInWindow(coordinates);
-                    showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
-                    showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
+                
+                // Compute showcase positions for each showcase
+                for (int ii = 0; ii < showcases.size(); ++ii) {
+                	ShowcasePosition thisShowcase = showcases.get(ii);
+	                if (mOptions.insert == INSERT_TO_VIEW) {
+	                    thisShowcase.showcaseX = (float) (view.getLeft() + view.getWidth() / 2);
+	                    thisShowcase.showcaseY = (float) (view.getTop() + view.getHeight() / 2);
+	                } else {
+	                    int[] coordinates = new int[2];
+	                    if (null != thisShowcase.view) {
+	                    	thisShowcase.view.getLocationInWindow(coordinates);
+		                    thisShowcase.showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
+		                    thisShowcase.showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
+	                    } 
+	                }
+	                thisShowcase.showcaseX += thisShowcase.showcaseXOffset;
+	                thisShowcase.showcaseY += thisShowcase.showcaseYOffset;
                 }
+                
                 invalidate();
             }
         });
     }
 
     /**
-     * Set a specific position to showcase
+     * Set a specific position to showcase  
+     *
+     * @param x X co-ordinate
+     * @param y Y co-ordinate
+     */
+    public void addShowcasePosition(float x, float y) {
+        // Check for redundant coordinates
+    	for (ShowcasePosition showcase : showcases) {
+        	if (showcase.showcaseX == x && showcase.showcaseY == y) {
+                return;
+            }
+        }
+    	
+    	ShowcasePosition thisPosition = new ShowcasePosition();
+    	thisPosition.showcaseX = x;
+    	thisPosition.showcaseY = y;
+    	showcases.add(thisPosition);
+    	
+        init();
+        invalidate();
+    }
+    
+
+    /**
+     * Set a specific position to showcase. Clears out all other showcases for this view
      *
      * @param x X co-ordinate
      * @param y Y co-ordinate
@@ -209,10 +307,58 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         if (isRedundant) {
             return;
         }
-        showcaseX = x;
-        showcaseY = y;
+
+    	// Multiple showcase support
+    	ShowcasePosition showcase;
+    	if (null == showcases) {
+    		// Sanity checking
+    		showcases = new ArrayList<ShowcasePosition>();
+    		
+    	} else if (showcases.size() <= 0) {
+        	// Add a new showcase if there aren't any
+    		showcases.add(new ShowcasePosition());
+    	} 
+
+    	// Get the last showcase in the list
+    	showcase = showcases.get( showcases.size() - 1 );
+        
+        // Set the position
+    	showcase.showcaseX = x;
+    	showcase.showcaseY = y;
+        
         init();
         invalidate();
+    }
+    
+    /**
+     * Set the showcase position offset
+     *
+     * @param x X co-ordinate
+     * @param y Y co-ordinate
+     */
+    public void setShowcaseOffset(float x, float y) {
+    	if (isRedundant) {
+    		return;
+    	}
+
+    	// Multiple showcase support
+    	ShowcasePosition showcase;
+    	if (null == showcases) {
+    		// Sanity checking
+    		showcases = new ArrayList<ShowcasePosition>();
+    		
+    	} else if (showcases.size() <= 0) {
+        	// Add a new showcase if there aren't any
+    		showcases.add(new ShowcasePosition());
+    	} 
+
+    	// Get the last showcase in the list
+    	showcase = showcases.get( showcases.size() - 1 );
+    	showcase.showcaseXOffset = x;
+    	showcase.showcaseYOffset = y;
+    	
+    	init();
+    	invalidate();
     }
 
     public void setShowcaseItem(final int itemType, final int actionItemId, final Activity activity) {
@@ -389,61 +535,150 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        if (showcaseX < 0 || showcaseY < 0 || isRedundant) {
-            super.dispatchDraw(canvas);
-            return;
-        }
 
-        //Draw the semi-transparent background
-        canvas.drawColor(backColor);
+    	for (ShowcasePosition showcase : showcases) {
+	    	if (showcase.showcaseX < 0 || showcase.showcaseY < 0 || isRedundant) {
+	            super.dispatchDraw(canvas);
+	            return;
+	        }
+    	}
+        
+        // Draw the semi-transparent background
+        int[] attrs = {R.attr.sv_overlayBackgroundColor};
+        TypedArray styled = getContext().obtainStyledAttributes(R.style.ShowcaseView, attrs);
+        int overlayColor = styled.getColor(0, Color.BLACK);
+        canvas.drawColor(overlayColor);
+        styled.recycle();
+        
+    	// Cycle through all the showcases on this screen
+    	for (ShowcasePosition showcase : showcases) {
+	        if (mOptions.insert == INSERT_TO_VIEW) {
+	        	showcase.showcaseX = (float) (showcase.view.getLeft() + showcase.view.getWidth() / 2);
+	            showcase.showcaseY = (float) (showcase.view.getTop() + showcase.view.getHeight() / 2);
+	        } else {
+	            int[] coordinates = new int[2];
+	            if (null != showcase.view) {
+		            showcase.view.getLocationInWindow(coordinates);
+		            showcase.showcaseX = (float) (coordinates[0] + showcase.view.getWidth() / 2);
+		            showcase.showcaseY = (float) (coordinates[1] + showcase.view.getHeight() / 2);
+	            }
+	        }
+	        showcase.showcaseX += showcase.showcaseXOffset;
+	        showcase.showcaseY += showcase.showcaseYOffset;
+	        invalidate();
+        
+	        // Draw to the scale specified
+	        Matrix mm = new Matrix();
+	        mm.postScale(scaleMultiplier, scaleMultiplier, showcase.showcaseX, showcase.showcaseY);
+	        canvas.setMatrix(mm);
+	
+      
+	       
+	        if (mOptions.showcaseHighlightHasHardEdge) {
+	        	// Create eraser
+	        	PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
+	        	mEraser = new Paint();
+	        	mEraser.setColor(0xFFFFFF);
+	        	mEraser.setAlpha(0);
+	        	mEraser.setXfermode(mBlender);
+	        	mEraser.setAntiAlias(true);
+	        	
+	        	canvas.drawCircle(showcase.showcaseX, showcase.showcaseY, showcase.getShowcaseRadius(), mEraser);
 
-        //Draw to the scale specified
-        Matrix mm = new Matrix();
-        mm.postScale(scaleMultiplier, scaleMultiplier, showcaseX, showcaseY);
-        canvas.setMatrix(mm);
+	        } else {
+	        	 // Create glowy-maker (radial gradient)
+		        RadialGradient gradient = new android.graphics.RadialGradient(
+		                showcase.showcaseX, showcase.showcaseY,
+		                showcase.getShowcaseRadius(), new int[]{0xFF888888, 0xFF888888, 0xFF888888, 0xFF000000, 0x00000000}, null,
+		                android.graphics.Shader.TileMode.CLAMP);
 
-        //Erase the area for the ring
-        canvas.drawCircle(showcaseX, showcaseY, showcaseRadius, mEraser);
+		        // Draw transparent circle into tempBitmap
+		        Paint mGlowyater = new Paint();
+		        mGlowyater.setShader(gradient);
+		        mGlowyater.setColor(0xFF888888);
+		        mGlowyater.setXfermode(new PorterDuffXfermode(Mode.DST_OUT));
 
-        boolean recalculateText = makeVoidedRect() || mAlteredText;
-        mAlteredText = false;
+	        	canvas.drawCircle(showcase.showcaseX, showcase.showcaseY, showcase.getShowcaseRadius(), mGlowyater);
+	        }
+	        
+	        // Draw overlay
+	        switch (mOptions.overlayType) {
+	        case OVERLAY_TYPE_ARROW:
+	        	showcase.overlayArrowRotation = determineArrowOrientation(showcase, canvas.getWidth(), canvas.getHeight());
+	        	showcase.overlay = getArrow(showcase.overlayArrowRotation);
+	        	break;
+	        
+	        case OVERLAY_TYPE_HAND:
+	        	showcase.overlay = getHandDrawable();
+	        	break;
+	        	
+	        case OVERLAY_TYPE_DEFAULT:
+	        case OVERLAY_TYPE_SHOWCASE:
+	        	default:
+		            showcase.overlay = getContext().getResources().getDrawable(R.drawable.cling_bleached);
+		            showcase.overlay.setColorFilter(mShowcaseColor, PorterDuff.Mode.MULTIPLY);
+		            break;
+		            
+	        }
 
-        showcase.setBounds(voidedArea);
-        showcase.draw(canvas);
+    		showcase.voidedOverlayArea = makeVoidedRect(showcase);
+    		showcase.overlay.setBounds(showcase.voidedOverlayArea);
+	        showcase.overlay.draw(canvas);
+	        
+	        canvas.setMatrix(new Matrix());
+  
 
-        canvas.setMatrix(new Matrix());
+	        if (!TextUtils.isEmpty(showcase.mTitleText) || !TextUtils.isEmpty(showcase.mSubText)) {
+	        	
+	            if (showcase.mAlteredText) {
+	            	if (TEXT_POSITION_HORZ == mOptions.textPositioning) {
+		                mBestTextPosition = getBestTextPositionHorz(showcase, canvas.getWidth(), canvas.getHeight());
+	            	} else {
+		                mBestTextPosition = getBestTextPosition(showcase, canvas.getWidth(), canvas.getHeight());
+	            	}
+	            }
+	            
+	            
+	            if (!TextUtils.isEmpty(showcase.mTitleText)) {
+	                canvas.save();
+	                if (showcase.mAlteredText) {
+	                mDynamicTitleLayout = new DynamicLayout(showcase.mTitleText, mPaintTitle,
+	                        ((Float) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
+	                        1.0f, 1.0f, true);
+	                }
+	            }
 
-
-        if (!TextUtils.isEmpty(mTitleText) || !TextUtils.isEmpty(mSubText)) {
-            if (recalculateText)
-                mBestTextPosition = getBestTextPosition(canvas.getWidth(), canvas.getHeight());
-
-            if (!TextUtils.isEmpty(mTitleText)) {
-                canvas.save();
-                if (recalculateText) {
-                mDynamicTitleLayout = new DynamicLayout(mTitleText, mPaintTitle,
-                        (int) mBestTextPosition[2], Layout.Alignment.ALIGN_NORMAL,
-                        1.0f, 1.0f, true);
+	            if (!TextUtils.isEmpty(showcase.mSubText)) {
+	                canvas.save();
+	                if (showcase.mAlteredText) {
+	                    mDynamicDetailLayout = new DynamicLayout(showcase.mSubText, mPaintDetail,
+	                            ((Float) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
+	                            1.2f, 1.0f, true);
+	                }
+	            }
+	            
+	            
+                // Zip up above OK button
+                int vertOffset = 0;
+                if (((Float)mBestTextPosition[1]).intValue() + OK_BUTTON_HEIGHT >= mEndButton.getTop() - OK_BUTTON_HEIGHT) {
+                	vertOffset = mEndButton.getHeight();
                 }
-                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] - 24 * metricScale);
-                mDynamicTitleLayout.draw(canvas);
-                canvas.restore();
-            }
 
-            if (!TextUtils.isEmpty(mSubText)) {
-                canvas.save();
-                if (recalculateText) {
-                    mDynamicDetailLayout = new DynamicLayout(mSubText, mPaintDetail,
-                            ((Number) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
-                            1.2f, 1.0f, true);
-                }
-                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] + 12 * metricScale);
-                mDynamicDetailLayout.draw(canvas);
-                canvas.restore();
-
-            }
-        }
-
+                
+                if (!TextUtils.isEmpty(showcase.mTitleText)) {
+	                canvas.translate((Float)mBestTextPosition[0], (Float)mBestTextPosition[1] - vertOffset - OK_BUTTON_HEIGHT * metricScale);
+	                mDynamicTitleLayout.draw(canvas);
+	                canvas.restore();
+	            }
+	            
+	            if (!TextUtils.isEmpty(showcase.mSubText)) {
+	                canvas.translate((Float)mBestTextPosition[0], (Float)mBestTextPosition[1] - vertOffset + OK_BUTTON_HEIGHT * metricScale);
+	                mDynamicDetailLayout.draw(canvas);
+	                canvas.restore();
+	            }
+	        }
+    	}
+    	
         super.dispatchDraw(canvas);
 
     }
@@ -455,51 +690,166 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
      * @param canvasH height of the screen
      * @return
      */
-    private float[] getBestTextPosition(int canvasW, int canvasH) {
+    private Object[] getBestTextPosition(ShowcasePosition showcase, int canvasW, int canvasH) {
 
         //if the width isn't much bigger than the voided area, just consider top & bottom
-        float spaceTop = voidedArea.top;
-        float spaceBottom = canvasH - voidedArea.bottom - 64 * metricScale; //64dip considers the OK button
-        //float spaceLeft = voidedArea.left;
-        //float spaceRight = canvasW - voidedArea.right;
+        float spaceTop = showcase.voidedOverlayArea.top;
+        float spaceBottom = canvasH - showcase.voidedOverlayArea.bottom - 64 * metricScale; //64dip considers the OK button
 
-        //TODO: currently only considers above or below showcase, deal with left or right
-        return new float[]{24 * metricScale, spaceTop > spaceBottom ? 128 * metricScale : 24 * metricScale + voidedArea.bottom, canvasW - 48 * metricScale};
+        return new Object[]{Float.valueOf(mOptions.titleTextSize * metricScale), 
+        					Float.valueOf(spaceTop > spaceBottom ? 128 * metricScale : mOptions.titleTextSize * metricScale + showcase.voidedOverlayArea.bottom), 
+        					Float.valueOf(canvasW - 48 * metricScale)};
 
+    }
+
+    /**
+     * Calculates where to position text horizontally
+     *
+     * @param canvasW width of the screen
+     * @param canvasH height of the screen
+     * @return
+     */
+    private Object[] getBestTextPositionHorz(ShowcasePosition showcase, int canvasW, int canvasH) {
+
+        //if the width isn't much bigger than the voided area, just consider top & bottom
+    	Rect voidedOverlay = showcase.voidedOverlayArea;
+        
+    	// init
+        Float textX = (float) voidedOverlay.left; 
+        Float textY = (float) voidedOverlay.top;
+        Float textWidth = (canvasW - 48) * metricScale;
+        Alignment textAlignment = Layout.Alignment.ALIGN_NORMAL;
+        
+        if ((voidedOverlay.right + voidedOverlay.left)/2 <= canvasW/2) {
+        	// Left
+        	textX = (float) showcase.voidedOverlayArea.right;
+        	textY = (float) ((voidedOverlay.bottom + voidedOverlay.top) /2);
+        	textWidth = canvasW - textX;
+        	
+        } else {
+        	// Right
+        	textX = mOptions.titleTextSize * metricScale;
+        	textY = (float) ((voidedOverlay.bottom + voidedOverlay.top) /2);
+        	textWidth = (float) (voidedOverlay.left);
+        	textAlignment = Layout.Alignment.ALIGN_OPPOSITE;
+        }
+
+        
+        return new Object[]{ textX, textY, textWidth, textAlignment };
     }
 
     /**
      * Creates a {@link Rect} which represents the area the showcase covers. Used to calculate
      * where best to place the text
      *
-     * @return true if voidedArea has changed, false otherwise.
+     * @return Rect of "voided" area of the overlay
      */
-    private boolean makeVoidedRect() {
+    private Rect makeVoidedRect(ShowcasePosition showcase) {
 
-        // This if statement saves resources by not recalculating voidedArea
-        // if the X & Y coordinates haven't changed
-        if (voidedArea == null || (showcaseX != legacyShowcaseX || showcaseY != legacyShowcaseY)) {
+        int cx = (int) showcase.showcaseX; 
+        int cy = (int) showcase.showcaseY;
+    	int dw, dh;
+        
+        Rect voidedArea = null;
+    	
+    	switch (mOptions.overlayType) {
+    	case OVERLAY_TYPE_ARROW:
+            dw = showcase.overlay.getIntrinsicWidth();
+            dh = showcase.overlay.getIntrinsicHeight();
+            
+            int halfRadius = (int)(showcase.getShowcaseRadius() / 2);
 
-            int cx = (int) showcaseX, cy = (int) showcaseY;
-            int dw = showcase.getIntrinsicWidth();
-            int dh = showcase.getIntrinsicHeight();
+        	if (showcase.overlayArrowRotation < 45 || showcase.overlayArrowRotation > 315) {
+        		//right
+        		//   ___________
+        		//  |           |
+        		//  |          _|_
+        		//  |_________/_| \       
+        		//           |     |
+        		//            \___/
+        		voidedArea = new Rect(  cx - dw - halfRadius, cy - dh - halfRadius, 
+                                        cx - halfRadius,      cy - halfRadius       );
+        		
+        	} else if (showcase.overlayArrowRotation >= 45 && showcase.overlayArrowRotation <= 135) {
+        		//up
+        		//             ___
+        		//   _________/_  \       
+        		//  |        |  |  |
+        		//  |         \_|_/
+        		//  |           |
+        		//  |___________|
+        		voidedArea = new Rect(  cx - dw - halfRadius,   cy + halfRadius, 
+                                        cx - halfRadius,        cy + dh + halfRadius );
+        		
+        	} else if (showcase.overlayArrowRotation >= 225 && showcase.overlayArrowRotation <= 315) {
+        		//down
+        		//   _____
+        		//  |     |
+        		//  |     |
+        		//  |     |
+        		//  |     |
+        		//  | ___ |
+        		//  |/___\|      
+        		//  |     |
+        		//   \___/
+        		voidedArea = new Rect( 	cx - (dw / 2), cy - dh - halfRadius, 
+                                        cx + (dw / 2), cy - halfRadius       );
+        		
+        	} else {
+        		//left
+        		//     ___________
+        		//    |           |
+        		//   _|_          |
+        		//  / |_\_________|      
+        		// |     |
+        		//  \___/
+        		voidedArea = new Rect( 	cx + halfRadius,      cy - dh - halfRadius, 
+                                        cx + dw + halfRadius, cy - halfRadius       );
+        	}
 
-            voidedArea = new Rect(cx - dw / 2, cy - dh / 2, cx + dw / 2, cy + dh / 2);
+    		break;
+    		
+    	case OVERLAY_TYPE_HAND:
+    		//    ___  
+    		//   /___\       
+    		//  |     |
+    		//  |\___/|
+    		//  |     |
+    		//  |     |
+    		//  |     |
+    		//  |     |
+    		//  |_____|
+            dw = showcase.overlay.getIntrinsicWidth();
+            dh = showcase.overlay.getIntrinsicHeight();
+            voidedArea = new Rect( cx - (dw / 2), cy, 
+                                   cx + (dw / 2), cy + dh );
+    		break;
+    		
+    	default:
+    		//   _________
+    		//  |   ___   |
+    		//  |  /   \  |      
+    		//  | |     | |
+    		//  |  \___/  |
+    		//  |_________|
+            dw = showcase.overlay.getIntrinsicWidth();
+            dh = showcase.overlay.getIntrinsicHeight();
+            voidedArea = new Rect( cx - dw / 2, cy - dh / 2, 
+                                   cx + dw / 2, cy + dh / 2 );
+    		break;
+    	}
 
-            legacyShowcaseX = showcaseX;
-            legacyShowcaseY = showcaseY;
-
-            return true;
-
-        }
-        return false;
+    	
+    	
+        // Draw a box around the showcase overlay
+        return voidedArea;
 
     }
 
     public void animateGesture(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) {
         mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
         addView(mHandy);
-        moveHand(offsetStartX, offsetStartY, offsetEndX, offsetEndY, new AnimationEndListener() {
+        moveHand(showcases.get(0), offsetStartX, offsetStartY, offsetEndX, offsetEndY, new AnimationEndListener() {
             @Override
             public void onAnimationEnd() {
                 removeView(mHandy);
@@ -507,14 +857,15 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         });
     }
 
-    private void moveHand(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY, AnimationEndListener listener) {
-        AnimationUtils.createMovementAnimation(mHandy, showcaseX, showcaseY,
+    private void moveHand(ShowcasePosition showcase, float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY, AnimationEndListener listener) {
+        AnimationUtils.createMovementAnimation(mHandy, showcase.showcaseX, showcase.showcaseY,
                 offsetStartX, offsetStartY,
                 offsetEndX, offsetEndY,
                 listener).start();
     }
 
-    @Override
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
+	@Override
     public void onClick(View view) {
         // If the type is set to one-shot, store that it has shot
         if (mOptions.shotType == TYPE_ONE_SHOT) {
@@ -572,16 +923,24 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
-        float xDelta = Math.abs(motionEvent.getRawX() - showcaseX);
-        float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
-        double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
+    	double distanceFromFocus;
+    	
+    	for (ShowcasePosition showcase : showcases) {
+            float xDelta = Math.abs(motionEvent.getRawX() - showcase.showcaseX);
+            float yDelta = Math.abs(motionEvent.getRawY() - showcase.showcaseY);
+            distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
 
-        if (mOptions.hideOnClickOutside && distanceFromFocus > showcaseRadius) {
-            this.hide();
-            return true;
-        }
+            if (mOptions.hideOnClickOutside && distanceFromFocus > showcase.getShowcaseRadius()) {
+                this.hide();
+                return true;
+            }
+            
+            if (mOptions.block && distanceFromFocus > showcase.getShowcaseRadius()) {
+            	return true;
+            }
+    	}
 
-        return mOptions.block && distanceFromFocus > showcaseRadius;
+        return false;
     }
 
     public void setShowcaseIndicatorScale(float scaleMultiplier) {
@@ -603,13 +962,29 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     public void setText(String titleText, String subText) {
+    	// Multiple showcase support
+    	ShowcasePosition showcase;
+    	if (null == showcases) {
+    		// Sanity checking
+    		showcases = new ArrayList<ShowcasePosition>();
+    		
+    	} else if (showcases.size() <= 0) {
+        	// Add a new showcase if there aren't any
+    		showcases.add(new ShowcasePosition());
+    	} 
+
+    	// Add the view to the showcase
+    	showcase = showcases.get( showcases.size() - 1 );
+        
         SpannableString ssbTitle = new SpannableString(titleText);
         ssbTitle.setSpan(mTitleSpan, 0, ssbTitle.length(), 0);
-        mTitleText = ssbTitle;
+        showcase.mTitleText = ssbTitle;
+        
         SpannableString ssbDetail = new SpannableString(subText);
         ssbDetail.setSpan(mDetailSpan, 0, ssbDetail.length(), 0);
-        mSubText = ssbDetail;
-        mAlteredText = true;
+        showcase.mSubText = ssbDetail;
+        
+        showcase.mAlteredText = true;
         invalidate();
     }
 
@@ -624,6 +999,68 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         AnimationUtils.hide(mHandy);
 
         return mHandy;
+    }
+    
+    public Drawable getHandDrawable() {
+        return getContext().getResources().getDrawable( R.layout.handy );
+    }
+
+    /**
+     * Get the cartoony arrow for custom gestures
+     * @param directionPolarCoordinate direction the arrow should point (e.g. 0 = right, 90 = up, 180 = left, 270 = down)
+     * @return
+     */
+    public Drawable getArrow(int directionPolarCoordinate) {
+    	// round and round and round
+    	directionPolarCoordinate %= 360;
+
+    	// Orient the arrow
+    	int arrowGlyph = R.drawable.arrow_left;
+    	if (directionPolarCoordinate < 45 || directionPolarCoordinate > 315) {
+    		arrowGlyph = R.drawable.arrow_right;
+    	} else if (directionPolarCoordinate >= 45 && directionPolarCoordinate <= 135) {
+    		arrowGlyph = R.drawable.arrow_right_up;
+    	} else if (directionPolarCoordinate >= 225 && directionPolarCoordinate <= 315) {
+    		arrowGlyph = R.drawable.arrow_down;
+    	} 
+    	
+        return getContext().getResources().getDrawable( arrowGlyph );
+    }
+    
+    /**
+     * Pass in a showcase using an arrow, and this method will determine how the arrow should be oriented.
+     * @param showcase
+     * @return int polar coordinate
+     */
+    private int determineArrowOrientation(ShowcasePosition showcase, int canvasX, int canvasY) {
+    	int oriented = 0;
+    	
+    	if (TEXT_POSITION_HORZ == mOptions.textPositioning) {
+    		// horz
+    		oriented = (showcase.showcaseX > (canvasX / 2)) ? 0 : 180;
+
+    	} else if (TEXT_POSITION_VERT == mOptions.textPositioning) {
+    		// vert
+    		oriented = (showcase.showcaseY > (canvasY / 2)) ? 270 : 90;
+    	
+    	} else {
+    		// TEXT_POSITION_DEFAULT
+    		// any direction
+    		// http://www.engineeringtoolbox.com/converting-cartesian-polar-coordinates-d_1347.html
+    		float originAdjustmentX = canvasX / 2; // center of screen
+    		float originAdjustmentY = canvasY / 2; // center of screen
+    		
+    		// Adjust Android coordinates to Cartesian coordinates
+    		double x = showcase.showcaseX - originAdjustmentX;
+    		double y = showcase.showcaseY - originAdjustmentY;
+    		
+    		// Convert Cartesian coordinates to polar coordinate (angle in degrees)
+    		double theta = Math.atan(y / x);
+    		
+    		oriented = (int)theta;
+    	} 
+    	
+    	return oriented;
     }
 
     /**
@@ -647,8 +1084,31 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 		final View mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
         AnimationUtils.createMovementAnimation(mHandy, x, y).start();
     }
+    
+    /**
+     * Set the showcase's radius. Default: ShowcaseView.INNER_CIRCLE_RADIUS
+     * @param r
+     */
+    public void setRadius(float r) {
+    	// Multiple showcase support
+    	ShowcasePosition showcase;
+    	if (null == showcases) {
+    		// Sanity checking
+    		showcases = new ArrayList<ShowcasePosition>();
+    		
+    	} 
+    	
+    	if (showcases.size() <= 0) {
+        	// Add a new showcase if there aren't any
+    		showcases.add(new ShowcasePosition());
+    	} 
 
-    private void setConfigOptions(ConfigOptions options) {
+    	// Set the showcase radius
+    	showcase = showcases.get( showcases.size() - 1 );
+    	showcase.setShowcaseRadius(r);
+    }
+
+    public void setConfigOptions(ConfigOptions options) {
         mOptions = options;
     }
 
@@ -813,12 +1273,37 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public static ShowcaseView insertShowcaseView(float x, float y, Activity activity) {
         return insertShowcaseView(x, y, activity, null, null, null);
     }
+    
+    /**
+     * Adds a new ShowcasePosition to this ShowcaseView.
+     * <ul>
+     *   <li>If you are putting multiple show cases on the same screen (the same ShowcaseView) you need to run this between each ItemViewProperties object.</li> 
+     *   <li>Or you can put them all in an ArrayList and run ShowcaseViews.addView on that.</li>
+     * </ul>
+     * <p>All setting operations will now apply to this new ShowcasePosition.</p>
+     */
+    public void addShowcase() {
+    	showcases.add(new ShowcasePosition());
+    }
+    
+    /**
+     * Remove the last showcase added to this ShowcaseView object.
+     * @return ShowcasePosition the last object to be added is popped off the stack. <br/>Returns null if the Showcase list is empty.
+     */
+    public ShowcasePosition removeShowcase() {
+    	if (showcases.size() <= 0) {
+    		return null;
+    	}
+    	
+    	// Pop the last showcase off the end of the list
+		ShowcasePosition thisShowcase = showcases.get( showcases.size() - 1 );
+		showcases.remove( thisShowcase );
+		
+		return thisShowcase;
+    }
 
     public static class ConfigOptions {
         public boolean block = true, noButton = false;
-        public int insert = INSERT_TO_DECOR;
-        public boolean hideOnClickOutside = false;
-
         /**
          * If you want to use more than one Showcase with the {@link ConfigOptions#shotType} {@link ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique value for every different Showcase you want to use.
          */
@@ -828,7 +1313,21 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
          * If you want to use more than one Showcase with {@link ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique {@link ConfigOptions#showcaseId} value for every different Showcase you want to use.
          */
         public int shotType = TYPE_NO_LIMIT;
-        
+        public int insert = INSERT_TO_DECOR;
+        public boolean hideOnClickOutside = false;
+        /**
+         * This is the path/name of the TTF font asset you want to use with the Title text.
+         * The asset must be in the main project in /git/projectname/assets/...
+         * The path root is the assets directory.
+         */
+        public String titleFontAssetName = null;
+        /**
+         * This is the path/name of the TTF font asset you want to use with the Detail text.
+         * The asset must be in the main project in /git/projectname/assets/...
+         * The path root is the assets directory.
+         */
+        public String detailFontAssetName = null;
+
         /**
          * Default duration for fade in animation. Set to 0 to disable.
          */
@@ -841,6 +1340,56 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         /** Allow custom positioning of the button within the showcase view.
          */
         public LayoutParams buttonLayoutParams = null;
+        public int titleTextSize = 24;
+        public int detailTextSize = 16;
+        /**
+         * Type of graphic overlay to display. 
+         * e.g. OVERLAY_TYPE_NONE, OVERLAY_TYPE_HAND, OVERLAY_TYPE_ARROW, OVERLAY_TYPE_SHOWCASE
+         */
+        public int overlayType = OVERLAY_TYPE_DEFAULT;
+        /**
+         * Type of text positioning to use in relation to showcases
+         * e.g. TEXT_POSITION_HORZ, TEXT_POSITION_DEFAULT
+         */
+        public int textPositioning = TEXT_POSITION_DEFAULT;
+        public boolean showcaseHighlightHasHardEdge = true;
     }
-
+    
+    /**
+     *  Specifies position of a showcase.
+     */
+    public static class ShowcasePosition {
+    	View view = null;
+    	public float showcaseX = -1;
+        public float showcaseY = -1;
+        public float showcaseXOffset = 0;
+        public float showcaseYOffset = 0;
+        public float legacyShowcaseX = -1;
+        public float legacyShowcaseY = -1;
+        public int innerCircleRadius = -1;
+        Drawable overlay = null;
+        Rect voidedOverlayArea;
+        
+        /**
+         * Polar coordinate of direction arrow should point.
+         * (e.g. 0 = right, 90 = up, 180 = left, 270 = down)
+         */
+        private float showcaseRadius = 2f;//INNER_CIRCLE_RADIUS;
+        private int overlayArrowRotation = 0;
+        private CharSequence mTitleText, mSubText;
+        private boolean mAlteredText = false;
+        
+        public ShowcasePosition() {
+        	voidedOverlayArea = new Rect();
+        }
+        
+        public void setShowcaseRadius (float r) {
+        	this.showcaseRadius = r;
+        }
+        
+        public float getShowcaseRadius() {
+        	return this.showcaseRadius * ShowcaseView.metricScale;
+        }
+    }
 }
+
