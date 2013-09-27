@@ -46,6 +46,7 @@ public class ShowcaseViews {
 		.setText(properties.titleResId, properties.messageResId)
 		.setShowcaseIndicatorScale(properties.scale)
 		.setShowcaseOffset(properties.xOffset, properties.yOffset)
+		.setRadius(properties.highlightRadius)
 		.setShowcaseConfigOptions(configOptions);
 
 		if(showcaseActionBar(properties)) {

@@ -76,7 +76,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private static final int OK_BUTTON_HEIGHT = 12;
     
     private ArrayList<ShowcasePosition> showcases = new ArrayList<ShowcasePosition>();
-    private float metricScale = 1.0f;
+    private static float metricScale = 1.0f;
     private boolean isRedundant = false;
     private boolean hasCustomClickListener = false;
     private ConfigOptions mOptions;
@@ -164,13 +164,6 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         catch (Exception e) { Log.d(TAG, "DETAIL FONT: default font"); }
         
 
-        // Compute each showcase radius
-        for (ShowcasePosition showcase : showcases) {
-	        if (-1 == showcase.showcaseRadius) {
-	        	showcase.showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
-	        }
-        }
-        
         // Set a listener
         setOnTouchListener(this);
 
@@ -265,13 +258,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	                } else {
 	                    int[] coordinates = new int[2];
 	                    if (null != thisShowcase.view) {
-	                    	Log.d(TAG, "KABOOM! 5");
 	                    	thisShowcase.view.getLocationInWindow(coordinates);
 		                    thisShowcase.showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
 		                    thisShowcase.showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
-	                    } else {
-	                    	Log.d(TAG, "NON-KABOOM! 2");
-	                    }
+	                    } 
 	                }
 	                thisShowcase.showcaseX += thisShowcase.showcaseXOffset;
 	                thisShowcase.showcaseY += thisShowcase.showcaseYOffset;
@@ -567,12 +557,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	        } else {
 	            int[] coordinates = new int[2];
 	            if (null != showcase.view) {
-	            	Log.d(TAG, "KABOOM! 6");
 		            showcase.view.getLocationInWindow(coordinates);
 		            showcase.showcaseX = (float) (coordinates[0] + showcase.view.getWidth() / 2);
 		            showcase.showcaseY = (float) (coordinates[1] + showcase.view.getHeight() / 2);
-	            } else {
-	            	Log.d(TAG, "NON-KABOOM! 1");
 	            }
 	        }
 	        showcase.showcaseX += showcase.showcaseXOffset;
@@ -588,7 +575,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	        // Create glowy-maker (radial gradient)
 	        RadialGradient gradient = new android.graphics.RadialGradient(
 	                showcase.showcaseX, showcase.showcaseY,
-	                showcase.showcaseRadius, new int[]{0xFF888888, 0xFF888888, 0xFF888888, 0xFF000000, 0x00000000}, null,
+	                showcase.getShowcaseRadius(), new int[]{0xFF888888, 0xFF888888, 0xFF888888, 0xFF000000, 0x00000000}, null,
 	                android.graphics.Shader.TileMode.CLAMP);
 
 	        // Draw transparent circle into tempBitmap
@@ -596,7 +583,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	        mGlowyater.setShader(gradient);
 	        mGlowyater.setColor(0xFF888888);
 	        mGlowyater.setXfermode(new PorterDuffXfermode(Mode.DST_OUT));
-	        canvas.drawCircle(showcase.showcaseX, showcase.showcaseY, showcase.showcaseRadius, mGlowyater);
+	        canvas.drawCircle(showcase.showcaseX, showcase.showcaseY, showcase.getShowcaseRadius(), mGlowyater);
 
 	        
 	        // Draw overlay
@@ -713,8 +700,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     	Rect voidedOverlay = showcase.voidedOverlayArea;
         
     	// init
-        Float textX = (float) showcase.voidedOverlayArea.left; 
-        Float textY = (float) showcase.voidedOverlayArea.top;
+        Float textX = (float) voidedOverlay.left; 
+        Float textY = (float) voidedOverlay.top;
         Float textWidth = (canvasW - 48) * metricScale;
         Alignment textAlignment = Layout.Alignment.ALIGN_NORMAL;
         
@@ -728,7 +715,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         	// Right
         	textX = mOptions.titleTextSize * metricScale;
         	textY = (float) ((voidedOverlay.bottom + voidedOverlay.top) /2);
-        	textWidth = (float) (showcase.voidedOverlayArea.left);
+        	textWidth = (float) (voidedOverlay.left);
         	textAlignment = Layout.Alignment.ALIGN_OPPOSITE;
         }
 
@@ -755,7 +742,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             dw = showcase.overlay.getIntrinsicWidth();
             dh = showcase.overlay.getIntrinsicHeight();
             
-            int halfRadius = (int)(showcase.showcaseRadius / 2);
+            int halfRadius = (int)(showcase.getShowcaseRadius() / 2);
 
         	if (showcase.overlayArrowRotation < 45 || showcase.overlayArrowRotation > 315) {
         		//right
@@ -928,12 +915,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             float yDelta = Math.abs(motionEvent.getRawY() - showcase.showcaseY);
             distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
 
-            if (mOptions.hideOnClickOutside && distanceFromFocus > showcase.showcaseRadius) {
+            if (mOptions.hideOnClickOutside && distanceFromFocus > showcase.getShowcaseRadius()) {
                 this.hide();
                 return true;
             }
             
-            if (mOptions.block && distanceFromFocus > showcase.showcaseRadius) {
+            if (mOptions.block && distanceFromFocus > showcase.getShowcaseRadius()) {
             	return true;
             }
     	}
@@ -1103,7 +1090,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     	// Set the showcase radius
     	showcase = showcases.get( showcases.size() - 1 );
-    	showcase.showcaseRadius = r;
+    	showcase.setShowcaseRadius(r);
     }
 
     public void setConfigOptions(ConfigOptions options) {
@@ -1361,22 +1348,31 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         public float showcaseY = -1;
         public float showcaseXOffset = 0;
         public float showcaseYOffset = 0;
-        public float showcaseRadius = -1;
         public float legacyShowcaseX = -1;
         public float legacyShowcaseY = -1;
         public int innerCircleRadius = -1;
         Drawable overlay = null;
         Rect voidedOverlayArea;
+        
         /**
          * Polar coordinate of direction arrow should point.
          * (e.g. 0 = right, 90 = up, 180 = left, 270 = down)
          */
+        private float showcaseRadius = 2f;//INNER_CIRCLE_RADIUS;
         private int overlayArrowRotation = 0;
         private CharSequence mTitleText, mSubText;
         private boolean mAlteredText = false;
         
         public ShowcasePosition() {
         	voidedOverlayArea = new Rect();
+        }
+        
+        public void setShowcaseRadius (float r) {
+        	this.showcaseRadius = r;
+        }
+        
+        public float getShowcaseRadius() {
+        	return this.showcaseRadius * ShowcaseView.metricScale;
         }
     }
 }
