@@ -1016,11 +1016,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     	// Orient the arrow
     	int arrowGlyph = R.drawable.arrow_left;
-    	if (directionPolarCoordinate < 45 || directionPolarCoordinate > 315) {
+    	if (directionPolarCoordinate < 45 || directionPolarCoordinate > 337) {
     		arrowGlyph = R.drawable.arrow_right;
     	} else if (directionPolarCoordinate >= 45 && directionPolarCoordinate <= 135) {
     		arrowGlyph = R.drawable.arrow_right_up;
-    	} else if (directionPolarCoordinate >= 225 && directionPolarCoordinate <= 315) {
+    	} else if (directionPolarCoordinate >= 202 && directionPolarCoordinate <= 270) {
+    		arrowGlyph = R.drawable.arrow_down2;
+    	} else if (directionPolarCoordinate > 270 && directionPolarCoordinate <= 337) {
     		arrowGlyph = R.drawable.arrow_down;
     	} 
     	
