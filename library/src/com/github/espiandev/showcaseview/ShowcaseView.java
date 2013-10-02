@@ -182,8 +182,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         	mPaintDetail.setTypeface(detailTypeface);
         } 
 
-        
         // Draw OK button
+        Log.d(TAG, String.format("No Button?: %s", mOptions.noButton));
         if (!mOptions.noButton && mEndButton.getParent() == null) {
             RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
             if (lps == null) {
@@ -197,6 +197,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             mEndButton.setText(buttonText != null ? buttonText : getResources().getString(R.string.ok));
             if (!hasCustomClickListener) mEndButton.setOnClickListener(this);
             addView(mEndButton);
+        } else {
+        	removeView(mEndButton);
         }
 
     }
