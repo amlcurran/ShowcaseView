@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -74,6 +75,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     private static final String DEFAULT_SHOWCASE_COLOR = "#33B5E5";
     private static final int OK_BUTTON_HEIGHT = 12;
+    
+    private static final int DEVICE_DPI_WITH_TRANSPARENT_MENU = 320;
     
     private ArrayList<ShowcasePosition> showcases = new ArrayList<ShowcasePosition>();
     private static float metricScale = 1.0f;
@@ -182,8 +185,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         	mPaintDetail.setTypeface(detailTypeface);
         } 
 
-        // Draw OK button
-        Log.d(TAG, String.format("No Button?: %s", mOptions.noButton));
+        // Draw OK button 
         if (!mOptions.noButton && mEndButton.getParent() == null) {
             RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
             if (lps == null) {
@@ -191,14 +193,18 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 int margin = ((Number) (metricScale * OK_BUTTON_HEIGHT)).intValue();
+
+                // Fix for certain newer devices with transparent Android control buttons
+                if (isDeviceWithTransparentToolbar()) {
+                	margin += 40;
+                }
+                
                 lps.setMargins(margin, margin, margin, margin);
             }
             mEndButton.setLayoutParams(lps);
             mEndButton.setText(buttonText != null ? buttonText : getResources().getString(R.string.ok));
             if (!hasCustomClickListener) mEndButton.setOnClickListener(this);
             addView(mEndButton);
-        } else {
-        	removeView(mEndButton);
         }
 
     }
@@ -652,9 +658,18 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
 	            if (!TextUtils.isEmpty(showcase.mSubText)) {
 	                canvas.save();
+	                
+	                
+	                int detailWidth = ((Float) mBestTextPosition[2]).intValue();
+	                
+	                // Fix for certain newer devices with transparent Android control buttons
+	                if (isDeviceWithTransparentToolbar()) {
+	                	detailWidth -= 200;
+	                }
+	                
 	                if (showcase.mAlteredText) {
 	                    mDynamicDetailLayout = new DynamicLayout(showcase.mSubText, mPaintDetail,
-	                            ((Float) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
+	                    		detailWidth, Layout.Alignment.ALIGN_NORMAL,
 	                            1.2f, 1.0f, true);
 	                }
 	            }
@@ -685,6 +700,30 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     }
 
+    /**
+     * Indicates that this device is one of the newer devices with transparent Android control buttons.
+     * They throw off screen dimensions for some reason, and overlay on top of the OK button and description text.
+     * @return 
+     */
+    private boolean isDeviceWithTransparentToolbar() {
+        int screenSize = getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+        int screenOrient = getResources().getConfiguration().orientation;
+        
+        int screenDensity = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        	screenDensity = getResources().getConfiguration().densityDpi;
+        }
+        
+        
+        if (screenSize == Configuration.SCREENLAYOUT_SIZE_NORMAL 
+        		&& screenDensity == DEVICE_DPI_WITH_TRANSPARENT_MENU
+        		&& screenOrient == Configuration.ORIENTATION_LANDSCAPE) {
+        	return true;
+        }
+
+        return false;
+    }
+    
     /**
      * Calculates the best place to position text
      *
