@@ -195,7 +195,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 int margin = ((Number) (metricScale * OK_BUTTON_HEIGHT)).intValue();
 
                 // Fix for certain newer devices with transparent Android control buttons
-                if (isDeviceWithTransparentToolbar()) {
+                if (isDeviceWithTransparentToolbar(false)) {
                 	margin += 40;
                 }
                 
@@ -706,6 +706,15 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
      * @return 
      */
     private boolean isDeviceWithTransparentToolbar() {
+    	return isDeviceWithTransparentToolbar(true);
+    }
+
+    /**
+     * Indicates that this device is one of the newer devices with transparent Android control buttons.
+     * They throw off screen dimensions for some reason, and overlay on top of the OK button and description text.
+     * @return 
+     */
+    private boolean isDeviceWithTransparentToolbar(boolean considerScreenOrientation) {
         int screenSize = getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
         int screenOrient = getResources().getConfiguration().orientation;
         
@@ -717,13 +726,15 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         
         if (screenSize == Configuration.SCREENLAYOUT_SIZE_NORMAL 
         		&& screenDensity == DEVICE_DPI_WITH_TRANSPARENT_MENU
-        		&& screenOrient == Configuration.ORIENTATION_LANDSCAPE) {
+        		&& (!considerScreenOrientation || screenOrient == Configuration.ORIENTATION_LANDSCAPE)) {
         	return true;
         }
 
         return false;
+
     }
     
+
     /**
      * Calculates the best place to position text
      *
