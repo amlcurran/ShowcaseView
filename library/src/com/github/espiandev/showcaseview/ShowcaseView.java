@@ -560,16 +560,18 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         
     	// Cycle through all the showcases on this screen
     	for (ShowcasePosition showcase : showcases) {
-	        if (mOptions.insert == INSERT_TO_VIEW) {
-	        	showcase.showcaseX = (float) (showcase.view.getLeft() + showcase.view.getWidth() / 2);
-	            showcase.showcaseY = (float) (showcase.view.getTop() + showcase.view.getHeight() / 2);
-	        } else {
-	            int[] coordinates = new int[2];
-	            if (null != showcase.view) {
-		            showcase.view.getLocationInWindow(coordinates);
-		            showcase.showcaseX = (float) (coordinates[0] + showcase.view.getWidth() / 2);
-		            showcase.showcaseY = (float) (coordinates[1] + showcase.view.getHeight() / 2);
-	            }
+	        if (showcase.showcaseX == -1 || showcase.showcaseY == -1) {
+	    		if (mOptions.insert == INSERT_TO_VIEW) {
+		        	showcase.showcaseX = (float) (showcase.view.getLeft() + showcase.view.getWidth() / 2);
+		            showcase.showcaseY = (float) (showcase.view.getTop() + showcase.view.getHeight() / 2);
+		        } else {
+		            int[] coordinates = new int[2];
+		            if (null != showcase.view) {
+			            showcase.view.getLocationInWindow(coordinates);
+			            showcase.showcaseX = (float) (coordinates[0] + showcase.view.getWidth() / 2);
+			            showcase.showcaseY = (float) (coordinates[1] + showcase.view.getHeight() / 2);
+		            }
+		        }
 	        }
 	        showcase.showcaseX += showcase.showcaseXOffset;
 	        showcase.showcaseY += showcase.showcaseYOffset;
@@ -641,6 +643,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 	            if (showcase.mAlteredText) {
 	            	if (TEXT_POSITION_HORZ == mOptions.textPositioning) {
 		                mBestTextPosition = getBestTextPositionHorz(showcase, canvas.getWidth(), canvas.getHeight());
+	            	} else if (TEXT_POSITION_VERT == mOptions.textPositioning) {
+	            		mBestTextPosition = getBestTextPositionVert(showcase, canvas.getWidth(), canvas.getHeight());
 	            	} else {
 		                mBestTextPosition = getBestTextPosition(showcase, canvas.getWidth(), canvas.getHeight());
 	            	}
@@ -783,7 +787,42 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         	textX = mOptions.titleTextSize * metricScale;
         	textY = (float) ((voidedOverlay.bottom + voidedOverlay.top) /2);
         	textWidth = (float) (voidedOverlay.left);
-        	textAlignment = Layout.Alignment.ALIGN_OPPOSITE;
+        	textAlignment = Layout.Alignment.ALIGN_CENTER;
+        }
+
+        
+        return new Object[]{ textX, textY, textWidth, textAlignment };
+    }
+
+    /**
+     * Calculates where to position text vertically
+     *
+     * @param canvasW width of the screen
+     * @param canvasH height of the screen
+     * @return
+     */
+    private Object[] getBestTextPositionVert(ShowcasePosition showcase, int canvasW, int canvasH) {
+
+        //if the width isn't much bigger than the voided area, just consider top & bottom
+    	Rect voidedOverlay = showcase.voidedOverlayArea;
+        
+    	// init
+        Float textX = (float) voidedOverlay.left; 
+        Float textY = (float) voidedOverlay.top;
+        Float textWidth = (canvasW - 48) * metricScale;
+        Alignment textAlignment = Layout.Alignment.ALIGN_NORMAL;
+        
+        if ((voidedOverlay.top + voidedOverlay.bottom)/2 <= canvasH/2) {
+        	// Top
+        	textX = (float) voidedOverlay.right - voidedOverlay.left;
+        	textY = (float) voidedOverlay.bottom;
+        	textWidth -= textX;
+        	
+        } else {
+        	// Bottom
+        	textX = (float) voidedOverlay.right - voidedOverlay.left;
+        	textY = (float) (2 * voidedOverlay.top) - voidedOverlay.bottom;
+        	textWidth -= textX;
         }
 
         
