@@ -43,11 +43,11 @@ public class ShowcaseViews {
 
 	public void addView(ItemViewProperties properties, ConfigOptions configOptions) {
 		ShowcaseViewBuilder builder = new ShowcaseViewBuilder(activity, showcaseTemplateId)
+		.setShowcaseConfigOptions(configOptions)
 		.setText(properties.titleResId, properties.messageResId)
 		.setShowcaseIndicatorScale(properties.scale)
 		.setShowcaseOffset(properties.xOffset, properties.yOffset)
-		.setRadius(properties.highlightRadius)
-		.setShowcaseConfigOptions(configOptions);
+		.setRadius(properties.highlightRadius);
 
 		if(showcaseActionBar(properties)) {
 			builder.setShowcaseItem(properties.itemType, properties.id, activity);
@@ -83,10 +83,10 @@ public class ShowcaseViews {
 
 			if (0 == ii) {
 				builder.setText(thisView.titleResId, thisView.messageResId)
+				.setShowcaseConfigOptions(configOptions)
 				.setShowcaseIndicatorScale(thisView.scale)
 				.setShowcaseOffset(thisView.xOffset, thisView.yOffset)
-				.setRadius(thisView.highlightRadius)
-				.setShowcaseConfigOptions(configOptions);
+				.setRadius(thisView.highlightRadius);
 
 				if(showcaseActionBar(thisView)) {
 					builder.setShowcaseItem(thisView.itemType, thisView.id, activity);

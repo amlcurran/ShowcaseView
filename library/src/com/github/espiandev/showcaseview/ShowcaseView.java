@@ -214,7 +214,7 @@ public class ShowcaseView extends RelativeLayout implements
 
 				// Fix for certain newer devices with transparent Android
 				// control buttons
-				if (isDeviceWithTransparentToolbar(false)) {
+				if (isDeviceWithTransparentToolbar(false, 0)) {
 					margin += 40;
 				}
 
@@ -285,20 +285,31 @@ public class ShowcaseView extends RelativeLayout implements
 				for (int ii = 0; ii < showcases.size(); ++ii) {
 					ShowcasePosition thisShowcase = showcases.get(ii);
 					if (mOptions.insert == INSERT_TO_VIEW) {
-						thisShowcase.showcaseX = (float) (view.getLeft() + view
-								.getWidth() / 2);
-						thisShowcase.showcaseY = (float) (view.getTop() + view
-								.getHeight() / 2);
+						thisShowcase.legacyShowcaseX = thisShowcase.showcaseX;
+						thisShowcase.legacyShowcaseY = thisShowcase.showcaseY;
+						thisShowcase.showcaseX = (float) (view.getLeft() + view.getWidth() / 2);
+						thisShowcase.showcaseY = (float) (view.getTop() + view.getHeight() / 2);
 					} else {
 						int[] coordinates = new int[2];
 						if (null != thisShowcase.view) {
 							thisShowcase.view.getLocationInWindow(coordinates);
-							thisShowcase.showcaseX = (float) (coordinates[0] + view
-									.getWidth() / 2);
-							thisShowcase.showcaseY = (float) (coordinates[1] + view
-									.getHeight() / 2);
+							thisShowcase.legacyShowcaseX = thisShowcase.showcaseX;
+							thisShowcase.legacyShowcaseY = thisShowcase.showcaseY;
+							thisShowcase.showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
+							thisShowcase.showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
 						}
 					}
+					
+					// Fix for newer LG devices
+					if (isDeviceWithTransparentToolbar(true, Configuration.ORIENTATION_PORTRAIT) 
+							&& thisShowcase.legacyShowcaseY != -1 && thisShowcase.showcaseY < thisShowcase.legacyShowcaseY) {
+						thisShowcase.showcaseY = thisShowcase.legacyShowcaseY;
+					}
+					if (isDeviceWithTransparentToolbar(true, Configuration.ORIENTATION_LANDSCAPE) 
+							&& thisShowcase.legacyShowcaseX != -1 && thisShowcase.showcaseX < thisShowcase.legacyShowcaseX) {
+						thisShowcase.showcaseX = thisShowcase.legacyShowcaseX;
+					}
+
 					thisShowcase.showcaseX += thisShowcase.showcaseXOffset;
 					thisShowcase.showcaseY += thisShowcase.showcaseYOffset;
 				}
@@ -362,6 +373,8 @@ public class ShowcaseView extends RelativeLayout implements
 		showcase = showcases.get(showcases.size() - 1);
 
 		// Set the position
+		showcase.legacyShowcaseX = showcase.showcaseX;
+		showcase.legacyShowcaseY = showcase.showcaseY;
 		showcase.showcaseX = x;
 		showcase.showcaseY = y;
 
@@ -612,23 +625,35 @@ public class ShowcaseView extends RelativeLayout implements
 
 		// Cycle through all the showcases on this screen
 		for (ShowcasePosition showcase : showcases) {
-			if (showcase.showcaseX == -1 || showcase.showcaseY == -1) {
-				if (mOptions.insert == INSERT_TO_VIEW) {
-					showcase.showcaseX = (float) (showcase.view.getLeft() + showcase.view
+			if (mOptions.insert == INSERT_TO_VIEW) {
+				showcase.legacyShowcaseX = showcase.showcaseX;
+				showcase.legacyShowcaseY = showcase.showcaseY;
+				showcase.showcaseX = (float) (showcase.view.getLeft() + showcase.view.getWidth() / 2);
+				showcase.showcaseY = (float) (showcase.view.getTop() + showcase.view.getHeight() / 2);
+			} else {
+				int[] coordinates = new int[2];
+				if (null != showcase.view) {
+					showcase.view.getLocationInWindow(coordinates);
+					showcase.legacyShowcaseX = showcase.showcaseX;
+					showcase.legacyShowcaseY = showcase.showcaseY;
+					showcase.showcaseX = (float) (coordinates[0] + showcase.view
 							.getWidth() / 2);
-					showcase.showcaseY = (float) (showcase.view.getTop() + showcase.view
+					showcase.showcaseY = (float) (coordinates[1] + showcase.view
 							.getHeight() / 2);
-				} else {
-					int[] coordinates = new int[2];
-					if (null != showcase.view) {
-						showcase.view.getLocationInWindow(coordinates);
-						showcase.showcaseX = (float) (coordinates[0] + showcase.view
-								.getWidth() / 2);
-						showcase.showcaseY = (float) (coordinates[1] + showcase.view
-								.getHeight() / 2);
+					
+					
+					// Fix for newer LG devices
+					if (isDeviceWithTransparentToolbar(true, Configuration.ORIENTATION_PORTRAIT) 
+							&& showcase.legacyShowcaseY != -1 && showcase.showcaseY < showcase.legacyShowcaseY) {
+						showcase.showcaseY = showcase.legacyShowcaseY;
+					}
+					if (isDeviceWithTransparentToolbar(true, Configuration.ORIENTATION_LANDSCAPE) 
+							&& showcase.legacyShowcaseX != -1 && showcase.showcaseX < showcase.legacyShowcaseX) {
+						showcase.showcaseX = showcase.legacyShowcaseX;
 					}
 				}
 			}
+		
 			showcase.showcaseX += showcase.showcaseXOffset;
 			showcase.showcaseY += showcase.showcaseYOffset;
 			invalidate();
@@ -782,7 +807,7 @@ public class ShowcaseView extends RelativeLayout implements
 	 * @return
 	 */
 	private boolean isDeviceWithTransparentToolbar() {
-		return isDeviceWithTransparentToolbar(true);
+		return isDeviceWithTransparentToolbar(true, Configuration.ORIENTATION_LANDSCAPE);
 	}
 
 	/**
@@ -790,10 +815,11 @@ public class ShowcaseView extends RelativeLayout implements
 	 * Android control buttons. They throw off screen dimensions for some
 	 * reason, and overlay on top of the OK button and description text.
 	 * 
+	 * @param considerScreenOrientation Consider the orientation of the device when making this true?
+	 * @param orientation Configuration.ORIENTATION_LANDSCAPE or ORIENTATION_PORTRAIT
 	 * @return
 	 */
-	private boolean isDeviceWithTransparentToolbar(
-			boolean considerScreenOrientation) {
+	private boolean isDeviceWithTransparentToolbar(boolean considerScreenOrientation, int orientation) {
 		int screenSize = getResources().getConfiguration().screenLayout
 				& Configuration.SCREENLAYOUT_SIZE_MASK;
 		int screenOrient = getResources().getConfiguration().orientation;
@@ -805,7 +831,7 @@ public class ShowcaseView extends RelativeLayout implements
 
 		if (screenSize == Configuration.SCREENLAYOUT_SIZE_NORMAL
 				&& screenDensity == DEVICE_DPI_WITH_TRANSPARENT_MENU
-				&& (!considerScreenOrientation || screenOrient == Configuration.ORIENTATION_LANDSCAPE)) {
+				&& (!considerScreenOrientation || screenOrient == orientation)) {
 			return true;
 		}
 
@@ -905,13 +931,13 @@ public class ShowcaseView extends RelativeLayout implements
 			// Top
 			textX = (float) voidedOverlay.right - voidedOverlay.left;
 			textY = (float) voidedOverlay.bottom;
-			textWidth -= textX;
+			textWidth -= textX * metricScale;
 
 		} else {
 			// Bottom
 			textX = (float) voidedOverlay.right - voidedOverlay.left;
 			textY = (float) (2 * voidedOverlay.top) - voidedOverlay.bottom;
-			textWidth -= textX;
+			textWidth -= (textX * metricScale) * 2;
 		}
 
 		return new Object[] { textX, textY, textWidth, textAlignment };
