@@ -14,15 +14,21 @@
     <script src="javascripts/jquery.min.js"></script>
     <script type="text/javascript">
         $('document').ready(function() {
+            updateClingPosition();
+            $('window').resize(function() {
+               updateClingPosition(); 
+            });
+        });
+        function updateClingPosition() {
             var left = $('#viewTarget').offset().left - 300 + $('#viewTarget').width() / 2;
             var top = $('#viewTarget').offset().top - 300 + $('#viewTarget').height() / 2;
             $('#showcaseview').offset({top: top, left: left});
-        });
+        }
     </script>
 </head>
 <body>
 <div class="wrapper">
-    <img src="stylesheets/cling.png" id="showcaseview" style="position: absolute; z-index: -1">
+    <img src="stylesheets/cling.png" id="showcaseview" style="position: fixed; z-index: -1">
     <header id="viewTarget">
         <h1 style="text-align: center" >Showcaseview</h1>
 
