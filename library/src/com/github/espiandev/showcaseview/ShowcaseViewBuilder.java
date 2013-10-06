@@ -5,6 +5,9 @@ import android.view.View;
 
 public class ShowcaseViewBuilder {
 
+    //TODO: Some options of ShowcaseView.ConfigOptions don't work yet.
+    //TODO: What's about showcaseId Field?
+
     private final ShowcaseView showcaseView;
 
     public ShowcaseViewBuilder(Activity activity) {
@@ -76,6 +79,11 @@ public class ShowcaseViewBuilder {
 
     public ShowcaseViewBuilder pointTo(float x, float y) {
         showcaseView.pointTo(x, y);
+        return this;
+    }
+
+    public ShowcaseViewBuilder setConfigOptions(ShowcaseView.ConfigOptions configOptions) {
+        showcaseView.setConfigOptions(configOptions);
         return this;
     }
 

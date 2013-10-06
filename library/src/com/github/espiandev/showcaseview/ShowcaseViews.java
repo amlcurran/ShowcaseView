@@ -36,7 +36,8 @@ public class ShowcaseViews {
     public void addView(ItemViewProperties properties) {
         ShowcaseViewBuilder builder = new ShowcaseViewBuilder(activity)
                 .setText(properties.titleResId, properties.messageResId)
-                .setShowcaseIndicatorScale(properties.scale);
+                .setShowcaseIndicatorScale(properties.scale)
+                .setConfigOptions(properties.configOptions);
 
         if(showcaseActionBar(properties)) {
             builder.setShowcaseItem(properties.itemType, properties.id, activity);
@@ -96,29 +97,51 @@ public class ShowcaseViews {
         protected final int id;
         protected final int itemType;
         protected final float scale;
+        protected final ShowcaseView.ConfigOptions configOptions;
 
         public ItemViewProperties(int titleResId, int messageResId) {
-            this(ID_NO_SHOWCASE, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE);
+            this(ID_NO_SHOWCASE, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE, null);
         }
 
         public ItemViewProperties(int id, int titleResId, int messageResId) {
-            this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE);
+            this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE, null);
         }
 
         public ItemViewProperties(int id, int titleResId, int messageResId, float scale) {
-            this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, scale);
+            this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, scale, null);
         }
 
         public ItemViewProperties(int id, int titleResId, int messageResId, int itemType) {
-            this(id, titleResId, messageResId, itemType, DEFAULT_SCALE);
+            this(id, titleResId, messageResId, itemType, DEFAULT_SCALE, null);
         }
 
         public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale) {
+            this(id, titleResId, messageResId, itemType, scale, null);
+        }
+
+        public ItemViewProperties(int titleResId, int messageResId, ShowcaseView.ConfigOptions configOptions) {
+            this(ID_NO_SHOWCASE, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE, configOptions);
+        }
+
+        public ItemViewProperties(int id, int titleResId, int messageResId, ShowcaseView.ConfigOptions configOptions) {
+            this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, DEFAULT_SCALE, configOptions);
+        }
+
+        public ItemViewProperties(int id, int titleResId, int messageResId, float scale, ShowcaseView.ConfigOptions configOptions) {
+            this(id, titleResId, messageResId, ID_NOT_IN_ACTIONBAR, scale, configOptions);
+        }
+
+        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, ShowcaseView.ConfigOptions configOptions) {
+            this(id, titleResId, messageResId, itemType, DEFAULT_SCALE, configOptions);
+        }
+
+        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale, ShowcaseView.ConfigOptions configOptions) {
             this.id = id;
             this.titleResId = titleResId;
             this.messageResId = messageResId;
             this.itemType = itemType;
             this.scale = scale;
+            this.configOptions = configOptions;
         }
     }
 }

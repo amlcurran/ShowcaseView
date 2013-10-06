@@ -648,7 +648,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         AnimationUtils.createMovementAnimation(mHandy, x, y).start();
     }
 
-    private void setConfigOptions(ConfigOptions options) {
+    protected void setConfigOptions(ConfigOptions options) {
         mOptions = options;
     }
 
@@ -816,8 +816,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     public static class ConfigOptions {
         public boolean block = true, noButton = false;
-        public int insert = INSERT_TO_DECOR;
         public boolean hideOnClickOutside = false;
+
+        /**
+         * Does not work with the {@link ShowcaseViews} class as it does not make sense (only with {@link ShowcaseView}).
+         */
+        public int insert = INSERT_TO_DECOR;
 
         /**
          * If you want to use more than one Showcase with the {@link ConfigOptions#shotType} {@link ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique value for every different Showcase you want to use.
