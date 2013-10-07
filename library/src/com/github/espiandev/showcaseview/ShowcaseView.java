@@ -931,13 +931,13 @@ public class ShowcaseView extends RelativeLayout implements
 			// Top
 			textX = (float) voidedOverlay.right - voidedOverlay.left;
 			textY = (float) voidedOverlay.bottom;
-			textWidth -= textX * metricScale;
+			textWidth = canvasW - textX;
 
 		} else {
 			// Bottom
 			textX = (float) voidedOverlay.right - voidedOverlay.left;
 			textY = (float) (2 * voidedOverlay.top) - voidedOverlay.bottom;
-			textWidth -= (textX * metricScale) * 2;
+			textWidth = canvasW - textX;
 		}
 
 		return new Object[] { textX, textY, textWidth, textAlignment };
