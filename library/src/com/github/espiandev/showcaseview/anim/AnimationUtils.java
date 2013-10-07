@@ -44,7 +44,7 @@ public class AnimationUtils {
     }
 
     public static ObjectAnimator createFadeInAnimation(Object target, int duration, final AnimationStartListener listener) {
-        ObjectAnimator oa = ObjectAnimator.ofFloat(target, ALPHA, VISIBLE);
+        ObjectAnimator oa = ObjectAnimator.ofFloat(target, ALPHA, INVISIBLE, VISIBLE);
         oa.setDuration(duration).addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {
