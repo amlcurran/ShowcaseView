@@ -310,8 +310,6 @@ public class ShowcaseView extends RelativeLayout implements
 						thisShowcase.showcaseX = thisShowcase.legacyShowcaseX;
 					}
 
-					thisShowcase.showcaseX += thisShowcase.showcaseXOffset;
-					thisShowcase.showcaseY += thisShowcase.showcaseYOffset;
 				}
 
 				invalidate();
@@ -609,7 +607,7 @@ public class ShowcaseView extends RelativeLayout implements
 	protected void dispatchDraw(Canvas canvas) {
 
 		for (ShowcasePosition showcase : showcases) {
-			if (showcase.showcaseX < 0 || showcase.showcaseY < 0 || isRedundant) {
+			if (showcase.getShowcaseX() < 0 || showcase.getShowcaseY() < 0 || isRedundant) {
 				super.dispatchDraw(canvas);
 				return;
 			}
@@ -654,14 +652,11 @@ public class ShowcaseView extends RelativeLayout implements
 				}
 			}
 		
-			showcase.showcaseX += showcase.showcaseXOffset;
-			showcase.showcaseY += showcase.showcaseYOffset;
 			invalidate();
 
 			// Draw to the scale specified
 			Matrix mm = new Matrix();
-			mm.postScale(scaleMultiplier, scaleMultiplier, showcase.showcaseX,
-					showcase.showcaseY);
+			mm.postScale(scaleMultiplier, scaleMultiplier, showcase.getShowcaseX(), showcase.getShowcaseY());
 			canvas.setMatrix(mm);
 
 			if (mOptions.showcaseHighlightHasHardEdge) {
@@ -674,13 +669,13 @@ public class ShowcaseView extends RelativeLayout implements
 				mEraser.setXfermode(mBlender);
 				mEraser.setAntiAlias(true);
 
-				canvas.drawCircle(showcase.showcaseX, showcase.showcaseY,
+				canvas.drawCircle(showcase.getShowcaseX(), showcase.getShowcaseY(),
 						showcase.getShowcaseRadius(), mEraser);
 
 			} else {
 				// Create glowy-maker (radial gradient)
 				RadialGradient gradient = new android.graphics.RadialGradient(
-						showcase.showcaseX, showcase.showcaseY,
+						showcase.getShowcaseX(), showcase.getShowcaseY(),
 						showcase.getShowcaseRadius(),
 						new int[] { 0xFF888888, 0xFF888888, 0xFF888888,
 								0xFF000000, 0x00000000 }, null,
@@ -692,7 +687,7 @@ public class ShowcaseView extends RelativeLayout implements
 				mGlowyater.setColor(0xFF888888);
 				mGlowyater.setXfermode(new PorterDuffXfermode(Mode.DST_OUT));
 
-				canvas.drawCircle(showcase.showcaseX, showcase.showcaseY,
+				canvas.drawCircle(showcase.getShowcaseX(), showcase.getShowcaseY(),
 						showcase.getShowcaseRadius(), mGlowyater);
 			}
 
@@ -951,8 +946,8 @@ public class ShowcaseView extends RelativeLayout implements
 	 */
 	private Rect makeVoidedRect(ShowcasePosition showcase) {
 
-		int cx = (int) showcase.showcaseX;
-		int cy = (int) showcase.showcaseY;
+		int cx = (int) showcase.getShowcaseX();
+		int cy = (int) showcase.getShowcaseY();
 		int dw, dh;
 
 		Rect voidedArea = null;
@@ -1145,8 +1140,8 @@ public class ShowcaseView extends RelativeLayout implements
 		double distanceFromFocus;
 
 		for (ShowcasePosition showcase : showcases) {
-			float xDelta = Math.abs(motionEvent.getRawX() - showcase.showcaseX);
-			float yDelta = Math.abs(motionEvent.getRawY() - showcase.showcaseY);
+			float xDelta = Math.abs(motionEvent.getRawX() - showcase.getShowcaseX());
+			float yDelta = Math.abs(motionEvent.getRawY() - showcase.getShowcaseY());
 			distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2)
 					+ Math.pow(yDelta, 2));
 
@@ -1272,11 +1267,11 @@ public class ShowcaseView extends RelativeLayout implements
 
 		if (TEXT_POSITION_HORZ == mOptions.textPositioning) {
 			// horz
-			oriented = (showcase.showcaseX > (canvasX / 2)) ? 0 : 180;
+			oriented = (showcase.getShowcaseX() > (canvasX / 2)) ? 0 : 180;
 
 		} else if (TEXT_POSITION_VERT == mOptions.textPositioning) {
 			// vert
-			oriented = (showcase.showcaseY > (canvasY / 2)) ? 270 : 90;
+			oriented = (showcase.getShowcaseY() > (canvasY / 2)) ? 270 : 90;
 
 		} else {
 			// TEXT_POSITION_DEFAULT
@@ -1286,8 +1281,8 @@ public class ShowcaseView extends RelativeLayout implements
 			float originAdjustmentY = canvasY / 2; // center of screen
 
 			// Adjust Android coordinates to Cartesian coordinates
-			double x = showcase.showcaseX - originAdjustmentX;
-			double y = showcase.showcaseY - originAdjustmentY;
+			double x = showcase.getShowcaseX() - originAdjustmentX;
+			double y = showcase.getShowcaseY() - originAdjustmentY;
 
 			// Convert Cartesian coordinates to polar coordinate (angle in
 			// degrees)
@@ -1659,8 +1654,8 @@ public class ShowcaseView extends RelativeLayout implements
 	 */
 	public static class ShowcasePosition {
 		View view = null;
-		public float showcaseX = -1;
-		public float showcaseY = -1;
+		private float showcaseX = -1;
+		private float showcaseY = -1;
 		public float showcaseXOffset = 0;
 		public float showcaseYOffset = 0;
 		public float legacyShowcaseX = -1;
@@ -1689,5 +1684,21 @@ public class ShowcaseView extends RelativeLayout implements
 		public float getShowcaseRadius() {
 			return this.showcaseRadius * ShowcaseView.metricScale;
 		}
-	}
+		
+		public float getShowcaseX() {
+			return this.showcaseX + this.showcaseXOffset;
+		}
+		
+		public void setShowcaseX(float sx) {
+			this.showcaseX = sx;
+		}
+
+		public float getShowcaseY() {
+			return this.showcaseY + this.showcaseYOffset;
+		}
+		
+		public void setShowcaseY(float sy) {
+			this.showcaseY = sy;
+		}
+}
 }
