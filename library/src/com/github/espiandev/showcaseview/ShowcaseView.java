@@ -223,6 +223,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 if (homeButton == null) {
                     // Thanks to @hameno for this
                     int homeId = activity.getResources().getIdentifier("abs__home", "id", activity.getPackageName());
+                    if (homeId == 0) {
+                        homeId = activity.getResources().getIdentifier("home", "id", activity.getPackageName());
+                    }
                     if (homeId != 0) {
                         homeButton = activity.findViewById(homeId);
                     }
@@ -290,6 +293,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                     // Have to get superclasses because mChildren is private
                     mChField = mAmv.getClass().getSuperclass().getSuperclass()
                             .getSuperclass().getSuperclass().getDeclaredField("mChildren");
+                } else if(mAmv.getClass().toString().contains("android.support.v7")) {
+                    mChField = mAmv.getClass().getSuperclass().getSuperclass()
+                            .getSuperclass().getDeclaredField("mChildren");
                 } else
                     mChField = mAmv.getClass().getSuperclass().getSuperclass().getDeclaredField("mChildren");
                 mChField.setAccessible(true);
