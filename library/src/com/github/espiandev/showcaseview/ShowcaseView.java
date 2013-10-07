@@ -652,7 +652,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         mOptions = options;
     }
 
-    private ConfigOptions getConfigOptions() {
+    protected ConfigOptions getConfigOptions() {
         // Make sure that this method never returns null
         if (mOptions == null) return mOptions = new ConfigOptions();
         return mOptions;

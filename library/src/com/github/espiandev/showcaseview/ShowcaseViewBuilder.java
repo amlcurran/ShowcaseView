@@ -83,6 +83,8 @@ public class ShowcaseViewBuilder {
     }
 
     public ShowcaseViewBuilder setConfigOptions(ShowcaseView.ConfigOptions configOptions) {
+        ShowcaseView.ConfigOptions options = showcaseView.getConfigOptions();
+        configOptions.showcaseId = options.showcaseId;
         showcaseView.setConfigOptions(configOptions);
         return this;
     }

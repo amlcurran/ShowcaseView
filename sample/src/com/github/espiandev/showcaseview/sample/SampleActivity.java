@@ -39,6 +39,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 
         ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
         co.hideOnClickOutside = true;
+        co.fadeInDuration = 3000;
 
         // The following code will reposition the OK button to the left.
 //        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -42,9 +42,13 @@ public class MultipleActionItemsSampleActivity extends Activity implements Actio
             }
         });
         ShowcaseView.ConfigOptions configOptions = new ShowcaseView.ConfigOptions();
+        configOptions.fadeInDuration = 2000;
         configOptions.fadeOutDuration = 2000;
+        configOptions.block = false;
+        configOptions.noButton = false;
+        configOptions.shotType = ShowcaseView.TYPE_ONE_SHOT;
         views.addView(new ItemViewProperties(ItemViewProperties.ID_SPINNER, R.string.showcase_spinner_title, R.string.showcase_spinner_message, ShowcaseView.ITEM_SPINNER, SHOWCASE_SPINNER_SCALE, configOptions));
-        views.addView(new ItemViewProperties(ItemViewProperties.ID_OVERFLOW, R.string.showcase_overflow_title, R.string.showcase_overflow_message, ShowcaseView.ITEM_ACTION_OVERFLOW, SHOWCASE_OVERFLOW_ITEM_SCALE));
+        views.addView(new ItemViewProperties(ItemViewProperties.ID_OVERFLOW, R.string.showcase_overflow_title, R.string.showcase_overflow_message, ShowcaseView.ITEM_ACTION_OVERFLOW, SHOWCASE_OVERFLOW_ITEM_SCALE, configOptions));
         views.show();
         return super.onCreateOptionsMenu(menu);
     }

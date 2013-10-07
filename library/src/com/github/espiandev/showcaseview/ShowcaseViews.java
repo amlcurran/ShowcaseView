@@ -1,6 +1,7 @@
 package com.github.espiandev.showcaseview;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -75,7 +76,9 @@ public class ShowcaseViews {
             return;
         }
         final ShowcaseView view = views.get(0);
+        view.setVisibility(View.INVISIBLE);
         ((ViewGroup) activity.getWindow().getDecorView()).addView(view);
+        view.show();
         views.remove(0);
     }
 
