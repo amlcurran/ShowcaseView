@@ -54,7 +54,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public static final int ITEM_ACTION_ITEM = 3;
     public static final int ITEM_ACTION_OVERFLOW = 6;
 
-    private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
+    protected static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     public static final int INNER_CIRCLE_RADIUS = 94;
 
     private float showcaseX = -1;
@@ -381,6 +381,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             mEndButton.setOnClickListener(listener != null ? listener : this);
         }
         hasCustomClickListener = true;
+    }
+
+    protected void performButtonClick() {
+        mEndButton.performClick();
     }
 
     public void setOnShowcaseEventListener(OnShowcaseEventListener listener) {
@@ -830,6 +834,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         /**
          * If you want to use more than one Showcase with {@link ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique {@link ConfigOptions#showcaseId} value for every different Showcase you want to use.
+         * If you want to use this in the {@link ShowcaseViews} class, you need to set a custom showcaseId for each {@link ShowcaseView}.
          */
         public int shotType = TYPE_NO_LIMIT;
         
