@@ -1063,8 +1063,16 @@ public class ShowcaseView extends RelativeLayout implements
 	private void moveHand(ShowcasePosition showcase, float offsetStartX,
 			float offsetStartY, float offsetEndX, float offsetEndY,
 			AnimationEndListener listener) {
-		AnimationUtils.createMovementAnimation(mHandy, showcase.showcaseX,
-				showcase.showcaseY, offsetStartX, offsetStartY, offsetEndX,
+		AnimationUtils.createMovementAnimation(mHandy, showcase.getShowcaseX(),
+				showcase.getShowcaseY(), offsetStartX, offsetStartY, offsetEndX,
+				offsetEndY, listener).start();
+	}
+
+	private void moveOverlay(ShowcasePosition showcase, View overlay, float offsetStartX,
+			float offsetStartY, float offsetEndX, float offsetEndY,
+			AnimationEndListener listener) {
+		AnimationUtils.createMovementAnimation(overlay, showcase.getShowcaseX(),
+				showcase.getShowcaseY(), offsetStartX, offsetStartY, offsetEndX,
 				offsetEndY, listener).start();
 	}
 
