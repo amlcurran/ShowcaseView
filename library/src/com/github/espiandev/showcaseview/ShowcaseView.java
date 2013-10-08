@@ -207,15 +207,35 @@ public class ShowcaseView extends RelativeLayout implements
 			RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
 			if (lps == null) {
 				lps = (LayoutParams) generateDefaultLayoutParams();
-				lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-				lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+				// See if any of the ShowcasePositions overlap the OK button
+				float buttonX = mEndButton.getX();
+				float buttonY = mEndButton.getY();
+				boolean okButtonOverlapsShowcase = false;
+				if (buttonX > 1f && buttonY > 1f) {
+					for (ShowcasePosition pos : showcases) {
+						if (( (pos.getShowcaseX() + pos.getShowcaseRadius()) > buttonX ) 
+								&& ( (pos.getShowcaseY() + pos.getShowcaseRadius()) > buttonY )) {
+							okButtonOverlapsShowcase = true;
+						}
+					}
+				}
+				
+				// Flip the OK button to the other side of the screen if it overlaps the showcase
+				if (okButtonOverlapsShowcase) {
+					lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+					lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+				} else {
+					lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+					lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+				}
+				
 				int margin = ((Number) (metricScale * OK_BUTTON_HEIGHT))
 						.intValue();
 
-				// Fix for certain newer devices with transparent Android
-				// control buttons
+				// Fix for certain newer devices with transparent Android control buttons
 				if (isDeviceWithTransparentToolbar(false, 0)) {
-					margin += 40;
+					margin += 50;
 				}
 
 				lps.setMargins(margin, margin, margin, margin);
@@ -962,23 +982,23 @@ public class ShowcaseView extends RelativeLayout implements
 			if (showcase.overlayArrowRotation < 45
 					|| showcase.overlayArrowRotation > 315) {
 				// right
-				// ___________
-				// | |
-				// | _|_
+				//  ___________
+				// |           |
+				// |          _|_
 				// |_________/_| \
-				// | |
-				// \___/
+				//          |     |
+				//           \___/
 				voidedArea = new Rect(cx - dw - halfRadius, cy - dh
 						- halfRadius, cx - halfRadius, cy - halfRadius);
 
 			} else if (showcase.overlayArrowRotation >= 45
 					&& showcase.overlayArrowRotation <= 135) {
 				// up
-				// ___
-				// _________/_ \
-				// | | | |
-				// | \_|_/
-				// | |
+				//            ___
+				//  _________/_  \
+				// |        |  |  |
+				// |         \_|_/
+				// |           |
 				// |___________|
 				voidedArea = new Rect(cx - dw - halfRadius, cy + halfRadius, cx
 						- halfRadius, cy + dh + halfRadius);
@@ -986,26 +1006,26 @@ public class ShowcaseView extends RelativeLayout implements
 			} else if (showcase.overlayArrowRotation >= 225
 					&& showcase.overlayArrowRotation <= 315) {
 				// down
-				// _____
-				// | |
-				// | |
-				// | |
-				// | |
+				//  _____
+				// |     |
+				// |     |
+				// |     |
+				// |     |
 				// | ___ |
 				// |/___\|
-				// | |
-				// \___/
+				// |     |
+				//  \___/
 				voidedArea = new Rect(cx - (dw / 2), cy - dh - halfRadius, cx
 						+ (dw / 2), cy - halfRadius);
 
 			} else {
 				// left
-				// ___________
-				// | |
-				// _|_ |
-				// / |_\_________|
-				// | |
-				// \___/
+				//     ___________
+				//    |           |
+				//   _|_          |
+				//  / |_\_________|
+				// |     |
+				//  \___/
 				voidedArea = new Rect(cx + halfRadius, cy - dh - halfRadius, cx
 						+ dw + halfRadius, cy - halfRadius);
 			}
@@ -1013,14 +1033,14 @@ public class ShowcaseView extends RelativeLayout implements
 			break;
 
 		case OVERLAY_TYPE_HAND:
-			// ___
-			// /___\
-			// | |
+			//   ___
+			//  /___\
+			// |     |
 			// |\___/|
-			// | |
-			// | |
-			// | |
-			// | |
+			// |     |
+			// |     |
+			// |     |
+			// |     |
 			// |_____|
 			dw = showcase.overlay.getIntrinsicWidth();
 			dh = showcase.overlay.getIntrinsicHeight();
@@ -1028,11 +1048,11 @@ public class ShowcaseView extends RelativeLayout implements
 			break;
 
 		default:
-			// _________
-			// | ___ |
-			// | / \ |
-			// | | | |
-			// | \___/ |
+			//  _________
+			// |   ___   |
+			// |  /   \  |
+			// | |     | |
+			// |  \___/  |
 			// |_________|
 			dw = showcase.overlay.getIntrinsicWidth();
 			dh = showcase.overlay.getIntrinsicHeight();
