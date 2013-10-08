@@ -831,9 +831,13 @@ public class ShowcaseView extends RelativeLayout implements
 		
 		Display display = ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		Point size = new Point();
-		display.getSize(size);
-		int width = size.x;
-		int height = size.y;
+		
+		int width=0, height=0;
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB_MR2) {
+			display.getSize(size);
+			width = size.x;
+			height = size.y;
+		}
 		
 		int screenDensity = 0;
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -1185,7 +1189,11 @@ public class ShowcaseView extends RelativeLayout implements
 			if (mOptions.hideOnClickOutside
 					&& distanceFromFocus > showcase.getShowcaseRadius()) {
 				// A touch to the overlay screen is equivalent to pressing the OK button
-				mEndButton.callOnClick();
+				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+					mEndButton.callOnClick();
+				} else {
+					mEndButton.performClick();
+				}
 				
 				this.hide();
 				return true;
