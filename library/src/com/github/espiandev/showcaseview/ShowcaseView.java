@@ -705,8 +705,7 @@ public class ShowcaseView extends RelativeLayout implements
 			// Draw overlay
 			switch (mOptions.overlayType) {
 			case OVERLAY_TYPE_ARROW:
-				showcase.overlayArrowRotation = determineArrowOrientation(
-						showcase, canvas.getWidth(), canvas.getHeight());
+				showcase.overlayArrowRotation = determineArrowOrientation(showcase, canvas.getWidth(), canvas.getHeight());
 				showcase.overlay = getArrow(showcase.overlayArrowRotation);
 				break;
 
@@ -717,10 +716,8 @@ public class ShowcaseView extends RelativeLayout implements
 			case OVERLAY_TYPE_DEFAULT:
 			case OVERLAY_TYPE_SHOWCASE:
 			default:
-				showcase.overlay = getContext().getResources().getDrawable(
-						R.drawable.cling_bleached);
-				showcase.overlay.setColorFilter(mShowcaseColor,
-						PorterDuff.Mode.MULTIPLY);
+				showcase.overlay = getContext().getResources().getDrawable(R.drawable.cling_bleached);
+				showcase.overlay.setColorFilter(mShowcaseColor, PorterDuff.Mode.MULTIPLY);
 				break;
 
 			}
