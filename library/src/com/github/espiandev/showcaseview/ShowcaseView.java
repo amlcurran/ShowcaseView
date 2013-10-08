@@ -1160,14 +1160,20 @@ public class ShowcaseView extends RelativeLayout implements
 				}).start();
 	}
 
+	
 	@Override
 	public boolean onTouch(View view, MotionEvent motionEvent) {
+		return onTouchEvent(motionEvent);
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent motionEvent) {
 
 		double distanceFromFocus;
 
 		int action = motionEvent.getAction();
 		if (action != MotionEvent.ACTION_UP) {
-			return false;
+			return true;
 		}
 		
 		for (ShowcasePosition showcase : showcases) {
