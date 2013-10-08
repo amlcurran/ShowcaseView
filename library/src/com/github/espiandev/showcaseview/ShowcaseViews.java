@@ -58,10 +58,7 @@ public class ShowcaseViews {
 		}
 
 		ShowcaseView showcaseView = builder.build();
-		showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
-
 		showcaseView.setVisibilityListener(showcaseViewOnSetVisibilityListener);
-		showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
 
 		views.add(showcaseView);
 	}
