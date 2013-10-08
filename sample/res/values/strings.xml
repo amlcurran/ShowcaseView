@@ -25,6 +25,8 @@
   <string name="showcase_like_message">Click the button if you like kittens.</string>
   <string name="showcase_fragment_title">ShowcaseView and Fragments?</string>
   <string name="showcase_fragment_message">Click the button to find out whether this works with Fragments, too.</string>
+  <string name="showcase_menu_item_one_shot_title">Shown only once</string>
+  <string name="showcase_menu_item_one_shot_message">This will be shown only once since it uses ShowcaseView.TYPE_ONE_SHOT as the shotType.\nDelete the app data to see it again.</string>
   <string name="does_really_work_with_fragments">Show toast</string>
   <string name="it_does_work">It does work with Fragments. :)</string>
 </resources>
