@@ -5,9 +5,6 @@ import android.view.View;
 
 public class ShowcaseViewBuilder {
 
-    //TODO: Some options of ShowcaseView.ConfigOptions don't work yet.
-    //TODO: What's about showcaseId Field?
-
     private final ShowcaseView showcaseView;
 
     public ShowcaseViewBuilder(Activity activity) {
