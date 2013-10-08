@@ -2,7 +2,6 @@ package com.github.espiandev.showcaseview.sample.v14;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
