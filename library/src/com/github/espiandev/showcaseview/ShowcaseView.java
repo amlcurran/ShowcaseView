@@ -943,14 +943,24 @@ public class ShowcaseView extends RelativeLayout implements
 
 		if ((voidedOverlay.top + voidedOverlay.bottom) / 2 <= canvasH / 2) {
 			// Top
-			textX = (float) voidedOverlay.right - voidedOverlay.left;
-			textY = (float) voidedOverlay.bottom;
+			textX = ((float) voidedOverlay.right - voidedOverlay.left) / 2;
+			if (showcase.overlayArrowRotation >= 202.5 && showcase.overlayArrowRotation <= 337.5) {
+				textY = (float) voidedOverlay.top - (voidedOverlay.height() / 3);
+				textY = (textY >= (OK_BUTTON_HEIGHT * metricScale)) ? textY : (OK_BUTTON_HEIGHT * metricScale);
+			} else {
+				textY = (float) voidedOverlay.bottom;
+			}
 			textWidth = canvasW - textX;
 
 		} else {
 			// Bottom
-			textX = (float) voidedOverlay.right - voidedOverlay.left;
-			textY = (float) (2 * voidedOverlay.top) - voidedOverlay.bottom;
+			textX = ((float) voidedOverlay.right - voidedOverlay.left) / 2;
+			if (showcase.overlayArrowRotation >= 202.5 && showcase.overlayArrowRotation <= 337.5) {
+				textY = (float) voidedOverlay.top - (voidedOverlay.height() / 3);
+				textY = (textY >= (OK_BUTTON_HEIGHT * metricScale)) ? textY : (OK_BUTTON_HEIGHT * metricScale);
+			} else {
+				textY = (float) (2 * voidedOverlay.top) - voidedOverlay.bottom;
+			}
 			textWidth = canvasW - textX;
 		}
 
