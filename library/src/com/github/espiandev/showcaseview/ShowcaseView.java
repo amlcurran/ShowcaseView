@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
@@ -27,11 +28,13 @@ import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
@@ -78,6 +81,8 @@ public class ShowcaseView extends RelativeLayout implements
 	private static final int OK_BUTTON_HEIGHT = 12;
 
 	private static final int DEVICE_DPI_WITH_TRANSPARENT_MENU = 320;
+	private static final int DEVICE_HEIGHT_WITH_TRANSPARENT_MENU = 1202;
+	private static final int DEVICE_WIDTH_WITH_TRANSPARENT_MENU = 720;
 
 	private ArrayList<ShowcasePosition> showcases = new ArrayList<ShowcasePosition>();
 	private static float metricScale = 1.0f;
@@ -208,30 +213,16 @@ public class ShowcaseView extends RelativeLayout implements
 			if (lps == null) {
 				lps = (LayoutParams) generateDefaultLayoutParams();
 
-				// See if any of the ShowcasePositions overlap the OK button
-				float buttonX = mEndButton.getX();
-				float buttonY = mEndButton.getY();
-				boolean okButtonOverlapsShowcase = false;
-				if (buttonX > 1f && buttonY > 1f) {
-					for (ShowcasePosition pos : showcases) {
-						if (( (pos.getShowcaseX() + pos.getShowcaseRadius()) > buttonX ) 
-								&& ( (pos.getShowcaseY() + pos.getShowcaseRadius()) > buttonY )) {
-							okButtonOverlapsShowcase = true;
-						}
-					}
-				}
-				
-				// Flip the OK button to the other side of the screen if it overlaps the showcase
-				if (okButtonOverlapsShowcase) {
-					lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-					lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-				} else {
+				// Position the OK button on the screen
+				if (mOptions.okButtonOnRight) {
 					lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 					lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+				} else {
+					lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+					lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 				}
 				
-				int margin = ((Number) (metricScale * OK_BUTTON_HEIGHT))
-						.intValue();
+				int margin = ((Number) (metricScale * OK_BUTTON_HEIGHT)).intValue();
 
 				// Fix for certain newer devices with transparent Android control buttons
 				if (isDeviceWithTransparentToolbar(false, 0)) {
@@ -834,11 +825,16 @@ public class ShowcaseView extends RelativeLayout implements
 	 * @param orientation Configuration.ORIENTATION_LANDSCAPE or ORIENTATION_PORTRAIT
 	 * @return
 	 */
-	private boolean isDeviceWithTransparentToolbar(boolean considerScreenOrientation, int orientation) {
-		int screenSize = getResources().getConfiguration().screenLayout
-				& Configuration.SCREENLAYOUT_SIZE_MASK;
+	public boolean isDeviceWithTransparentToolbar(boolean considerScreenOrientation, int orientation) {
+		int screenSize = getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
 		int screenOrient = getResources().getConfiguration().orientation;
-
+		
+		Display display = ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		int width = size.x;
+		int height = size.y;
+		
 		int screenDensity = 0;
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
 			screenDensity = getResources().getConfiguration().densityDpi;
@@ -846,6 +842,8 @@ public class ShowcaseView extends RelativeLayout implements
 
 		if (screenSize == Configuration.SCREENLAYOUT_SIZE_NORMAL
 				&& screenDensity == DEVICE_DPI_WITH_TRANSPARENT_MENU
+				&& width == DEVICE_WIDTH_WITH_TRANSPARENT_MENU
+				&& height == DEVICE_HEIGHT_WITH_TRANSPARENT_MENU
 				&& (!considerScreenOrientation || screenOrient == orientation)) {
 			return true;
 		}
@@ -1619,6 +1617,7 @@ public class ShowcaseView extends RelativeLayout implements
 
 	public static class ConfigOptions {
 		public boolean block = true, noButton = false;
+		public boolean okButtonOnRight = true;
 		/**
 		 * If you want to use more than one Showcase with the
 		 * {@link ConfigOptions#shotType} {@link ShowcaseView#TYPE_ONE_SHOT} in
