@@ -2,12 +2,14 @@ package com.github.espiandev.showcaseview;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class ShowcaseViews {
 
@@ -63,13 +65,28 @@ public class ShowcaseViews {
             @Override
             public void onClick(View v) {
                 showcaseView.onClick(showcaseView); //Needed for TYPE_ONE_SHOT
-                if (views.isEmpty()) {
-                    showcaseAcknowledgedListener.onShowCaseAcknowledged(showcaseView);
+                int fadeOutTime = showcaseView.getConfigOptions().fadeOutDuration;
+                if (fadeOutTime > 0) {
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showNextView(showcaseView);
+                        }
+                    }, fadeOutTime);
                 } else {
-                    show();
+                    showNextView(showcaseView);
                 }
             }
         };
+    }
+
+    private void showNextView(ShowcaseView showcaseView) {
+        if (views.isEmpty()) {
+            showcaseAcknowledgedListener.onShowCaseAcknowledged(showcaseView);
+        } else {
+            show();
+        }
     }
 
     public void show() {
