@@ -1165,6 +1165,11 @@ public class ShowcaseView extends RelativeLayout implements
 
 		double distanceFromFocus;
 
+		int action = motionEvent.getAction();
+		if (action != MotionEvent.ACTION_UP) {
+			return false;
+		}
+		
 		for (ShowcasePosition showcase : showcases) {
 			float xDelta = Math.abs(motionEvent.getRawX() - showcase.getShowcaseX());
 			float yDelta = Math.abs(motionEvent.getRawY() - showcase.getShowcaseY());
