@@ -842,8 +842,8 @@ public class ShowcaseView extends RelativeLayout implements
 
 		if (screenSize == Configuration.SCREENLAYOUT_SIZE_NORMAL
 				&& screenDensity == DEVICE_DPI_WITH_TRANSPARENT_MENU
-				&& width == DEVICE_WIDTH_WITH_TRANSPARENT_MENU
-				&& height == DEVICE_HEIGHT_WITH_TRANSPARENT_MENU
+				&& ( (width == DEVICE_WIDTH_WITH_TRANSPARENT_MENU && height == DEVICE_HEIGHT_WITH_TRANSPARENT_MENU) 
+						|| (width == DEVICE_HEIGHT_WITH_TRANSPARENT_MENU && height == DEVICE_WIDTH_WITH_TRANSPARENT_MENU) )
 				&& (!considerScreenOrientation || screenOrient == orientation)) {
 			return true;
 		}
