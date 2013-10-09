@@ -167,8 +167,7 @@ public class ShowcaseView extends RelativeLayout implements
 				PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE).getBoolean(
 				"hasShot" + getConfigOptions().showcaseId, false);
 		if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
-			// The showcase has already been shot once, so we don't need to do
-			// anything
+			// The showcase has already been shot once, so we don't need to do anything
 			setVisibility(View.GONE);
 			isRedundant = true;
 			return;
@@ -312,11 +311,11 @@ public class ShowcaseView extends RelativeLayout implements
 					}
 					
 					// Fix for newer LG devices
-					if (isDeviceWithTransparentToolbar(true, Configuration.ORIENTATION_PORTRAIT) 
+					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT 
 							&& thisShowcase.legacyShowcaseY != -1 && thisShowcase.showcaseY < thisShowcase.legacyShowcaseY) {
 						thisShowcase.showcaseY = thisShowcase.legacyShowcaseY;
 					}
-					if (isDeviceWithTransparentToolbar(true, Configuration.ORIENTATION_LANDSCAPE) 
+					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE 
 							&& thisShowcase.legacyShowcaseX != -1 && thisShowcase.showcaseX < thisShowcase.legacyShowcaseX) {
 						thisShowcase.showcaseX = thisShowcase.legacyShowcaseX;
 					}
@@ -487,8 +486,7 @@ public class ShowcaseView extends RelativeLayout implements
 			mAmpField.setAccessible(true);
 			Object mAmp = mAmpField.get(p);
 			if (itemType == ITEM_ACTION_OVERFLOW) {
-				// Finds the overflow button associated with the
-				// ActionMenuPresenter
+				// Finds the overflow button associated with the ActionMenuPresenter
 				Field mObField = mAmp.getClass().getDeclaredField(
 						"mOverflowButton");
 				mObField.setAccessible(true);
@@ -652,11 +650,11 @@ public class ShowcaseView extends RelativeLayout implements
 					
 					
 					// Fix for newer LG devices
-					if (isDeviceWithTransparentToolbar(true, Configuration.ORIENTATION_PORTRAIT) 
+					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT 
 							&& showcase.legacyShowcaseY != -1 && showcase.showcaseY < showcase.legacyShowcaseY) {
 						showcase.showcaseY = showcase.legacyShowcaseY;
 					}
-					if (isDeviceWithTransparentToolbar(true, Configuration.ORIENTATION_LANDSCAPE) 
+					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE 
 							&& showcase.legacyShowcaseX != -1 && showcase.showcaseX < showcase.legacyShowcaseX) {
 						showcase.showcaseX = showcase.legacyShowcaseX;
 					}
@@ -759,8 +757,7 @@ public class ShowcaseView extends RelativeLayout implements
 
 					int detailWidth = ((Float) mBestTextPosition[2]).intValue();
 
-					// Fix for certain newer devices with transparent Android
-					// control buttons
+					// Fix for certain newer devices with transparent Android control buttons
 					if (isDeviceWithTransparentToolbar()) {
 						detailWidth -= 200;
 					}
@@ -865,8 +862,7 @@ public class ShowcaseView extends RelativeLayout implements
 	private Object[] getBestTextPosition(ShowcasePosition showcase,
 			int canvasW, int canvasH) {
 
-		// if the width isn't much bigger than the voided area, just consider
-		// top & bottom
+		// if the width isn't much bigger than the voided area, just consider top & bottom
 		float spaceTop = showcase.voidedOverlayArea.top;
 		float spaceBottom = canvasH - showcase.voidedOverlayArea.bottom - 64
 				* metricScale; // 64dip considers the OK button
@@ -892,8 +888,7 @@ public class ShowcaseView extends RelativeLayout implements
 	private Object[] getBestTextPositionHorz(ShowcasePosition showcase,
 			int canvasW, int canvasH) {
 
-		// if the width isn't much bigger than the voided area, just consider
-		// top & bottom
+		// if the width isn't much bigger than the voided area, just consider top & bottom
 		Rect voidedOverlay = showcase.voidedOverlayArea;
 
 		// init
@@ -931,8 +926,7 @@ public class ShowcaseView extends RelativeLayout implements
 	private Object[] getBestTextPositionVert(ShowcasePosition showcase,
 			int canvasW, int canvasH) {
 
-		// if the width isn't much bigger than the voided area, just consider
-		// top & bottom
+		// if the width isn't much bigger than the voided area, just consider top & bottom
 		Rect voidedOverlay = showcase.voidedOverlayArea;
 
 		// init
@@ -1339,8 +1333,7 @@ public class ShowcaseView extends RelativeLayout implements
 			double x = showcase.getShowcaseX() - originAdjustmentX;
 			double y = showcase.getShowcaseY() - originAdjustmentY;
 
-			// Convert Cartesian coordinates to polar coordinate (angle in
-			// degrees)
+			// Convert Cartesian coordinates to polar coordinate (angle in degrees)
 			double theta = Math.atan(y / x);
 
 			oriented = (int) theta;
