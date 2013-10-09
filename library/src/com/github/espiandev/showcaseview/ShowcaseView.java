@@ -1189,14 +1189,11 @@ public class ShowcaseView extends RelativeLayout implements
 
 			if (mOptions.hideOnClickOutside
 					&& distanceFromFocus > showcase.getShowcaseRadius()) {
-				// A touch to the overlay screen is equivalent to pressing the OK button
-				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-					mEndButton.callOnClick();
-				} else {
-					mEndButton.performClick();
-				}
 				
+				// A touch to the overlay screen is equivalent to pressing the OK button
+				mEndButton.performClick();
 				this.hide();
+
 				return true;
 			}
 
