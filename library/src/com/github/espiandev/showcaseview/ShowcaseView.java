@@ -1135,6 +1135,7 @@ public class ShowcaseView extends RelativeLayout implements
 								true).commit();
 			}
 		}
+
 		hide();
 	}
 
@@ -1193,34 +1194,22 @@ public class ShowcaseView extends RelativeLayout implements
 	@Override
 	public boolean onTouchEvent(MotionEvent motionEvent) {
 
-		double distanceFromFocus;
 
+		// Only process the event if the user's finger has lifted from the screen
 		int action = motionEvent.getAction();
 		if (action != MotionEvent.ACTION_UP) {
 			return true;
 		}
 		
-		for (ShowcasePosition showcase : showcases) {
-			float xDelta = Math.abs(motionEvent.getRawX() - showcase.getShowcaseX());
-			float yDelta = Math.abs(motionEvent.getRawY() - showcase.getShowcaseY());
-			distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2)
-					+ Math.pow(yDelta, 2));
+		if (mOptions.hideOnClickOutside) {
+			
+			// A touch to the overlay screen is equivalent to pressing the OK button
+			mEndButton.performClick();
+			this.hide();
 
-			if (mOptions.hideOnClickOutside
-					&& distanceFromFocus > showcase.getShowcaseRadius()) {
-				
-				// A touch to the overlay screen is equivalent to pressing the OK button
-				mEndButton.performClick();
-				this.hide();
-
-				return true;
-			}
-
-			if (mOptions.block
-					&& distanceFromFocus > showcase.getShowcaseRadius()) {
-				return true;
-			}
+			return true;
 		}
+
 
 		return false;
 	}
