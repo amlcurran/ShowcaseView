@@ -320,6 +320,16 @@ public class ShowcaseView extends RelativeLayout implements
 						thisShowcase.showcaseX = thisShowcase.legacyShowcaseX;
 					}
 
+					// Fix for semi-new LG devices (Some LG devices send uninitialized data through here somehow)
+					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT 
+							&& (thisShowcase.legacyShowcaseX <= -1f || thisShowcase.legacyShowcaseY <= -1f 
+							|| thisShowcase.showcaseX <= 0f || thisShowcase.showcaseY <= 0f) ) {
+
+						// Guestimate that the share icon will be at the bottom of the screen
+						thisShowcase.showcaseY = 110 - (thisShowcase.view.getHeight() / 2); // Bottom of showcase touching bottom of screen
+						thisShowcase.showcaseX = 700 * (3f/5f); // Share button in middle-right of screen
+						thisShowcase.showcaseRadius = INNER_CIRCLE_RADIUS; // Widen showcase to account for error
+					}
 				}
 
 				invalidate();
@@ -643,10 +653,8 @@ public class ShowcaseView extends RelativeLayout implements
 					showcase.view.getLocationInWindow(coordinates);
 					showcase.legacyShowcaseX = showcase.showcaseX;
 					showcase.legacyShowcaseY = showcase.showcaseY;
-					showcase.showcaseX = (float) (coordinates[0] + showcase.view
-							.getWidth() / 2);
-					showcase.showcaseY = (float) (coordinates[1] + showcase.view
-							.getHeight() / 2);
+					showcase.showcaseX = (float) (coordinates[0] + showcase.view.getWidth() / 2);
+					showcase.showcaseY = (float) (coordinates[1] + showcase.view.getHeight() / 2);
 					
 					
 					// Fix for newer LG devices
@@ -657,6 +665,17 @@ public class ShowcaseView extends RelativeLayout implements
 					if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE 
 							&& showcase.legacyShowcaseX != -1 && showcase.showcaseX < showcase.legacyShowcaseX) {
 						showcase.showcaseX = showcase.legacyShowcaseX;
+					}
+					
+					// Fix for semi-new LG devices (Some LG devices send uninitialized data through here somehow)
+					if ( getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT 
+							&& (showcase.legacyShowcaseX <= -1f || showcase.legacyShowcaseY <= -1f 
+								|| showcase.showcaseX <= 0f || showcase.showcaseY <= 0f) ) {
+
+						// Guestimate that the share icon will be at the bottom of the screen
+						showcase.showcaseY = canvas.getHeight() - (showcase.view.getHeight() / 2); // Bottom of showcase touching bottom of screen
+						showcase.showcaseX = canvas.getWidth() * (3f/5f); // Share button in middle-right of screen
+						showcase.showcaseRadius = INNER_CIRCLE_RADIUS; // Widen showcase to account for error
 					}
 				}
 			}
