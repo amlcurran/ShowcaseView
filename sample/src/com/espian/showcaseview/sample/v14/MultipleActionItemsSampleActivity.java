@@ -1,4 +1,8 @@
-package com.github.espiandev.showcaseview.sample.v14;
+package com.espian.showcaseview.sample.v14;
+
+import com.espian.showcaseview.sample.R;
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.ShowcaseViews;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -8,11 +12,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.github.espiandev.showcaseview.ShowcaseView;
-import com.github.espiandev.showcaseview.ShowcaseViews;
-import com.github.espiandev.showcaseview.sample.R;
-
-import static com.github.espiandev.showcaseview.ShowcaseViews.ItemViewProperties;
+import static com.espian.showcaseview.ShowcaseViews.ItemViewProperties;
 
 public class MultipleActionItemsSampleActivity extends Activity implements ActionBar.OnNavigationListener {
 

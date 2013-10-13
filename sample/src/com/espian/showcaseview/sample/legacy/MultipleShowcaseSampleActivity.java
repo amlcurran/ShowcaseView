@@ -1,13 +1,13 @@
-package com.github.espiandev.showcaseview.sample.legacy;
+package com.espian.showcaseview.sample.legacy;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import com.github.espiandev.showcaseview.ShowcaseView;
-import com.github.espiandev.showcaseview.ShowcaseViews;
-import com.github.espiandev.showcaseview.sample.R;
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.ShowcaseViews;
+import com.espian.showcaseview.sample.R;
 
 public class MultipleShowcaseSampleActivity extends Activity {
 

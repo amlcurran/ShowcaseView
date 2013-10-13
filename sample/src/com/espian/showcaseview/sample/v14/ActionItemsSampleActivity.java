@@ -1,12 +1,12 @@
-package com.github.espiandev.showcaseview.sample.v14;
+package com.espian.showcaseview.sample.v14;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.github.espiandev.showcaseview.ShowcaseView;
-import com.github.espiandev.showcaseview.sample.R;
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.sample.R;
 
 public class ActionItemsSampleActivity extends Activity {
 

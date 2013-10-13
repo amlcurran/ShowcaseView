@@ -1,4 +1,7 @@
-package com.github.espiandev.showcaseview;
+package com.espian.showcaseview;
+
+import com.espian.showcaseview.anim.AnimationUtils;
+import com.github.espiandev.showcaseview.R;
 
 import android.app.Activity;
 import android.content.Context;
@@ -30,12 +33,10 @@ import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-import com.github.espiandev.showcaseview.anim.AnimationUtils;
-
 import java.lang.reflect.Field;
 
-import static com.github.espiandev.showcaseview.anim.AnimationUtils.AnimationEndListener;
-import static com.github.espiandev.showcaseview.anim.AnimationUtils.AnimationStartListener;
+import static com.espian.showcaseview.anim.AnimationUtils.AnimationEndListener;
+import static com.espian.showcaseview.anim.AnimationUtils.AnimationStartListener;
 
 /**
  * A view which allows you to showcase areas of your app with an explanation.

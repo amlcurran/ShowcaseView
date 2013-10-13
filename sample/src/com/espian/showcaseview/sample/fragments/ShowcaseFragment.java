@@ -1,4 +1,7 @@
-package com.github.espiandev.showcaseview.sample.fragments;
+package com.espian.showcaseview.sample.fragments;
+
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.sample.R;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,9 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.github.espiandev.showcaseview.ShowcaseView;
-import com.github.espiandev.showcaseview.sample.R;
 
 public class ShowcaseFragment extends Fragment {
 

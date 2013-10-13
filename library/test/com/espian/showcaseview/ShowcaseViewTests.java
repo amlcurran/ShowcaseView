@@ -1,4 +1,4 @@
-package com.github.espiandev.showcaseview;
+package com.espian.showcaseview;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;

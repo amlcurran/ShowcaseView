@@ -29,12 +29,6 @@ Gestures can now be indicated using `animateGesture(...)`, which returns a [Nine
 
 Styles are included to maintain consistently in ShowcaseViews. Buttons should use the style ClingButton, with title text using ClingTitleText and standard text using ClingText.
 
-Upcoming features
-----
-
-- Improved styling ability
-- Variable sized circles/images for showcasing
-
 Copyright and Licensing
 ----
 

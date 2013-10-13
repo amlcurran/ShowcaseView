@@ -1,4 +1,4 @@
-package com.github.espiandev.showcaseview.sample;
+package com.espian.showcaseview.sample;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,11 +8,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.github.espiandev.showcaseview.ShowcaseView;
-import com.github.espiandev.showcaseview.sample.fragments.ShowcaseFragmentActivity;
-import com.github.espiandev.showcaseview.sample.legacy.MultipleShowcaseSampleActivity;
-import com.github.espiandev.showcaseview.sample.v14.ActionItemsSampleActivity;
-import com.github.espiandev.showcaseview.sample.v14.MultipleActionItemsSampleActivity;
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.sample.fragments.ShowcaseFragmentActivity;
+import com.espian.showcaseview.sample.legacy.MultipleShowcaseSampleActivity;
+import com.espian.showcaseview.sample.v14.ActionItemsSampleActivity;
+import com.espian.showcaseview.sample.v14.MultipleActionItemsSampleActivity;
 
 public class SampleActivity extends Activity implements View.OnClickListener,
         ShowcaseView.OnShowcaseEventListener {

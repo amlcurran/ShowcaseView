@@ -1,4 +1,4 @@
-package com.github.espiandev.showcaseview;
+package com.espian.showcaseview;
 
 import android.app.Activity;
 import android.view.View;

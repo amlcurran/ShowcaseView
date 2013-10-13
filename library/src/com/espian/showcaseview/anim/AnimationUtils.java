@@ -1,4 +1,4 @@
-package com.github.espiandev.showcaseview.anim;
+package com.espian.showcaseview.anim;
 
 import android.os.Handler;
 import android.view.View;

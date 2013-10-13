@@ -1,9 +1,9 @@
-package com.github.espiandev.showcaseview.sample.fragments;
+package com.espian.showcaseview.sample.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
-import com.github.espiandev.showcaseview.sample.R;
+import com.espian.showcaseview.sample.R;
 
 public class ShowcaseFragmentActivity extends FragmentActivity {
 
