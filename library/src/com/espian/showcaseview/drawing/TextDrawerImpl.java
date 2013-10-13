@@ -5,8 +5,10 @@ import com.espian.showcaseview.ShowcaseView;
 import android.graphics.Canvas;
 import android.text.DynamicLayout;
 import android.text.Layout;
+import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.style.TextAppearanceSpan;
 
 /**
  * Draws the text as required by the ShowcaseView
@@ -68,13 +70,17 @@ public class TextDrawerImpl implements TextDrawer {
     }
 
     @Override
-    public void setDetails(CharSequence details) {
-        mDetails = details;
+    public void setDetails(CharSequence details, TextAppearanceSpan detailSpan) {
+        SpannableString ssbDetail = new SpannableString(details);
+        ssbDetail.setSpan(detailSpan, 0, ssbDetail.length(), 0);
+        mDetails = ssbDetail;
     }
 
     @Override
-    public void setTitle(CharSequence title) {
-        mTitle = title;
+    public void setTitle(CharSequence title, TextAppearanceSpan titleSpan) {
+        SpannableString ssbTitle = new SpannableString(title);
+        ssbTitle.setSpan(titleSpan, 0, ssbTitle.length(), 0);
+        mTitle = ssbTitle;
     }
 
     /**

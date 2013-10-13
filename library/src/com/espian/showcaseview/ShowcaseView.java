@@ -4,7 +4,6 @@ import com.espian.showcaseview.anim.AnimationUtils;
 import com.espian.showcaseview.drawing.TextDrawer;
 import com.espian.showcaseview.drawing.TextDrawerImpl;
 import com.github.espiandev.showcaseview.R;
-import com.sun.istack.internal.NotNull;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,8 +19,6 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.text.DynamicLayout;
-import android.text.SpannableString;
 import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -75,8 +72,6 @@ public class ShowcaseView extends RelativeLayout
     private final Button mEndButton;
     private OnShowcaseEventListener mEventListener;
     private Rect voidedArea;
-    private DynamicLayout mDynamicTitleLayout;
-    private DynamicLayout mDynamicDetailLayout;
     private boolean mAlteredText = false;
     private TextAppearanceSpan mDetailSpan, mTitleSpan;
 
@@ -90,7 +85,7 @@ public class ShowcaseView extends RelativeLayout
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
     }
 
-    protected ShowcaseView(@NotNull Context context, AttributeSet attrs, int defStyle) {
+    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         // Get the attributes for the ShowcaseView
@@ -443,6 +438,7 @@ public class ShowcaseView extends RelativeLayout
 
         canvas.setMatrix(new Matrix());
 
+        // Draw the text on the screen, recalculating its position if necessary
         if (recalculateText) {
             mTextDrawer.calculateTextPosition(canvas.getWidth(), canvas.getHeight(), this);
         }
@@ -600,12 +596,8 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void setText(String titleText, String subText) {
-        SpannableString ssbTitle = new SpannableString(titleText);
-        ssbTitle.setSpan(mTitleSpan, 0, ssbTitle.length(), 0);
-        mTextDrawer.setTitle(ssbTitle);
-        SpannableString ssbDetail = new SpannableString(subText);
-        ssbDetail.setSpan(mDetailSpan, 0, ssbDetail.length(), 0);
-        mTextDrawer.setDetails(ssbDetail);
+        mTextDrawer.setTitle(titleText, mTitleSpan);
+        mTextDrawer.setDetails(subText, mDetailSpan);
         mAlteredText = true;
         invalidate();
     }
@@ -713,8 +705,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public static ShowcaseView insertShowcaseView(int showcaseViewId, Activity activity,
-            String title,
-            String detailText, ConfigOptions options) {
+            String title, String detailText, ConfigOptions options) {
         View v = activity.findViewById(showcaseViewId);
         if (v != null) {
             return insertShowcaseView(v, activity, title, detailText, options);
