@@ -103,14 +103,16 @@ public class ShowcaseView extends RelativeLayout
         int detailTextAppearance = styled
                 .getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance,
                         R.style.TextAppearance_ShowcaseView_Detail);
-        mTitleSpan = new TextAppearanceSpan(context, titleTextAppearance);
-        mDetailSpan = new TextAppearanceSpan(context, detailTextAppearance);
 
         buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
         styled.recycle();
 
         metricScale = getContext().getResources().getDisplayMetrics().density;
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
+
+        mTextDrawer = new TextDrawerImpl(metricScale);
+        mTextDrawer.setTitleStyling(context, titleTextAppearance);
+        mTextDrawer.setDetailStyling(context, detailTextAppearance);
 
         ConfigOptions options = new ConfigOptions();
         options.showcaseId = getId();
@@ -147,8 +149,6 @@ public class ShowcaseView extends RelativeLayout
         mEraser.setAlpha(0);
         mEraser.setXfermode(mBlender);
         mEraser.setAntiAlias(true);
-
-        mTextDrawer = new TextDrawerImpl(metricScale);
 
         if (!mOptions.noButton && mEndButton.getParent() == null) {
             RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
@@ -596,8 +596,8 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void setText(String titleText, String subText) {
-        mTextDrawer.setTitle(titleText, mTitleSpan);
-        mTextDrawer.setDetails(subText, mDetailSpan);
+        mTextDrawer.setTitle(titleText);
+        mTextDrawer.setDetails(subText);
         mAlteredText = true;
         invalidate();
     }

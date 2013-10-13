@@ -2,6 +2,7 @@ package com.espian.showcaseview.drawing;
 
 import com.espian.showcaseview.ShowcaseView;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.text.DynamicLayout;
 import android.text.Layout;
@@ -23,6 +24,8 @@ public class TextDrawerImpl implements TextDrawer {
     private float[] mBestTextPosition = new float[3];
     private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
+    private TextAppearanceSpan mTitleSpan;
+    private TextAppearanceSpan mDetailSpan;
 
     public TextDrawerImpl(float densityScale) {
         mDensityScale = densityScale;
@@ -70,16 +73,16 @@ public class TextDrawerImpl implements TextDrawer {
     }
 
     @Override
-    public void setDetails(CharSequence details, TextAppearanceSpan detailSpan) {
+    public void setDetails(CharSequence details) {
         SpannableString ssbDetail = new SpannableString(details);
-        ssbDetail.setSpan(detailSpan, 0, ssbDetail.length(), 0);
+        ssbDetail.setSpan(mDetailSpan, 0, ssbDetail.length(), 0);
         mDetails = ssbDetail;
     }
 
     @Override
-    public void setTitle(CharSequence title, TextAppearanceSpan titleSpan) {
+    public void setTitle(CharSequence title) {
         SpannableString ssbTitle = new SpannableString(title);
-        ssbTitle.setSpan(titleSpan, 0, ssbTitle.length(), 0);
+        ssbTitle.setSpan(mTitleSpan, 0, ssbTitle.length(), 0);
         mTitle = ssbTitle;
     }
 
@@ -105,6 +108,16 @@ public class TextDrawerImpl implements TextDrawer {
         mBestTextPosition[2] = canvasW - 48 * mDensityScale;
         //TODO: currently only considers above or below showcase, deal with left or right
 
+    }
+
+    @Override
+    public void setTitleStyling(Context context, int styleId) {
+        mTitleSpan = new TextAppearanceSpan(context, styleId);
+    }
+
+    @Override
+    public void setDetailStyling(Context context, int styleId) {
+        mDetailSpan = new TextAppearanceSpan(context, styleId);
     }
 
     public float[] getBestTextPosition() {
