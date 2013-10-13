@@ -55,7 +55,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public static final int ITEM_ACTION_ITEM = 3;
     public static final int ITEM_ACTION_OVERFLOW = 6;
 
-    private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
+    protected static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     public static final int INNER_CIRCLE_RADIUS = 94;
 
     private float showcaseX = -1;
@@ -224,6 +224,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 if (homeButton == null) {
                     // Thanks to @hameno for this
                     int homeId = activity.getResources().getIdentifier("abs__home", "id", activity.getPackageName());
+                    if (homeId == 0) {
+                        homeId = activity.getResources().getIdentifier("home", "id", activity.getPackageName());
+                    }
                     if (homeId != 0) {
                         homeButton = activity.findViewById(homeId);
                     }
@@ -291,6 +294,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                     // Have to get superclasses because mChildren is private
                     mChField = mAmv.getClass().getSuperclass().getSuperclass()
                             .getSuperclass().getSuperclass().getDeclaredField("mChildren");
+                } else if(mAmv.getClass().toString().contains("android.support.v7")) {
+                    mChField = mAmv.getClass().getSuperclass().getSuperclass()
+                            .getSuperclass().getDeclaredField("mChildren");
                 } else
                     mChField = mAmv.getClass().getSuperclass().getSuperclass().getDeclaredField("mChildren");
                 mChField.setAccessible(true);
@@ -384,6 +390,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         hasCustomClickListener = true;
     }
 
+    protected void performButtonClick() {
+        mEndButton.performClick();
+    }
+
     public void setOnShowcaseEventListener(OnShowcaseEventListener listener) {
         mEventListener = listener;
     }
@@ -438,7 +448,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                             ((Number) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
                             1.2f, 1.0f, true);
                 }
-                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] + 12 * metricScale);
+                canvas.translate(mBestTextPosition[0] , mBestTextPosition[1] + 12 * metricScale + (mDynamicTitleLayout.getLineBottom(mDynamicTitleLayout.getLineCount()-1)-mDynamicTitleLayout.getLineBottom(0)));
                 mDynamicDetailLayout.draw(canvas);
                 canvas.restore();
 
@@ -649,11 +659,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         AnimationUtils.createMovementAnimation(mHandy, x, y).start();
     }
 
-    private void setConfigOptions(ConfigOptions options) {
+    protected void setConfigOptions(ConfigOptions options) {
         mOptions = options;
     }
 
-    private ConfigOptions getConfigOptions() {
+    protected ConfigOptions getConfigOptions() {
         // Make sure that this method never returns null
         if (mOptions == null) return mOptions = new ConfigOptions();
         return mOptions;
@@ -817,8 +827,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     public static class ConfigOptions {
         public boolean block = true, noButton = false;
-        public int insert = INSERT_TO_DECOR;
         public boolean hideOnClickOutside = false;
+
+        /**
+         * Does not work with the {@link ShowcaseViews} class as it does not make sense (only with {@link ShowcaseView}).
+         */
+        public int insert = INSERT_TO_DECOR;
 
         /**
          * If you want to use more than one Showcase with the {@link ConfigOptions#shotType} {@link ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique value for every different Showcase you want to use.
@@ -827,6 +841,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         /**
          * If you want to use more than one Showcase with {@link ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique {@link ConfigOptions#showcaseId} value for every different Showcase you want to use.
+         * If you want to use this in the {@link ShowcaseViews} class, you need to set a custom showcaseId for each {@link ShowcaseView}.
          */
         public int shotType = TYPE_NO_LIMIT;
         

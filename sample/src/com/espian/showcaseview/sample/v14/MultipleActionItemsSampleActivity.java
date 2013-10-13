@@ -40,7 +40,15 @@ public class MultipleActionItemsSampleActivity extends Activity implements Actio
                  Toast.makeText(getApplicationContext(), R.string.dismissed_message, Toast.LENGTH_SHORT).show();
             }
         });
-        views.addView(new ItemViewProperties(ItemViewProperties.ID_SPINNER, R.string.showcase_spinner_title, R.string.showcase_spinner_message, ShowcaseView.ITEM_SPINNER, SHOWCASE_SPINNER_SCALE));
+        ShowcaseView.ConfigOptions options = new ShowcaseView.ConfigOptions();
+        options.shotType = ShowcaseView.TYPE_ONE_SHOT;
+        options.showcaseId = 1234;
+        views.addView(new ItemViewProperties(R.id.menu_item1, R.string.showcase_menu_item_one_shot_title, R.string.showcase_menu_item_one_shot_message, ShowcaseView.ITEM_SPINNER, SHOWCASE_SPINNER_SCALE, options));
+        ShowcaseView.ConfigOptions configOptions = new ShowcaseView.ConfigOptions();
+        configOptions.fadeInDuration = 700;
+        configOptions.fadeOutDuration = 700;
+        configOptions.block = true;
+        views.addView(new ItemViewProperties(ItemViewProperties.ID_SPINNER, R.string.showcase_spinner_title, R.string.showcase_spinner_message, ShowcaseView.ITEM_SPINNER, SHOWCASE_SPINNER_SCALE, configOptions));
         views.addView(new ItemViewProperties(ItemViewProperties.ID_OVERFLOW, R.string.showcase_overflow_title, R.string.showcase_overflow_message, ShowcaseView.ITEM_ACTION_OVERFLOW, SHOWCASE_OVERFLOW_ITEM_SCALE));
         views.show();
         return super.onCreateOptionsMenu(menu);
@@ -48,8 +56,11 @@ public class MultipleActionItemsSampleActivity extends Activity implements Actio
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
