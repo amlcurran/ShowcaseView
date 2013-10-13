@@ -1,6 +1,7 @@
 package com.espian.showcaseview;
 
 import com.espian.showcaseview.anim.AnimationUtils;
+import com.espian.showcaseview.drawing.TextDrawer;
 import com.espian.showcaseview.drawing.TextDrawerImpl;
 import com.github.espiandev.showcaseview.R;
 import com.sun.istack.internal.NotNull;
@@ -83,7 +84,7 @@ public class ShowcaseView extends RelativeLayout
     private float scaleMultiplier = 1f;
     private Bitmap mBleachedCling;
     private int mShowcaseColor;
-    private TextDrawerImpl mTextDrawer;
+    private TextDrawer mTextDrawer;
 
     protected ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
