@@ -350,30 +350,6 @@ public class ShowcaseView extends RelativeLayout
     }
 
     /**
-     * Set the shot method of the showcase - only once or no limit
-     *
-     * @param shotType either TYPE_ONE_SHOT or TYPE_NO_LIMIT
-     * @deprecated Use the option in {@link ConfigOptions} instead.
-     */
-    @Deprecated
-    public void setShotType(int shotType) {
-        if (shotType == TYPE_NO_LIMIT || shotType == TYPE_ONE_SHOT) {
-            mOptions.shotType = shotType;
-        }
-    }
-
-    /**
-     * Decide whether touches outside the showcased circle should be ignored or not
-     *
-     * @param block true to block touches, false otherwise. By default, this is true.
-     * @deprecated Use the option in {@link ConfigOptions} instead.
-     */
-    @Deprecated
-    public void blockNonShowcasedTouches(boolean block) {
-        mOptions.block = block;
-    }
-
-    /**
      * Override the standard button click event
      *
      * @param listener Listener to listen to on click events
