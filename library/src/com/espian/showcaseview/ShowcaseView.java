@@ -1,6 +1,8 @@
 package com.espian.showcaseview;
 
 import com.espian.showcaseview.anim.AnimationUtils;
+import com.espian.showcaseview.drawing.ClingDrawer;
+import com.espian.showcaseview.drawing.ClingDrawerImpl;
 import com.espian.showcaseview.drawing.TextDrawer;
 import com.espian.showcaseview.drawing.TextDrawerImpl;
 import com.github.espiandev.showcaseview.R;
@@ -12,14 +14,11 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -73,13 +72,13 @@ public class ShowcaseView extends RelativeLayout
     private OnShowcaseEventListener mEventListener;
     private Rect voidedArea;
     private boolean mAlteredText = false;
-    private TextAppearanceSpan mDetailSpan, mTitleSpan;
 
     private final String buttonText;
     private float scaleMultiplier = 1f;
     private Bitmap mBleachedCling;
     private int mShowcaseColor;
     private TextDrawer mTextDrawer;
+    private ClingDrawer mClingDrawer;
 
     protected ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
@@ -114,6 +113,8 @@ public class ShowcaseView extends RelativeLayout
         mTextDrawer.setTitleStyling(context, titleTextAppearance);
         mTextDrawer.setDetailStyling(context, detailTextAppearance);
 
+        mClingDrawer = new ClingDrawerImpl();
+
         ConfigOptions options = new ConfigOptions();
         options.showcaseId = getId();
         setConfigOptions(options);
@@ -141,14 +142,7 @@ public class ShowcaseView extends RelativeLayout
         showcase.setColorFilter(mShowcaseColor, PorterDuff.Mode.MULTIPLY);
 
         showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
-        PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
         setOnTouchListener(this);
-
-        mEraser = new Paint();
-        mEraser.setColor(0xFFFFFF);
-        mEraser.setAlpha(0);
-        mEraser.setXfermode(mBlender);
-        mEraser.setAntiAlias(true);
 
         if (!mOptions.noButton && mEndButton.getParent() == null) {
             RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
@@ -419,24 +413,25 @@ public class ShowcaseView extends RelativeLayout
             return;
         }
 
-        //Draw the semi-transparent background
-        canvas.drawColor(backColor);
-
-        //Draw to the scale specified
-        Matrix mm = new Matrix();
-        mm.postScale(scaleMultiplier, scaleMultiplier, showcaseX, showcaseY);
-        canvas.setMatrix(mm);
-
-        //Erase the area for the ring
-        canvas.drawCircle(showcaseX, showcaseY, showcaseRadius, mEraser);
-
-        boolean recalculateText = makeVoidedRect() || mAlteredText;
+        boolean recalculatedCling = makeVoidedRect();
+        boolean recalculateText = recalculatedCling || mAlteredText;
         mAlteredText = false;
 
+        // Draw the semi-transparent background
+        canvas.drawColor(backColor);
+
+        // Draw to the scale specified
+        mClingDrawer.scale(canvas, scaleMultiplier, showcaseX, showcaseY);
+
+        // Erase the area for the ring
+        mClingDrawer.eraseCircle(canvas, showcaseX, showcaseY, showcaseRadius);
+
+        // Draw the showcase drawable
         showcase.setBounds(voidedArea);
         showcase.draw(canvas);
 
-        canvas.setMatrix(new Matrix());
+        // Revert the scale altered above
+        mClingDrawer.revertScale(canvas);
 
         // Draw the text on the screen, recalculating its position if necessary
         if (recalculateText) {
@@ -458,13 +453,20 @@ public class ShowcaseView extends RelativeLayout
 
         // This if statement saves resources by not recalculating voidedArea
         // if the X & Y coordinates haven't changed
-        if (voidedArea == null || (showcaseX != legacyShowcaseX || showcaseY != legacyShowcaseY)) {
+        if (showcaseX != legacyShowcaseX || showcaseY != legacyShowcaseY) {
+
+            if (voidedArea == null) {
+                voidedArea = new Rect();
+            }
 
             int cx = (int) showcaseX, cy = (int) showcaseY;
             int dw = showcase.getIntrinsicWidth();
             int dh = showcase.getIntrinsicHeight();
 
-            voidedArea = new Rect(cx - dw / 2, cy - dh / 2, cx + dw / 2, cy + dh / 2);
+            voidedArea.left = cx - dw / 2;
+            voidedArea.top = cy - dh / 2;
+            voidedArea.right = cx + dw / 2;
+            voidedArea.bottom = cy + dh / 2;
 
             legacyShowcaseX = showcaseX;
             legacyShowcaseY = showcaseY;
