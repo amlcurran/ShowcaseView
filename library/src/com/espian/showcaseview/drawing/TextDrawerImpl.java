@@ -1,6 +1,7 @@
 package com.espian.showcaseview.drawing;
 
 import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.utils.ShowcaseAreaCalculator;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -21,14 +22,16 @@ public class TextDrawerImpl implements TextDrawer {
 
     private CharSequence mTitle, mDetails;
     private float mDensityScale;
+    private ShowcaseAreaCalculator mCalculator;
     private float[] mBestTextPosition = new float[3];
     private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
     private TextAppearanceSpan mTitleSpan;
     private TextAppearanceSpan mDetailSpan;
 
-    public TextDrawerImpl(float densityScale) {
+    public TextDrawerImpl(float densityScale, ShowcaseAreaCalculator calculator) {
         mDensityScale = densityScale;
+        mCalculator = calculator;
 
         mPaintTitle = new TextPaint();
         mPaintTitle.setAntiAlias(true);
@@ -96,17 +99,17 @@ public class TextDrawerImpl implements TextDrawer {
     public void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView) {
 
         //if the width isn't much bigger than the voided area, just consider top & bottom
-        float spaceTop = showcaseView.getVoidedArea().top;
-        float spaceBottom = canvasH - showcaseView.getVoidedArea().bottom
+        float spaceTop = mCalculator.getShowcaseRect().top;
+        float spaceBottom = canvasH - mCalculator.getShowcaseRect().bottom
                 - 64 * mDensityScale; //64dip considers the OK button
         //float spaceLeft = voidedArea.left;
         //float spaceRight = canvasW - voidedArea.right;
 
+        //TODO: currently only considers above or below showcase, deal with left or right
         mBestTextPosition[0] = 24 * mDensityScale;
         mBestTextPosition[1] = spaceTop > spaceBottom ? 128 * mDensityScale
-                : 24 * mDensityScale + showcaseView.getVoidedArea().bottom;
+                : 24 * mDensityScale + mCalculator.getShowcaseRect().bottom;
         mBestTextPosition[2] = canvasW - 48 * mDensityScale;
-        //TODO: currently only considers above or below showcase, deal with left or right
 
     }
 

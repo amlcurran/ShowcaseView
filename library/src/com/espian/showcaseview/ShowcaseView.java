@@ -11,13 +11,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -64,18 +59,14 @@ public class ShowcaseView extends RelativeLayout
     private boolean isRedundant = false;
     private boolean hasCustomClickListener = false;
     private ConfigOptions mOptions;
-    private Paint mEraser;
     private int backColor;
-    private Drawable showcase;
     private View mHandy;
     private final Button mEndButton;
     private OnShowcaseEventListener mEventListener;
-    private Rect voidedArea;
     private boolean mAlteredText = false;
 
     private final String buttonText;
     private float scaleMultiplier = 1f;
-    private Bitmap mBleachedCling;
     private int mShowcaseColor;
     private TextDrawer mTextDrawer;
     private ClingDrawer mClingDrawer;
@@ -109,11 +100,12 @@ public class ShowcaseView extends RelativeLayout
         metricScale = getContext().getResources().getDisplayMetrics().density;
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
 
-        mTextDrawer = new TextDrawerImpl(metricScale);
+        mClingDrawer = new ClingDrawerImpl(getResources(), mShowcaseColor);
+
+        // TODO: This isn't ideal, ClingDrawer and Calculator interfaces should be separate
+        mTextDrawer = new TextDrawerImpl(metricScale, mClingDrawer);
         mTextDrawer.setTitleStyling(context, titleTextAppearance);
         mTextDrawer.setDetailStyling(context, detailTextAppearance);
-
-        mClingDrawer = new ClingDrawerImpl();
 
         ConfigOptions options = new ConfigOptions();
         options.showcaseId = getId();
@@ -138,8 +130,6 @@ public class ShowcaseView extends RelativeLayout
             isRedundant = true;
             return;
         }
-        showcase = getContext().getResources().getDrawable(R.drawable.cling_bleached);
-        showcase.setColorFilter(mShowcaseColor, PorterDuff.Mode.MULTIPLY);
 
         showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
         setOnTouchListener(this);
@@ -413,7 +403,7 @@ public class ShowcaseView extends RelativeLayout
             return;
         }
 
-        boolean recalculatedCling = makeVoidedRect();
+        boolean recalculatedCling = mClingDrawer.calculateShowcaseRect(showcaseX, showcaseY);
         boolean recalculateText = recalculatedCling || mAlteredText;
         mAlteredText = false;
 
@@ -421,14 +411,13 @@ public class ShowcaseView extends RelativeLayout
         canvas.drawColor(backColor);
 
         // Draw to the scale specified
-        mClingDrawer.scale(canvas, scaleMultiplier, showcaseX, showcaseY);
+        mClingDrawer.scale(canvas, showcaseX, showcaseY, scaleMultiplier);
 
         // Erase the area for the ring
         mClingDrawer.eraseCircle(canvas, showcaseX, showcaseY, showcaseRadius);
 
         // Draw the showcase drawable
-        showcase.setBounds(voidedArea);
-        showcase.draw(canvas);
+        mClingDrawer.drawCling(canvas);
 
         // Revert the scale altered above
         mClingDrawer.revertScale(canvas);
@@ -440,41 +429,6 @@ public class ShowcaseView extends RelativeLayout
         mTextDrawer.draw(canvas, recalculateText);
 
         super.dispatchDraw(canvas);
-
-    }
-
-    /**
-     * Creates a {@link Rect} which represents the area the showcase covers. Used to calculate where
-     * best to place the text
-     *
-     * @return true if voidedArea has changed, false otherwise.
-     */
-    private boolean makeVoidedRect() {
-
-        // This if statement saves resources by not recalculating voidedArea
-        // if the X & Y coordinates haven't changed
-        if (showcaseX != legacyShowcaseX || showcaseY != legacyShowcaseY) {
-
-            if (voidedArea == null) {
-                voidedArea = new Rect();
-            }
-
-            int cx = (int) showcaseX, cy = (int) showcaseY;
-            int dw = showcase.getIntrinsicWidth();
-            int dh = showcase.getIntrinsicHeight();
-
-            voidedArea.left = cx - dw / 2;
-            voidedArea.top = cy - dh / 2;
-            voidedArea.right = cx + dw / 2;
-            voidedArea.bottom = cy + dh / 2;
-
-            legacyShowcaseX = showcaseX;
-            legacyShowcaseY = showcaseY;
-
-            return true;
-
-        }
-        return false;
 
     }
 
@@ -548,10 +502,6 @@ public class ShowcaseView extends RelativeLayout
         } else {
             setVisibility(View.VISIBLE);
         }
-    }
-
-    public Rect getVoidedArea() {
-        return voidedArea;
     }
 
     private void fadeInShowcase() {
