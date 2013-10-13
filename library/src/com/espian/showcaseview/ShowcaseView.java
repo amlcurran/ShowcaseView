@@ -1,7 +1,9 @@
 package com.espian.showcaseview;
 
 import com.espian.showcaseview.anim.AnimationUtils;
+import com.espian.showcaseview.drawing.TextDrawerImpl;
 import com.github.espiandev.showcaseview.R;
+import com.sun.istack.internal.NotNull;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,10 +20,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.DynamicLayout;
-import android.text.Layout;
 import android.text.SpannableString;
-import android.text.TextPaint;
-import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -41,7 +40,8 @@ import static com.espian.showcaseview.anim.AnimationUtils.AnimationStartListener
 /**
  * A view which allows you to showcase areas of your app with an explanation.
  */
-public class ShowcaseView extends RelativeLayout implements View.OnClickListener, View.OnTouchListener {
+public class ShowcaseView extends RelativeLayout
+        implements View.OnClickListener, View.OnTouchListener {
 
     public static final int TYPE_NO_LIMIT = 0;
     public static final int TYPE_ONE_SHOT = 1;
@@ -67,18 +67,15 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private boolean isRedundant = false;
     private boolean hasCustomClickListener = false;
     private ConfigOptions mOptions;
-    private Paint  mEraser;
-    private TextPaint mPaintDetail, mPaintTitle;
+    private Paint mEraser;
     private int backColor;
     private Drawable showcase;
     private View mHandy;
     private final Button mEndButton;
     private OnShowcaseEventListener mEventListener;
     private Rect voidedArea;
-    private CharSequence mTitleText, mSubText;
     private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
-    private float[] mBestTextPosition;
     private boolean mAlteredText = false;
     private TextAppearanceSpan mDetailSpan, mTitleSpan;
 
@@ -86,21 +83,30 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     private float scaleMultiplier = 1f;
     private Bitmap mBleachedCling;
     private int mShowcaseColor;
+    private TextDrawerImpl mTextDrawer;
 
     protected ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
     }
 
-    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
+    protected ShowcaseView(@NotNull Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         // Get the attributes for the ShowcaseView
-        final TypedArray styled = context.getTheme().obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle, R.style.ShowcaseView);
-        backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
-        mShowcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor("#33B5E5"));
+        final TypedArray styled = context.getTheme()
+                .obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle,
+                        R.style.ShowcaseView);
+        backColor = styled
+                .getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
+        mShowcaseColor = styled
+                .getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor("#33B5E5"));
 
-        int titleTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance, R.style.TextAppearance_ShowcaseView_Title);
-        int detailTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance, R.style.TextAppearance_ShowcaseView_Detail);
+        int titleTextAppearance = styled
+                .getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance,
+                        R.style.TextAppearance_ShowcaseView_Title);
+        int detailTextAppearance = styled
+                .getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance,
+                        R.style.TextAppearance_ShowcaseView_Detail);
         mTitleSpan = new TextAppearanceSpan(context, titleTextAppearance);
         mDetailSpan = new TextAppearanceSpan(context, detailTextAppearance);
 
@@ -113,6 +119,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         ConfigOptions options = new ConfigOptions();
         options.showcaseId = getId();
         setConfigOptions(options);
+
+        init();
     }
 
     private void init() {
@@ -122,7 +130,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             setDrawingCacheEnabled(true);
         }
 
-        boolean hasShot = getContext().getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
+        boolean hasShot = getContext()
+                .getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
                 .getBoolean("hasShot" + getConfigOptions().showcaseId, false);
         if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
             // The showcase has already been shot once, so we don't need to do anything
@@ -137,17 +146,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
         setOnTouchListener(this);
 
-        mPaintTitle = new TextPaint();
-        mPaintTitle.setAntiAlias(true);
-
-        mPaintDetail = new TextPaint();
-        mPaintDetail.setAntiAlias(true);
-
         mEraser = new Paint();
         mEraser.setColor(0xFFFFFF);
         mEraser.setAlpha(0);
         mEraser.setXfermode(mBlender);
         mEraser.setAntiAlias(true);
+
+        mTextDrawer = new TextDrawerImpl(metricScale);
 
         if (!mOptions.noButton && mEndButton.getParent() == null) {
             RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
@@ -159,8 +164,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 lps.setMargins(margin, margin, margin, margin);
             }
             mEndButton.setLayoutParams(lps);
-            mEndButton.setText(buttonText != null ? buttonText : getResources().getString(R.string.ok));
-            if (!hasCustomClickListener) mEndButton.setOnClickListener(this);
+            mEndButton.setText(
+                    buttonText != null ? buttonText : getResources().getString(R.string.ok));
+            if (!hasCustomClickListener) {
+                mEndButton.setOnClickListener(this);
+            }
             addView(mEndButton);
         }
 
@@ -185,8 +193,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         view.post(new Runnable() {
             @Override
             public void run() {
-                init();
-                if (mOptions.insert == INSERT_TO_VIEW) {
+                //init();
+                if (getConfigOptions().insert == INSERT_TO_VIEW) {
                     showcaseX = (float) (view.getLeft() + view.getWidth() / 2);
                     showcaseY = (float) (view.getTop() + view.getHeight() / 2);
                 } else {
@@ -212,37 +220,43 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         }
         showcaseX = x;
         showcaseY = y;
-        init();
+        //init();
         invalidate();
     }
 
-    public void setShowcaseItem(final int itemType, final int actionItemId, final Activity activity) {
+    public void setShowcaseItem(final int itemType, final int actionItemId,
+            final Activity activity) {
         post(new Runnable() {
             @Override
             public void run() {
                 View homeButton = activity.findViewById(android.R.id.home);
                 if (homeButton == null) {
                     // Thanks to @hameno for this
-                    int homeId = activity.getResources().getIdentifier("abs__home", "id", activity.getPackageName());
+                    int homeId = activity.getResources()
+                            .getIdentifier("abs__home", "id", activity.getPackageName());
                     if (homeId == 0) {
-                        homeId = activity.getResources().getIdentifier("home", "id", activity.getPackageName());
+                        homeId = activity.getResources()
+                                .getIdentifier("home", "id", activity.getPackageName());
                     }
                     if (homeId != 0) {
                         homeButton = activity.findViewById(homeId);
                     }
                 }
-                if (homeButton == null)
-                    throw new RuntimeException("insertShowcaseViewWithType cannot be used when the theme " +
-                            "has no ActionBar");
+                if (homeButton == null) {
+                    throw new RuntimeException(
+                            "insertShowcaseViewWithType cannot be used when the theme " +
+                                    "has no ActionBar");
+                }
                 ViewParent p = homeButton.getParent().getParent(); //ActionBarView
 
                 if (!p.getClass().getName().contains("ActionBarView")) {
                     String previousP = p.getClass().getName();
                     p = p.getParent();
                     String throwP = p.getClass().getName();
-                    if (!p.getClass().getName().contains("ActionBarView"))
+                    if (!p.getClass().getName().contains("ActionBarView")) {
                         throw new IllegalStateException("Cannot find ActionBarView for " +
                                 "Activity, instead found " + previousP + " and " + throwP);
+                    }
                 }
 
                 Class abv = p.getClass(); //ActionBarView class
@@ -280,8 +294,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                 Field mObField = mAmp.getClass().getDeclaredField("mOverflowButton");
                 mObField.setAccessible(true);
                 View mOb = (View) mObField.get(mAmp);
-                if (mOb != null)
+                if (mOb != null) {
                     setShowcaseView(mOb);
+                }
             } else {
                 // Want an ActionItem, so find it
                 Field mAmvField = mAmp.getClass().getSuperclass().getDeclaredField("mMenuView");
@@ -294,18 +309,21 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
                     // Have to get superclasses because mChildren is private
                     mChField = mAmv.getClass().getSuperclass().getSuperclass()
                             .getSuperclass().getSuperclass().getDeclaredField("mChildren");
-                } else if(mAmv.getClass().toString().contains("android.support.v7")) {
+                } else if (mAmv.getClass().toString().contains("android.support.v7")) {
                     mChField = mAmv.getClass().getSuperclass().getSuperclass()
                             .getSuperclass().getDeclaredField("mChildren");
-                } else
-                    mChField = mAmv.getClass().getSuperclass().getSuperclass().getDeclaredField("mChildren");
+                } else {
+                    mChField = mAmv.getClass().getSuperclass().getSuperclass()
+                            .getDeclaredField("mChildren");
+                }
                 mChField.setAccessible(true);
                 Object[] mChs = (Object[]) mChField.get(mAmv);
                 for (Object mCh : mChs) {
                     if (mCh != null) {
                         View v = (View) mCh;
-                        if (v.getId() == actionItemId)
+                        if (v.getId() == actionItemId) {
                             setShowcaseView(v);
+                        }
                     }
                 }
             }
@@ -424,64 +442,18 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
         canvas.setMatrix(new Matrix());
 
-
-        if (!TextUtils.isEmpty(mTitleText) || !TextUtils.isEmpty(mSubText)) {
-            if (recalculateText)
-                mBestTextPosition = getBestTextPosition(canvas.getWidth(), canvas.getHeight());
-
-            if (!TextUtils.isEmpty(mTitleText)) {
-                canvas.save();
-                if (recalculateText) {
-                mDynamicTitleLayout = new DynamicLayout(mTitleText, mPaintTitle,
-                        (int) mBestTextPosition[2], Layout.Alignment.ALIGN_NORMAL,
-                        1.0f, 1.0f, true);
-                }
-                canvas.translate(mBestTextPosition[0], mBestTextPosition[1] - 24 * metricScale);
-                mDynamicTitleLayout.draw(canvas);
-                canvas.restore();
-            }
-
-            if (!TextUtils.isEmpty(mSubText)) {
-                canvas.save();
-                if (recalculateText) {
-                    mDynamicDetailLayout = new DynamicLayout(mSubText, mPaintDetail,
-                            ((Number) mBestTextPosition[2]).intValue(), Layout.Alignment.ALIGN_NORMAL,
-                            1.2f, 1.0f, true);
-                }
-                canvas.translate(mBestTextPosition[0] , mBestTextPosition[1] + 12 * metricScale + (mDynamicTitleLayout.getLineBottom(mDynamicTitleLayout.getLineCount()-1)-mDynamicTitleLayout.getLineBottom(0)));
-                mDynamicDetailLayout.draw(canvas);
-                canvas.restore();
-
-            }
+        if (recalculateText) {
+            mTextDrawer.calculateTextPosition(canvas.getWidth(), canvas.getHeight(), this);
         }
+        mTextDrawer.draw(canvas, recalculateText);
 
         super.dispatchDraw(canvas);
 
     }
 
     /**
-     * Calculates the best place to position text
-     *
-     * @param canvasW width of the screen
-     * @param canvasH height of the screen
-     * @return
-     */
-    private float[] getBestTextPosition(int canvasW, int canvasH) {
-
-        //if the width isn't much bigger than the voided area, just consider top & bottom
-        float spaceTop = voidedArea.top;
-        float spaceBottom = canvasH - voidedArea.bottom - 64 * metricScale; //64dip considers the OK button
-        //float spaceLeft = voidedArea.left;
-        //float spaceRight = canvasW - voidedArea.right;
-
-        //TODO: currently only considers above or below showcase, deal with left or right
-        return new float[]{24 * metricScale, spaceTop > spaceBottom ? 128 * metricScale : 24 * metricScale + voidedArea.bottom, canvasW - 48 * metricScale};
-
-    }
-
-    /**
-     * Creates a {@link Rect} which represents the area the showcase covers. Used to calculate
-     * where best to place the text
+     * Creates a {@link Rect} which represents the area the showcase covers. Used to calculate where
+     * best to place the text
      *
      * @return true if voidedArea has changed, false otherwise.
      */
@@ -507,8 +479,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     }
 
-    public void animateGesture(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) {
-        mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
+    public void animateGesture(float offsetStartX, float offsetStartY, float offsetEndX,
+            float offsetEndY) {
+        mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.handy, null);
         addView(mHandy);
         moveHand(offsetStartX, offsetStartY, offsetEndX, offsetEndY, new AnimationEndListener() {
             @Override
@@ -518,7 +492,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         });
     }
 
-    private void moveHand(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY, AnimationEndListener listener) {
+    private void moveHand(float offsetStartX, float offsetStartY, float offsetEndX,
+            float offsetEndY, AnimationEndListener listener) {
         AnimationUtils.createMovementAnimation(mHandy, showcaseX, showcaseY,
                 offsetStartX, offsetStartY,
                 offsetEndX, offsetEndY,
@@ -529,11 +504,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public void onClick(View view) {
         // If the type is set to one-shot, store that it has shot
         if (mOptions.shotType == TYPE_ONE_SHOT) {
-            SharedPreferences internal = getContext().getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE);
+            SharedPreferences internal = getContext()
+                    .getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                 internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).apply();
             } else {
-                internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).commit();
+                internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true)
+                        .commit();
             }
         }
         hide();
@@ -544,7 +521,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
             mEventListener.onShowcaseViewHide(this);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && getConfigOptions().fadeOutDuration > 0) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+                && getConfigOptions().fadeOutDuration > 0) {
             fadeOutShowcase();
         } else {
             setVisibility(View.GONE);
@@ -552,32 +530,39 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     private void fadeOutShowcase() {
-        AnimationUtils.createFadeOutAnimation(this, getConfigOptions().fadeOutDuration, new AnimationEndListener() {
-            @Override
-            public void onAnimationEnd() {
-                setVisibility(View.GONE);
-            }
-        }).start();
+        AnimationUtils.createFadeOutAnimation(this, getConfigOptions().fadeOutDuration,
+                new AnimationEndListener() {
+                    @Override
+                    public void onAnimationEnd() {
+                        setVisibility(View.GONE);
+                    }
+                }).start();
     }
 
     public void show() {
         if (mEventListener != null) {
             mEventListener.onShowcaseViewShow(this);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && getConfigOptions().fadeInDuration > 0) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+                && getConfigOptions().fadeInDuration > 0) {
             fadeInShowcase();
         } else {
             setVisibility(View.VISIBLE);
         }
     }
 
+    public Rect getVoidedArea() {
+        return voidedArea;
+    }
+
     private void fadeInShowcase() {
-        AnimationUtils.createFadeInAnimation(this, getConfigOptions().fadeInDuration, new AnimationStartListener() {
-            @Override
-            public void onAnimationStart() {
-                setVisibility(View.VISIBLE);
-            }
-        }).start();
+        AnimationUtils.createFadeInAnimation(this, getConfigOptions().fadeInDuration,
+                new AnimationStartListener() {
+                    @Override
+                    public void onAnimationStart() {
+                        setVisibility(View.VISIBLE);
+                    }
+                }).start();
     }
 
     @Override
@@ -616,10 +601,10 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     public void setText(String titleText, String subText) {
         SpannableString ssbTitle = new SpannableString(titleText);
         ssbTitle.setSpan(mTitleSpan, 0, ssbTitle.length(), 0);
-        mTitleText = ssbTitle;
+        mTextDrawer.setTitle(ssbTitle);
         SpannableString ssbDetail = new SpannableString(subText);
         ssbDetail.setSpan(mDetailSpan, 0, ssbDetail.length(), 0);
-        mSubText = ssbDetail;
+        mTextDrawer.setDetails(ssbDetail);
         mAlteredText = true;
         invalidate();
     }
@@ -630,7 +615,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
      * @return a View representing the ghostly hand
      */
     public View getHand() {
-        final View mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
+        final View mHandy = ((LayoutInflater) getContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
         addView(mHandy);
         AnimationUtils.hide(mHandy);
 
@@ -655,7 +641,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
      * @param y Y-coordinate to point to
      */
     public void pointTo(float x, float y) {
-		final View mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
+        final View mHandy = ((LayoutInflater) getContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
         AnimationUtils.createMovementAnimation(mHandy, x, y).start();
     }
 
@@ -665,7 +652,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
 
     protected ConfigOptions getConfigOptions() {
         // Make sure that this method never returns null
-        if (mOptions == null) return mOptions = new ConfigOptions();
+        if (mOptions == null) {
+            return mOptions = new ConfigOptions();
+        }
         return mOptions;
     }
 
@@ -679,11 +668,13 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
      * @param options        A set of options to customise the ShowcaseView
      * @return the created ShowcaseView instance
      */
-    public static ShowcaseView insertShowcaseView(View viewToShowcase, Activity activity, String title,
-                                                  String detailText, ConfigOptions options) {
+    public static ShowcaseView insertShowcaseView(View viewToShowcase, Activity activity,
+            String title,
+            String detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
-        if (options != null)
+        if (options != null) {
             sv.setConfigOptions(options);
+        }
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
         } else {
@@ -705,10 +696,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
      * @return the created ShowcaseView instance
      */
     public static ShowcaseView insertShowcaseView(View viewToShowcase, Activity activity, int title,
-                                                  int detailText, ConfigOptions options) {
+            int detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
-        if (options != null)
+        if (options != null) {
             sv.setConfigOptions(options);
+        }
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
         } else {
@@ -719,8 +711,9 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
         return sv;
     }
 
-    public static ShowcaseView insertShowcaseView(int showcaseViewId, Activity activity, String title,
-                                                  String detailText, ConfigOptions options) {
+    public static ShowcaseView insertShowcaseView(int showcaseViewId, Activity activity,
+            String title,
+            String detailText, ConfigOptions options) {
         View v = activity.findViewById(showcaseViewId);
         if (v != null) {
             return insertShowcaseView(v, activity, title, detailText, options);
@@ -729,7 +722,7 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     public static ShowcaseView insertShowcaseView(int showcaseViewId, Activity activity, int title,
-                                                  int detailText, ConfigOptions options) {
+            int detailText, ConfigOptions options) {
         View v = activity.findViewById(showcaseViewId);
         if (v != null) {
             return insertShowcaseView(v, activity, title, detailText, options);
@@ -738,10 +731,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     public static ShowcaseView insertShowcaseView(float x, float y, Activity activity, String title,
-                                                  String detailText, ConfigOptions options) {
+            String detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
-        if (options != null)
+        if (options != null) {
             sv.setConfigOptions(options);
+        }
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
         } else {
@@ -753,10 +747,11 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     public static ShowcaseView insertShowcaseView(float x, float y, Activity activity, int title,
-                                                  int detailText, ConfigOptions options) {
+            int detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
-        if (options != null)
+        if (options != null) {
             sv.setConfigOptions(options);
+        }
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
         } else {
@@ -774,7 +769,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     /**
      * Quickly insert a ShowcaseView into an Activity, highlighting an item.
      *
-     * @param type       the type of item to showcase (can be ITEM_ACTION_HOME, ITEM_TITLE_OR_SPINNER, ITEM_ACTION_ITEM or ITEM_ACTION_OVERFLOW)
+     * @param type       the type of item to showcase (can be ITEM_ACTION_HOME,
+     *                   ITEM_TITLE_OR_SPINNER, ITEM_ACTION_ITEM or ITEM_ACTION_OVERFLOW)
      * @param itemId     the ID of an Action item to showcase (only required for ITEM_ACTION_ITEM
      * @param activity   Activity to insert the ShowcaseView into
      * @param title      Text to show as a title. Can be null.
@@ -782,10 +778,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
      * @param options    A set of options to customise the ShowcaseView
      * @return the created ShowcaseView instance
      */
-    public static ShowcaseView insertShowcaseViewWithType(int type, int itemId, Activity activity, String title, String detailText, ConfigOptions options) {
+    public static ShowcaseView insertShowcaseViewWithType(int type, int itemId, Activity activity,
+            String title, String detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
-        if (options != null)
+        if (options != null) {
             sv.setConfigOptions(options);
+        }
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
         } else {
@@ -799,7 +797,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     /**
      * Quickly insert a ShowcaseView into an Activity, highlighting an item.
      *
-     * @param type       the type of item to showcase (can be ITEM_ACTION_HOME, ITEM_TITLE_OR_SPINNER, ITEM_ACTION_ITEM or ITEM_ACTION_OVERFLOW)
+     * @param type       the type of item to showcase (can be ITEM_ACTION_HOME,
+     *                   ITEM_TITLE_OR_SPINNER, ITEM_ACTION_ITEM or ITEM_ACTION_OVERFLOW)
      * @param itemId     the ID of an Action item to showcase (only required for ITEM_ACTION_ITEM
      * @param activity   Activity to insert the ShowcaseView into
      * @param title      Text to show as a title. Can be null.
@@ -807,10 +806,12 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
      * @param options    A set of options to customise the ShowcaseView
      * @return the created ShowcaseView instance
      */
-    public static ShowcaseView insertShowcaseViewWithType(int type, int itemId, Activity activity, int title, int detailText, ConfigOptions options) {
+    public static ShowcaseView insertShowcaseViewWithType(int type, int itemId, Activity activity,
+            int title, int detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
-        if (options != null)
+        if (options != null) {
             sv.setConfigOptions(options);
+        }
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
         } else {
@@ -826,25 +827,31 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
     }
 
     public static class ConfigOptions {
+
         public boolean block = true, noButton = false;
         public boolean hideOnClickOutside = false;
 
         /**
-         * Does not work with the {@link ShowcaseViews} class as it does not make sense (only with {@link ShowcaseView}).
+         * Does not work with the {@link ShowcaseViews} class as it does not make sense (only with
+         * {@link ShowcaseView}).
          */
         public int insert = INSERT_TO_DECOR;
 
         /**
-         * If you want to use more than one Showcase with the {@link ConfigOptions#shotType} {@link ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique value for every different Showcase you want to use.
+         * If you want to use more than one Showcase with the {@link ConfigOptions#shotType} {@link
+         * ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique value for every different
+         * Showcase you want to use.
          */
         public int showcaseId = 0;
 
         /**
-         * If you want to use more than one Showcase with {@link ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique {@link ConfigOptions#showcaseId} value for every different Showcase you want to use.
-         * If you want to use this in the {@link ShowcaseViews} class, you need to set a custom showcaseId for each {@link ShowcaseView}.
+         * If you want to use more than one Showcase with {@link ShowcaseView#TYPE_ONE_SHOT} in one
+         * Activity, set a unique {@link ConfigOptions#showcaseId} value for every different
+         * Showcase you want to use. If you want to use this in the {@link ShowcaseViews} class, you
+         * need to set a custom showcaseId for each {@link ShowcaseView}.
          */
         public int shotType = TYPE_NO_LIMIT;
-        
+
         /**
          * Default duration for fade in animation. Set to 0 to disable.
          */
@@ -854,7 +861,8 @@ public class ShowcaseView extends RelativeLayout implements View.OnClickListener
          * Default duration for fade out animation. Set to 0 to disable.
          */
         public int fadeOutDuration = AnimationUtils.DEFAULT_DURATION;
-        /** Allow custom positioning of the button within the showcase view.
+        /**
+         * Allow custom positioning of the button within the showcase view.
          */
         public LayoutParams buttonLayoutParams = null;
     }
