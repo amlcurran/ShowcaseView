@@ -12,6 +12,7 @@ import java.util.List;
 public class ShowcaseViews {
 
     private final List<ShowcaseView> views = new ArrayList<ShowcaseView>();
+    private final List<float[]> animations = new ArrayList<float[]>();
     private final Activity activity;
     private OnShowcaseAcknowledged showcaseAcknowledgedListener = new OnShowcaseAcknowledged() {
         @Override
@@ -51,7 +52,14 @@ public class ShowcaseViews {
         showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
         views.add(showcaseView);
 
+        animations.add(null);
+
         return this;
+    }
+
+    public void addAnimatedGestureToView(int viewIndex, float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) throws IndexOutOfBoundsException {
+        animations.remove(viewIndex);
+        animations.add(viewIndex, new float[]{offsetStartX, offsetStartY, offsetEndX, offsetEndY});
     }
 
     private boolean showcaseActionBar(ItemViewProperties properties) {
@@ -99,6 +107,7 @@ public class ShowcaseViews {
             // The showcase has already been shot once, so we don't need to do show it again.
             view.setVisibility(View.GONE);
             views.remove(0);
+            animations.remove(0);
             view.getConfigOptions().fadeOutDuration = 0;
             view.performButtonClick();
             return;
@@ -107,8 +116,14 @@ public class ShowcaseViews {
         view.setVisibility(View.INVISIBLE);
         ((ViewGroup) activity.getWindow().getDecorView()).addView(view);
         view.show();
-        views.remove(0);
 
+        float[] animation = animations.get(0);
+        if (animation != null) {
+            view.animateGesture(animation[0], animation[1], animation[2], animation[3]);
+        }
+
+        views.remove(0);
+        animations.remove(0);
     }
 
     public boolean hasViews(){
