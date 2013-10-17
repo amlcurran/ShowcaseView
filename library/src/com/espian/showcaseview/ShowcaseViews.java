@@ -57,6 +57,11 @@ public class ShowcaseViews {
         return this;
     }
 
+    /**
+     * Add an animated gesture to the view at position viewIndex.
+     * @param viewIndex The position of the view the gesture should be added to (beginning with 0 for the view which had been added as the first one)
+     * @see com.espian.showcaseview.ShowcaseView#animateGesture(float, float, float, float)
+     */
     public void addAnimatedGestureToView(int viewIndex, float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) throws IndexOutOfBoundsException {
         animations.remove(viewIndex);
         animations.add(viewIndex, new float[]{offsetStartX, offsetStartY, offsetEndX, offsetEndY});
