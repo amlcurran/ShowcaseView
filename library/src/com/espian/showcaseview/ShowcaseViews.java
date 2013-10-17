@@ -21,6 +21,9 @@ public class ShowcaseViews {
         }
     };
 
+    private static final int ABSOLUTE_COORDINATES = 0;
+    private static final int RELATIVE_COORDINATES = 1;
+
     public interface OnShowcaseAcknowledged {
         void onShowCaseAcknowledged(ShowcaseView showcaseView);
     }
@@ -60,11 +63,31 @@ public class ShowcaseViews {
     /**
      * Add an animated gesture to the view at position viewIndex.
      * @param viewIndex The position of the view the gesture should be added to (beginning with 0 for the view which had been added as the first one)
+     * @param offsetStartX  x-offset of the start position
+     * @param offsetStartY  y-offset of the start position
+     * @param offsetEndX    x-offset of the end position
+     * @param offsetEndY    y-offset of the end position
      * @see com.espian.showcaseview.ShowcaseView#animateGesture(float, float, float, float)
      */
     public void addAnimatedGestureToView(int viewIndex, float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) throws IndexOutOfBoundsException {
         animations.remove(viewIndex);
-        animations.add(viewIndex, new float[]{offsetStartX, offsetStartY, offsetEndX, offsetEndY});
+        animations.add(viewIndex, new float[]{RELATIVE_COORDINATES, offsetStartX, offsetStartY, offsetEndX, offsetEndY});
+    }
+
+    /**
+     * Like {@link com.espian.showcaseview.ShowcaseViews#addAnimatedGestureToView(int, float, float, float, float)}
+     * but instead of passing coordinates relative to the center of the showcased view
+     * you pass absolute screen coordinates.
+     * @param viewIndex The position of the view the gesture should be added to (beginning with 0 for the view which had been added as the first one)
+     * @param startX    x-coordinate of the start position
+     * @param startY    y-coordinate of the start position
+     * @param endX      x-coordinate of the end position
+     * @param endY      y-coordinate of the end position
+     * @see com.espian.showcaseview.ShowcaseView#animateGestureUsingAbsoluteCoordinates(float, float, float, float)
+     */
+    public void addAnimatedGestureUsingAbsoluteCoordinatesToView(int viewIndex, float startX, float startY, float endX, float endY) throws IndexOutOfBoundsException {
+        animations.remove(viewIndex);
+        animations.add(viewIndex, new float[]{ABSOLUTE_COORDINATES, startX, startY, endX, endY});
     }
 
     private boolean showcaseActionBar(ItemViewProperties properties) {
@@ -124,7 +147,12 @@ public class ShowcaseViews {
 
         float[] animation = animations.get(0);
         if (animation != null) {
-            view.animateGesture(animation[0], animation[1], animation[2], animation[3]);
+            if (animation[0] == RELATIVE_COORDINATES) {
+                view.animateGesture(animation[1], animation[2], animation[3], animation[4]);
+            } else if (animation[0] == ABSOLUTE_COORDINATES) {
+                view.animateGestureUsingAbsoluteCoordinates(animation[1], animation[2], animation[3], animation[4]);
+            }
+
         }
 
         views.remove(0);

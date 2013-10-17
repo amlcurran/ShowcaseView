@@ -403,12 +403,21 @@ public class ShowcaseView extends RelativeLayout
 
     }
 
+    /**
+     * Adds an animated hand performing a gesture.
+     * All parameters passed to this method are relative to the center of the showcased view.
+     * @param offsetStartX  x-offset of the start position
+     * @param offsetStartY  y-offset of the start position
+     * @param offsetEndX    x-offset of the end position
+     * @param offsetEndY    y-offset of the end position
+     * @see com.espian.showcaseview.ShowcaseView#animateGestureUsingAbsoluteCoordinates(float, float, float, float)
+     */
     public void animateGesture(float offsetStartX, float offsetStartY, float offsetEndX,
             float offsetEndY) {
         mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                 .inflate(R.layout.handy, null);
         addView(mHandy);
-        moveHand(offsetStartX, offsetStartY, offsetEndX, offsetEndY, new AnimationEndListener() {
+        moveHand(offsetStartX, offsetStartY, offsetEndX, offsetEndY, false, new AnimationEndListener() {
             @Override
             public void onAnimationEnd() {
                 removeView(mHandy);
@@ -416,11 +425,34 @@ public class ShowcaseView extends RelativeLayout
         });
     }
 
-    private void moveHand(float offsetStartX, float offsetStartY, float offsetEndX,
-            float offsetEndY, AnimationEndListener listener) {
-        AnimationUtils.createMovementAnimation(mHandy, showcaseX, showcaseY,
-                offsetStartX, offsetStartY,
-                offsetEndX, offsetEndY,
+    /**
+     * Like {@link com.espian.showcaseview.ShowcaseView#animateGesture(float, float, float, float)}
+     * but instead of passing coordinates relative to the center of the showcased view
+     * you pass absolute screen coordinates.
+     * @param startX    x-coordinate of the start position
+     * @param startY    y-coordinate of the start position
+     * @param endX      x-coordinate of the end position
+     * @param endY      y-coordinate of the end position
+     */
+    public void animateGestureUsingAbsoluteCoordinates(float startX, float startY, float endX,
+            float endY) {
+        mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                .inflate(R.layout.handy, null);
+        addView(mHandy);
+        moveHand(startX, startY, endX, endY, true, new AnimationEndListener() {
+            @Override
+            public void onAnimationEnd() {
+                removeView(mHandy);
+            }
+        });
+    }
+
+    private void moveHand(float startX, float startY, float endX,
+            float endY, boolean absoluteCoordinates, AnimationEndListener listener) {
+        AnimationUtils.createMovementAnimation(mHandy, absoluteCoordinates?0:showcaseX,
+                absoluteCoordinates?0:showcaseY,
+                startX, startY,
+                endX, endY,
                 listener).start();
     }
 
