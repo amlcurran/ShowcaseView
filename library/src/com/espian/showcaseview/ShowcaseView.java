@@ -222,6 +222,24 @@ public class ShowcaseView extends RelativeLayout
         //init();
         invalidate();
     }
+    
+    /**
+     * Set a specific rectangle to showcase
+     *
+     * @param x X co-ordinate
+     * @param y Y co-ordinate
+     */
+    public void setShowcaseRectangle(float x, float y, float width, float height) {
+        if (isRedundant) {
+            return;
+        }
+        showcaseX = x;
+        showcaseY = y;
+        showcaseRight = (int) (x + width);
+        showcaseBottom = (int) (y + height);
+        //init();
+        invalidate();
+    }
 
     public void setShowcaseItem(final int itemType, final int actionItemId,
             final Activity activity) {
