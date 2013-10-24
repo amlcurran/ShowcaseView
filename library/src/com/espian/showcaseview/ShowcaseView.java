@@ -46,12 +46,17 @@ public class ShowcaseView extends RelativeLayout
     public static final int ITEM_SPINNER = 2;
     public static final int ITEM_ACTION_ITEM = 3;
     public static final int ITEM_ACTION_OVERFLOW = 6;
+    
+    public static final int SHAPE_CIRCLE = 0;
+    public static final int SHAPE_RECTANGLE = 1;
 
     protected static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     public static final int INNER_CIRCLE_RADIUS = 94;
 
     private float showcaseX = -1;
     private float showcaseY = -1;
+    private int showcaseRight = -1;
+    private int showcaseBottom = -1;
     private float showcaseRadius = -1;
     private float metricScale = 1.0f;
     private float legacyShowcaseX = -1;
@@ -175,13 +180,27 @@ public class ShowcaseView extends RelativeLayout
             public void run() {
                 //init();
                 if (getConfigOptions().insert == INSERT_TO_VIEW) {
-                    showcaseX = (float) (view.getLeft() + view.getWidth() / 2);
-                    showcaseY = (float) (view.getTop() + view.getHeight() / 2);
+                	if(mOptions.clingShape == SHAPE_CIRCLE) {
+	                    showcaseX = (float) (view.getLeft() + view.getWidth() / 2);
+	                    showcaseY = (float) (view.getTop() + view.getHeight() / 2);
+                	} else if(mOptions.clingShape == SHAPE_RECTANGLE) {
+                		showcaseX = view.getLeft();
+                		showcaseY = view.getTop();
+                		showcaseRight = view.getRight();
+                		showcaseBottom = view.getBottom();
+                	}
                 } else {
-                    int[] coordinates = new int[2];
+                	int[] coordinates = new int[2];
                     view.getLocationInWindow(coordinates);
-                    showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
-                    showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
+                	if(mOptions.clingShape == SHAPE_CIRCLE) {
+                		showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
+                        showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
+                	} else if(mOptions.clingShape == SHAPE_RECTANGLE) {
+                		showcaseX = coordinates[0];
+                		showcaseY = coordinates[1];
+                		showcaseRight = (int) showcaseX + view.getWidth();
+                		showcaseBottom = (int) showcaseY + view.getHeight();
+                	}
                 }
                 invalidate();
             }
@@ -379,7 +398,10 @@ public class ShowcaseView extends RelativeLayout
             return;
         }
 
-        boolean recalculatedCling = mClingDrawer.calculateShowcaseRect(showcaseX, showcaseY);
+        boolean recalculatedCling = 
+        		mOptions.clingShape == SHAPE_CIRCLE
+        		? mClingDrawer.calculateShowcaseRect(showcaseX, showcaseY)
+        		: mClingDrawer.calculateShowcaseRect((int) showcaseX, (int) showcaseY, showcaseRight, showcaseBottom);
         boolean recalculateText = recalculatedCling || mAlteredText;
         mAlteredText = false;
 
@@ -389,11 +411,15 @@ public class ShowcaseView extends RelativeLayout
         // Draw to the scale specified
         mClingDrawer.scale(canvas, showcaseX, showcaseY, scaleMultiplier);
 
-        // Erase the area for the ring
-        mClingDrawer.eraseCircle(canvas, showcaseX, showcaseY, showcaseRadius);
+        // Erase the area for the ring/rectangle
+        if(mOptions.clingShape == SHAPE_CIRCLE)
+        	mClingDrawer.eraseCircle(canvas, showcaseX, showcaseY, showcaseRadius);
+        else if(mOptions.clingShape == SHAPE_RECTANGLE)
+        	mClingDrawer.eraseRectangle(canvas, showcaseX, showcaseY, showcaseRight, showcaseBottom);
 
         // Draw the showcase drawable
-        mClingDrawer.drawCling(canvas);
+        if(mOptions.clingShape == SHAPE_CIRCLE)
+        	mClingDrawer.drawCling(canvas);
 
         // Revert the scale altered above
         mClingDrawer.revertScale(canvas);
@@ -785,6 +811,11 @@ public class ShowcaseView extends RelativeLayout
          * Allow custom positioning of the button within the showcase view.
          */
         public LayoutParams buttonLayoutParams = null;
+        
+        /**
+         * Cling shape to draw
+         */
+        public int clingShape = SHAPE_CIRCLE;
     }
 
 }

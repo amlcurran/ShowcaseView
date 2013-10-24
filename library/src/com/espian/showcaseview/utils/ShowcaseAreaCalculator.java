@@ -8,6 +8,7 @@ import android.graphics.Rect;
 public interface ShowcaseAreaCalculator {
 
     boolean calculateShowcaseRect(float showcaseX, float showcaseY);
+    boolean calculateShowcaseRect(int left, int top, int right, int bottom);
 
     Rect getShowcaseRect();
 }
