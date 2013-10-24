@@ -18,7 +18,7 @@ import android.text.style.TextAppearanceSpan;
  */
 public class TextDrawerImpl implements TextDrawer {
 	
-	private static final int PADDING = 48;
+	private static final int PADDING = 24;
 
     private final TextPaint mPaintTitle;
     private final TextPaint mPaintDetail;
@@ -133,6 +133,17 @@ public class TextDrawerImpl implements TextDrawer {
     		mBestTextPosition[0] = PADDING * mDensityScale;
     		mBestTextPosition[1] = showcase.bottom + PADDING * mDensityScale;
     		mBestTextPosition[2] = canvasW - 2 * PADDING * mDensityScale;
+    		break;
+    	}
+    	switch(largest) {
+    	case 0:
+    	case 2:
+    		mBestTextPosition[1] += canvasH / 3;
+    		break;
+    	case 1:
+    	case 3:
+    		mBestTextPosition[2] /= 3;
+    		mBestTextPosition[0] += canvasW / 3;
     		break;
     	}
 
