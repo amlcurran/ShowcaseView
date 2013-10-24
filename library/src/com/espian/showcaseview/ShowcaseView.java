@@ -537,16 +537,25 @@ public class ShowcaseView extends RelativeLayout
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
 
-        float xDelta = Math.abs(motionEvent.getRawX() - showcaseX);
-        float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
-        double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
+    	boolean outside = false;
+    	if(mOptions.clingShape == SHAPE_CIRCLE) {
+	        float xDelta = Math.abs(motionEvent.getRawX() - showcaseX);
+	        float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
+	        double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
+	        outside = distanceFromFocus > showcaseRadius;
+    	} else if(mOptions.clingShape == SHAPE_RECTANGLE) {
+    		outside = !mClingDrawer.getShowcaseRect().contains(
+    				(int) motionEvent.getRawX(),
+    				(int) motionEvent.getRawY()
+    			);
+    	}
 
-        if (mOptions.hideOnClickOutside && distanceFromFocus > showcaseRadius) {
+        if (mOptions.hideOnClickOutside && outside) {
             this.hide();
             return true;
         }
 
-        return mOptions.block && distanceFromFocus > showcaseRadius;
+        return mOptions.block && outside;
     }
 
     public void setShowcaseIndicatorScale(float scaleMultiplier) {
