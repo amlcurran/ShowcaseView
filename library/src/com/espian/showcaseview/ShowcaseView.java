@@ -5,6 +5,7 @@ import com.espian.showcaseview.drawing.ClingDrawer;
 import com.espian.showcaseview.drawing.ClingDrawerImpl;
 import com.espian.showcaseview.drawing.TextDrawer;
 import com.espian.showcaseview.drawing.TextDrawerImpl;
+import com.espian.showcaseview.utils.Calculator;
 import com.github.espiandev.showcaseview.R;
 
 import android.app.Activity;
@@ -13,6 +14,7 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -173,18 +175,15 @@ public class ShowcaseView extends RelativeLayout
             @Override
             public void run() {
                 //init();
-                if (getConfigOptions().insert == INSERT_TO_VIEW) {
-                    showcaseX = (float) (view.getLeft() + view.getWidth() / 2);
-                    showcaseY = (float) (view.getTop() + view.getHeight() / 2);
-                } else {
-                    int[] coordinates = new int[2];
-                    view.getLocationInWindow(coordinates);
-                    showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
-                    showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
-                }
+                Point viewPoint = Calculator.getShowcasePointFromView(view, getConfigOptions());
+                setShowcasePosition(viewPoint);
                 invalidate();
             }
         });
+    }
+
+    public void setShowcasePosition(Point point) {
+        setShowcasePosition(point.x, point.y);
     }
 
     /**
@@ -580,7 +579,7 @@ public class ShowcaseView extends RelativeLayout
         mOptions = options;
     }
 
-    protected ConfigOptions getConfigOptions() {
+    public ConfigOptions getConfigOptions() {
         // Make sure that this method never returns null
         if (mOptions == null) {
             return mOptions = new ConfigOptions();
