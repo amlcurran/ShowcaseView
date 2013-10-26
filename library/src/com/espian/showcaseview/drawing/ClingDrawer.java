@@ -9,6 +9,7 @@ import android.graphics.Canvas;
  */
 public interface ClingDrawer extends ShowcaseAreaCalculator {
     void eraseCircle(Canvas canvas, float x, float y, float radius);
+    void eraseRectangle(Canvas canvas, float left, float top, float right, float bottom);
 
     void scale(Canvas canvas, float x, float y, float scaleMultiplier);
 

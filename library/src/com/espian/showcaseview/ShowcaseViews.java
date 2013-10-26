@@ -35,7 +35,7 @@ public class ShowcaseViews {
         this.showcaseAcknowledgedListener = acknowledgedListener;
     }
 
-    public void addView(ItemViewProperties properties) {
+    public ShowcaseView addView(ItemViewProperties properties) {
         ShowcaseViewBuilder builder = new ShowcaseViewBuilder(activity)
                 .setText(properties.titleResId, properties.messageResId)
                 .setShowcaseIndicatorScale(properties.scale)
@@ -52,6 +52,7 @@ public class ShowcaseViews {
         ShowcaseView showcaseView = builder.build();
         showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
         views.add(showcaseView);
+        return showcaseView;
     }
 
     private boolean showcaseActionBar(ItemViewProperties properties) {
