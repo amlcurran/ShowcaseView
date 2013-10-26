@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.espian.showcaseview.OnShowcaseEventListener;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.sample.fragments.ShowcaseFragmentActivity;
 import com.espian.showcaseview.sample.legacy.MultipleShowcaseSampleActivity;
@@ -15,7 +16,7 @@ import com.espian.showcaseview.sample.v14.ActionItemsSampleActivity;
 import com.espian.showcaseview.sample.v14.MultipleActionItemsSampleActivity;
 
 public class SampleActivity extends Activity implements View.OnClickListener,
-        ShowcaseView.OnShowcaseEventListener {
+        OnShowcaseEventListener {
 
     ShowcaseView sv;
     Button buttonTop;
