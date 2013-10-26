@@ -68,6 +68,7 @@ public class ShowcaseView extends RelativeLayout
     private boolean mAlteredText = false;
 
     private final String buttonText;
+
     private float scaleMultiplier = 1f;
     private TextDrawer mTextDrawer;
     private ClingDrawer mClingDrawer;
@@ -522,8 +523,12 @@ public class ShowcaseView extends RelativeLayout
         return mOptions.block && distanceFromFocus > showcaseRadius;
     }
 
+    /**
+     * @deprecated Use setScaleMultiplier
+     */
+    @Deprecated
     public void setShowcaseIndicatorScale(float scaleMultiplier) {
-        this.scaleMultiplier = scaleMultiplier;
+        setScaleMultiplier(scaleMultiplier);
     }
 
     public void setText(int titleTextResId, int subTextResId) {
@@ -793,6 +798,14 @@ public class ShowcaseView extends RelativeLayout
          * Allow custom positioning of the button within the showcase view.
          */
         public LayoutParams buttonLayoutParams = null;
+    }
+
+    public float getScaleMultiplier() {
+        return scaleMultiplier;
+    }
+
+    public void setScaleMultiplier(float scaleMultiplier) {
+        this.scaleMultiplier = scaleMultiplier;
     }
 
 }
