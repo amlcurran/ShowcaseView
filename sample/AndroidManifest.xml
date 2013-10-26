@@ -33,5 +33,6 @@
                 android:name=".legacy.MultipleShowcaseSampleActivity"/>
         <activity
                 android:name=".fragments.ShowcaseFragmentActivity"/>
+        <activity android:name=".animations.AnimationSampleActivity" />
     </application>
 </manifest>

@@ -33,4 +33,9 @@
     <string name="sum_action_bar">Other items that can be shown on an ActionBar, such as spinners and titles</string>
     <string name="sum_multiple">Demonstrates a series of Showcases moving from one to the next</string>
     <string name="sum_fragments">Usage of ShowcaseView with fragments</string>
+    <string name="anim_first">First we showcase this…</string>
+    <string name="anim_second">Then this…</string>
+    <string name="title_animations">Animations</string>
+    <string name="sum_animations">Using ObjectAnimators to animate ShowcaseViews</string>
+    <string name="anim_third">Finally this!</string>
 </resources>

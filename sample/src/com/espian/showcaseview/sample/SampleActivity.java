@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.espian.showcaseview.OnShowcaseEventListener;
 import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.sample.animations.AnimationSampleActivity;
 import com.espian.showcaseview.sample.fragments.ShowcaseFragmentActivity;
 import com.espian.showcaseview.sample.legacy.MultipleShowcaseSampleActivity;
 import com.espian.showcaseview.sample.v14.ActionItemsSampleActivity;
@@ -149,6 +150,9 @@ public class SampleActivity extends Activity implements View.OnClickListener,
             case 3:
                 startFragmentActivity();
                 break;
+
+            case 4:
+                startActivity(new Intent(this, AnimationSampleActivity.class));
         }
     }
 
@@ -157,13 +161,13 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         private static final int[] TITLE_RES_IDS = new int[] {
                 R.string.title_action_items, R.string.title_action_bar,
                 R.string.title_multiple, R.string.title_fragments,
-                //R.string.title_animations
+                R.string.title_animations
         };
 
         private static final int[] SUMMARY_RES_IDS = new int[] {
                 R.string.sum_action_items, R.string.sum_action_bar,
                 R.string.sum_multiple, R.string.sum_fragments,
-                //R.string.sum_animations
+                R.string.sum_animations
         };
 
         public HardcodedListAdapter(Context context) {
