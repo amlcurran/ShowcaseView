@@ -203,6 +203,22 @@ public class ShowcaseView extends RelativeLayout
         invalidate();
     }
 
+    public void setShowcaseX(float x) {
+        setShowcasePosition(x, showcaseY);
+    }
+
+    public void setShowcaseY(float y) {
+        setShowcasePosition(showcaseX, y);
+    }
+
+    public float getShowcaseX() {
+        return showcaseX;
+    }
+
+    public float getShowcaseY() {
+        return showcaseY;
+    }
+
     public void setShowcaseItem(final int itemType, final int actionItemId,
             final Activity activity) {
         post(new Runnable() {
