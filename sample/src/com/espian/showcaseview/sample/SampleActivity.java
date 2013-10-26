@@ -105,6 +105,10 @@ public class SampleActivity extends Activity implements View.OnClickListener,
     }
 
     @Override
+    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+    }
+
+    @Override
     public void onShowcaseViewShow(ShowcaseView showcaseView) {
         buttonTop.setText(R.string.button_hide);
         buttonMiddle.setVisibility(View.GONE);

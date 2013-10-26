@@ -455,17 +455,24 @@ public class ShowcaseView extends RelativeLayout
             fadeOutShowcase();
         } else {
             setVisibility(View.GONE);
+
+            if (mEventListener != null) {
+                mEventListener.onShowcaseViewDidHide(this);
+            }
         }
     }
 
     private void fadeOutShowcase() {
-        AnimationUtils.createFadeOutAnimation(this, getConfigOptions().fadeOutDuration,
-                new AnimationEndListener() {
-                    @Override
-                    public void onAnimationEnd() {
-                        setVisibility(View.GONE);
-                    }
-                }).start();
+        AnimationUtils.createFadeOutAnimation(this, new AnimationEndListener() {
+            @Override
+            public void onAnimationEnd() {
+                setVisibility(View.GONE);
+
+                if (mEventListener != null) {
+                    mEventListener.onShowcaseViewDidHide(ShowcaseView.this);
+                }
+            }
+        }).start();
     }
 
     public void show() {
@@ -512,6 +519,8 @@ public class ShowcaseView extends RelativeLayout
     public interface OnShowcaseEventListener {
 
         public void onShowcaseViewHide(ShowcaseView showcaseView);
+
+        public void onShowcaseViewDidHide(ShowcaseView showcaseView);
 
         public void onShowcaseViewShow(ShowcaseView showcaseView);
 
