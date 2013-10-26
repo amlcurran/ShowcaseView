@@ -571,7 +571,7 @@ public class ShowcaseView extends RelativeLayout
         mOptions = options;
     }
 
-    protected ConfigOptions getConfigOptions() {
+    public ConfigOptions getConfigOptions() {
         // Make sure that this method never returns null
         if (mOptions == null) {
             return mOptions = new ConfigOptions();
@@ -785,6 +785,11 @@ public class ShowcaseView extends RelativeLayout
          * Allow custom positioning of the button within the showcase view.
          */
         public LayoutParams buttonLayoutParams = null;
+        
+        /**
+         * Whether the text should be centered or stretched in the available space
+         */
+        public boolean centerText = false;
     }
 
 }

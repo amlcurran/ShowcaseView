@@ -19,7 +19,7 @@ import android.text.style.TextAppearanceSpan;
 public class TextDrawerImpl implements TextDrawer {
 	
 	private static final int PADDING = 24;
-	private static final int ACTIONBAR_PADDING = 100;
+	private static final int ACTIONBAR_PADDING = 66;
 
     private final TextPaint mPaintTitle;
     private final TextPaint mPaintDetail;
@@ -123,7 +123,7 @@ public class TextDrawerImpl implements TextDrawer {
     		break;
     	case 1:
     		mBestTextPosition[0] = PADDING * mDensityScale;
-    		mBestTextPosition[1] = ACTIONBAR_PADDING * mDensityScale;
+    		mBestTextPosition[1] = (PADDING + ACTIONBAR_PADDING) * mDensityScale;
     		mBestTextPosition[2] = canvasW - 2 * PADDING * mDensityScale;
     		break;
     	case 2:
@@ -137,19 +137,28 @@ public class TextDrawerImpl implements TextDrawer {
     		mBestTextPosition[2] = canvasW - 2 * PADDING * mDensityScale;
     		break;
     	}
-    	// Center text vertically or horizontally
-    	switch(largest) {
-    	case 0:
-    	case 2:
-    		mBestTextPosition[1] += canvasH / 4;
-    		break;
-    	case 1:
-    	case 3:
-    		mBestTextPosition[2] /= 2;
-    		mBestTextPosition[0] += canvasW / 4;
-    		break;
+    	if(showcaseView.getConfigOptions().centerText) {
+	    	// Center text vertically or horizontally
+	    	switch(largest) {
+	    	case 0:
+	    	case 2:
+	    		mBestTextPosition[1] += canvasH / 4;
+	    		break;
+	    	case 1:
+	    	case 3:
+	    		mBestTextPosition[2] /= 2;
+	    		mBestTextPosition[0] += canvasW / 4;
+	    		break;
+	    	} 
+    	} else {
+    		// As text is not centered add actionbar padding if the text is left or right
+	    	switch(largest) {
+	    		case 0:
+	    		case 2:
+	    			mBestTextPosition[1] += ACTIONBAR_PADDING * mDensityScale;
+	    			break;
+	    	}
     	}
-
     }
 
     @Override
