@@ -13,7 +13,6 @@ public class ShowcaseViews {
 
     private final List<ShowcaseView> views = new ArrayList<ShowcaseView>();
     private final Activity activity;
-    private final int showcaseTemplateId;
     private OnShowcaseAcknowledged showcaseAcknowledgedListener = new OnShowcaseAcknowledged() {
         @Override
         public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
@@ -25,13 +24,12 @@ public class ShowcaseViews {
         void onShowCaseAcknowledged(ShowcaseView showcaseView);
     }
 
-    public ShowcaseViews(Activity activity, int showcaseTemplateLayout) {
+    public ShowcaseViews(Activity activity) {
         this.activity = activity;
-        this.showcaseTemplateId = showcaseTemplateLayout;
     }
 
-    public ShowcaseViews(Activity activity, int showcaseTemplateLayout, OnShowcaseAcknowledged acknowledgedListener) {
-        this(activity, showcaseTemplateLayout);
+    public ShowcaseViews(Activity activity, OnShowcaseAcknowledged acknowledgedListener) {
+        this(activity);
         this.showcaseAcknowledgedListener = acknowledgedListener;
     }
 
