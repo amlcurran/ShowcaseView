@@ -13,7 +13,6 @@ public class ShowcaseViews {
 
     private final List<ShowcaseView> views = new ArrayList<ShowcaseView>();
     private final Activity activity;
-    private final int showcaseTemplateId;
     private OnShowcaseAcknowledged showcaseAcknowledgedListener = new OnShowcaseAcknowledged() {
         @Override
         public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
@@ -25,17 +24,16 @@ public class ShowcaseViews {
         void onShowCaseAcknowledged(ShowcaseView showcaseView);
     }
 
-    public ShowcaseViews(Activity activity, int showcaseTemplateLayout) {
+    public ShowcaseViews(Activity activity) {
         this.activity = activity;
-        this.showcaseTemplateId = showcaseTemplateLayout;
     }
 
-    public ShowcaseViews(Activity activity, int showcaseTemplateLayout, OnShowcaseAcknowledged acknowledgedListener) {
-        this(activity, showcaseTemplateLayout);
+    public ShowcaseViews(Activity activity, OnShowcaseAcknowledged acknowledgedListener) {
+        this(activity);
         this.showcaseAcknowledgedListener = acknowledgedListener;
     }
 
-    public void addView(ItemViewProperties properties) {
+    public ShowcaseViews addView(ItemViewProperties properties) {
         ShowcaseViewBuilder builder = new ShowcaseViewBuilder(activity)
                 .setText(properties.titleResId, properties.messageResId)
                 .setShowcaseIndicatorScale(properties.scale)
@@ -52,6 +50,8 @@ public class ShowcaseViews {
         ShowcaseView showcaseView = builder.build();
         showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
         views.add(showcaseView);
+
+        return this;
     }
 
     private boolean showcaseActionBar(ItemViewProperties properties) {

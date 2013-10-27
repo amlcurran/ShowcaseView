@@ -1,20 +1,20 @@
 package com.espian.showcaseview.sample.v14;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.espian.showcaseview.sample.R;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.ShowcaseViews;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import static com.espian.showcaseview.ShowcaseViews.ItemViewProperties;
 
-public class MultipleActionItemsSampleActivity extends Activity implements ActionBar.OnNavigationListener {
+public class MultipleActionItemsSampleActivity extends SherlockActivity implements com.actionbarsherlock.app.ActionBar.OnNavigationListener {
 
     public static final float SHOWCASE_SPINNER_SCALE = 1f;
     public static final float SHOWCASE_OVERFLOW_ITEM_SCALE = 0.5f;
@@ -24,17 +24,17 @@ public class MultipleActionItemsSampleActivity extends Activity implements Actio
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        getActionBar().setListNavigationCallbacks(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, new String[]{"Item1", "Item2", "Item3"}), this);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        getSupportActionBar().setListNavigationCallbacks(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, new String[]{"Item1", "Item2", "Item3"}), this);
         mOptions.block = false;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getSupportMenuInflater().inflate(R.menu.menu, menu);
 
-        ShowcaseViews views = new ShowcaseViews(this, R.layout.showcase_view_template, new ShowcaseViews.OnShowcaseAcknowledged() {
+        ShowcaseViews views = new ShowcaseViews(this, new ShowcaseViews.OnShowcaseAcknowledged() {
             @Override
             public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
                  Toast.makeText(getApplicationContext(), R.string.dismissed_message, Toast.LENGTH_SHORT).show();

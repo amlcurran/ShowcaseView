@@ -77,16 +77,20 @@ public class TextDrawerImpl implements TextDrawer {
 
     @Override
     public void setDetails(CharSequence details) {
-        SpannableString ssbDetail = new SpannableString(details);
-        ssbDetail.setSpan(mDetailSpan, 0, ssbDetail.length(), 0);
-        mDetails = ssbDetail;
+        if (details != null) {
+            SpannableString ssbDetail = new SpannableString(details);
+            ssbDetail.setSpan(mDetailSpan, 0, ssbDetail.length(), 0);
+            mDetails = ssbDetail;
+        }
     }
 
     @Override
     public void setTitle(CharSequence title) {
-        SpannableString ssbTitle = new SpannableString(title);
-        ssbTitle.setSpan(mTitleSpan, 0, ssbTitle.length(), 0);
-        mTitle = ssbTitle;
+        if (title != null) {
+            SpannableString ssbTitle = new SpannableString(title);
+            ssbTitle.setSpan(mTitleSpan, 0, ssbTitle.length(), 0);
+            mTitle = ssbTitle;
+        }
     }
 
     /**

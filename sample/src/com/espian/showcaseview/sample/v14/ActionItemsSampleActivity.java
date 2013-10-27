@@ -2,13 +2,14 @@ package com.espian.showcaseview.sample.v14;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.sample.R;
 
-public class ActionItemsSampleActivity extends Activity {
+public class ActionItemsSampleActivity extends SherlockActivity {
 
     ShowcaseView sv;
     ShowcaseView.ConfigOptions mOptions = new ShowcaseView.ConfigOptions();
@@ -17,13 +18,13 @@ public class ActionItemsSampleActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mOptions.block = false;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
+        getSupportMenuInflater().inflate(R.menu.menu, menu);
 
         sv = ShowcaseView.insertShowcaseViewWithType(ShowcaseView.ITEM_ACTION_OVERFLOW, R.id.menu_item1, this,
                 R.string.showcase_simple_title, R.string.showcase_simple_message, mOptions);

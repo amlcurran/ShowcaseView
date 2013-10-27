@@ -1,41 +1,50 @@
 package com.espian.showcaseview.sample;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import com.espian.showcaseview.OnShowcaseEventListener;
 import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.sample.animations.AnimationSampleActivity;
 import com.espian.showcaseview.sample.fragments.ShowcaseFragmentActivity;
 import com.espian.showcaseview.sample.legacy.MultipleShowcaseSampleActivity;
 import com.espian.showcaseview.sample.v14.ActionItemsSampleActivity;
 import com.espian.showcaseview.sample.v14.MultipleActionItemsSampleActivity;
 
 public class SampleActivity extends Activity implements View.OnClickListener,
-        ShowcaseView.OnShowcaseEventListener {
+        OnShowcaseEventListener, AdapterView.OnItemClickListener {
+
+    private static final float ALPHA_DIM_VALUE = 0.1f;
 
     ShowcaseView sv;
-    Button buttonTop;
-    Button buttonMiddle;
-    Button buttonDown;
-    Button buttonLowest;
+    Button buttonBlocked;
+    ListView listView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        buttonTop = (Button) findViewById(R.id.buttonBlocked);
-        buttonTop.setOnClickListener(this);
-        buttonMiddle = (Button) findViewById(R.id.buttonToMultipleItemsActivtiy);
-        buttonMiddle.setOnClickListener(this);
-        buttonDown = (Button) findViewById(R.id.buttonToMultipleShowcaseViewsActivity);
-        buttonDown.setOnClickListener(this);
-        buttonLowest = (Button) findViewById(R.id.buttonToShowcaseFragmentActivity);
-        buttonLowest.setOnClickListener(this);
+        HardcodedListAdapter adapter = new HardcodedListAdapter(this);
+        listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
+        dimView(listView);
+
+        buttonBlocked = (Button) findViewById(R.id.buttonBlocked);
+        buttonBlocked.setOnClickListener(this);
 
         ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
         co.hideOnClickOutside = true;
@@ -53,62 +62,123 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void dimView(View view) {
+        if (isHoneycombOrAbove()) {
+            view.setAlpha(ALPHA_DIM_VALUE);
+        }
+    }
+
     @Override
     public void onClick(View view) {
 
         int viewId = view.getId();
         switch (viewId) {
             case R.id.buttonBlocked:
-                if (sv.isShown()) {
-                    sv.animateGesture(0, 0, 0, -400);
-                } else {
-                    startSdkLevelAppropriateActivity(R.id.buttonBlocked);
-                }
-                break;
-            case R.id.buttonToMultipleItemsActivtiy:
-            case R.id.buttonToMultipleShowcaseViewsActivity:
-                startSdkLevelAppropriateActivity(viewId);
-                break;
-            case R.id.buttonToShowcaseFragmentActivity:
-                startFragmentActivity();
+                sv.animateGesture(0, 0, 0, 400);
                 break;
         }
     }
 
-    private void startFragmentActivity() {
-        Intent startIntent = new Intent(this, ShowcaseFragmentActivity.class);
-        startActivity(startIntent);
-    }
-
-    private void startSdkLevelAppropriateActivity(int buttonId) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            if (buttonId == R.id.buttonToMultipleShowcaseViewsActivity) {
-                startActivity(new Intent(this, MultipleShowcaseSampleActivity.class));
-            } else {
-                Toast.makeText(this, R.string.error_message, Toast.LENGTH_SHORT).show();
-            }
-        } else if (buttonId == R.id.buttonBlocked) {
-            startActivity(new Intent(this, ActionItemsSampleActivity.class));
-        } else if (buttonId == R.id.buttonToMultipleItemsActivtiy) {
-            startActivity(new Intent(this, MultipleActionItemsSampleActivity.class));
-        } else if (buttonId == R.id.buttonToMultipleShowcaseViewsActivity) {
-            startActivity(new Intent(this, MultipleShowcaseSampleActivity.class));
-        }
-    }
+//    private void startSdkLevelAppropriateActivity(int buttonId) {
+//        if (!isHoneycombOrAbove()) {
+//            if (buttonId == R.id.buttonToMultipleShowcaseViewsActivity) {
+//                startActivity(new Intent(this, MultipleShowcaseSampleActivity.class));
+//            } else {
+//                Toast.makeText(this, R.string.error_message, Toast.LENGTH_SHORT).show();
+//            }
+//        } else if (buttonId == R.id.buttonToActionItems) {
+//            startActivity(new Intent(this, ActionItemsSampleActivity.class));
+//        } else if (buttonId == R.id.buttonToMultipleItemsActivtiy) {
+//            startActivity(new Intent(this, MultipleActionItemsSampleActivity.class));
+//        } else if (buttonId == R.id.buttonToMultipleShowcaseViewsActivity) {
+//            startActivity(new Intent(this, MultipleShowcaseSampleActivity.class));
+//        }
+//    }
 
     @Override
     public void onShowcaseViewHide(ShowcaseView showcaseView) {
-        buttonTop.setText(R.string.button_show);
-        buttonMiddle.setVisibility(View.VISIBLE);
-        buttonDown.setVisibility(View.VISIBLE);
-        buttonLowest.setVisibility(View.VISIBLE);
+        if (isHoneycombOrAbove()) {
+            listView.setAlpha(1f);
+        }
+        buttonBlocked.setEnabled(false);
+    }
+
+    @Override
+    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
     }
 
     @Override
     public void onShowcaseViewShow(ShowcaseView showcaseView) {
-        buttonTop.setText(R.string.button_hide);
-        buttonMiddle.setVisibility(View.GONE);
-        buttonDown.setVisibility(View.GONE);
-        buttonLowest.setVisibility(View.GONE);
+        dimView(listView);
+        buttonBlocked.setEnabled(true);
     }
+
+    private static boolean isHoneycombOrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        switch (position) {
+
+            case 0:
+                startActivity(new Intent(this, ActionItemsSampleActivity.class));
+                break;
+
+            case 1:
+                startActivity(new Intent(this, MultipleActionItemsSampleActivity.class));
+                break;
+
+            case 2:
+                startActivity(new Intent(this, MultipleShowcaseSampleActivity.class));
+                break;
+
+            case 3:
+                startActivity(new Intent(this, ShowcaseFragmentActivity.class));
+                break;
+
+            case 4:
+                startActivity(new Intent(this, AnimationSampleActivity.class));
+                break;
+
+            case 5:
+                startActivity(new Intent(this, MemoryManagementTesting.class));
+        }
+    }
+
+    private static class HardcodedListAdapter extends ArrayAdapter {
+
+        private static final int[] TITLE_RES_IDS = new int[] {
+                R.string.title_action_items, R.string.title_action_bar,
+                R.string.title_multiple, R.string.title_fragments,
+                R.string.title_animations, R.string.title_memory
+        };
+
+        private static final int[] SUMMARY_RES_IDS = new int[] {
+                R.string.sum_action_items, R.string.sum_action_bar,
+                R.string.sum_multiple, R.string.sum_fragments,
+                R.string.sum_animations, R.string.sum_memory
+        };
+
+        public HardcodedListAdapter(Context context) {
+            super(context, R.layout.item_next_thing);
+        }
+
+        @Override
+        public int getCount() {
+            return TITLE_RES_IDS.length;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_next_thing, parent, false);
+            }
+            ((TextView) convertView.findViewById(R.id.textView)).setText(TITLE_RES_IDS[position]);
+            ((TextView) convertView.findViewById(R.id.textView2)).setText(SUMMARY_RES_IDS[position]);
+            return convertView;
+        }
+    }
+
 }

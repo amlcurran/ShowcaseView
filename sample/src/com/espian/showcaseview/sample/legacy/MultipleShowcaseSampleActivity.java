@@ -35,7 +35,7 @@ public class MultipleShowcaseSampleActivity extends Activity {
         mOptions.hideOnClickOutside = false;
 
         mViews = new ShowcaseViews(this,
-                R.layout.showcase_view_template, new ShowcaseViews.OnShowcaseAcknowledged() {
+                new ShowcaseViews.OnShowcaseAcknowledged() {
             @Override
             public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
                 Toast.makeText(MultipleShowcaseSampleActivity.this, R.string.dismissed_message, Toast.LENGTH_SHORT).show();

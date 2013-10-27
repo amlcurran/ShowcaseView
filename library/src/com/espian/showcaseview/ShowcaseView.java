@@ -5,6 +5,7 @@ import com.espian.showcaseview.drawing.ClingDrawer;
 import com.espian.showcaseview.drawing.ClingDrawerImpl;
 import com.espian.showcaseview.drawing.TextDrawer;
 import com.espian.showcaseview.drawing.TextDrawerImpl;
+import com.espian.showcaseview.utils.Calculator;
 import com.github.espiandev.showcaseview.R;
 
 import android.app.Activity;
@@ -13,6 +14,7 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -59,15 +61,15 @@ public class ShowcaseView extends RelativeLayout
     private boolean isRedundant = false;
     private boolean hasCustomClickListener = false;
     private ConfigOptions mOptions;
-    private int backColor;
+    private int mBackgroundColor;
     private View mHandy;
     private final Button mEndButton;
-    private OnShowcaseEventListener mEventListener;
+    private OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
     private boolean mAlteredText = false;
 
     private final String buttonText;
+
     private float scaleMultiplier = 1f;
-    private int mShowcaseColor;
     private TextDrawer mTextDrawer;
     private ClingDrawer mShowcaseDrawer;
 
@@ -82,9 +84,9 @@ public class ShowcaseView extends RelativeLayout
         final TypedArray styled = context.getTheme()
                 .obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle,
                         R.style.ShowcaseView);
-        backColor = styled
+        mBackgroundColor = styled
                 .getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
-        mShowcaseColor = styled
+        int showcaseColor = styled
                 .getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor("#33B5E5"));
 
         int titleTextAppearance = styled
@@ -174,18 +176,15 @@ public class ShowcaseView extends RelativeLayout
             @Override
             public void run() {
                 //init();
-                if (getConfigOptions().insert == INSERT_TO_VIEW) {
-                    showcaseX = (float) (view.getLeft() + view.getWidth() / 2);
-                    showcaseY = (float) (view.getTop() + view.getHeight() / 2);
-                } else {
-                    int[] coordinates = new int[2];
-                    view.getLocationInWindow(coordinates);
-                    showcaseX = (float) (coordinates[0] + view.getWidth() / 2);
-                    showcaseY = (float) (coordinates[1] + view.getHeight() / 2);
-                }
+                Point viewPoint = Calculator.getShowcasePointFromView(view, getConfigOptions());
+                setShowcasePosition(viewPoint);
                 invalidate();
             }
         });
+    }
+
+    public void setShowcasePosition(Point point) {
+        setShowcasePosition(point.x, point.y);
     }
 
     /**
@@ -202,6 +201,22 @@ public class ShowcaseView extends RelativeLayout
         showcaseY = y;
         //init();
         invalidate();
+    }
+
+    public void setShowcaseX(float x) {
+        setShowcasePosition(x, showcaseY);
+    }
+
+    public void setShowcaseY(float y) {
+        setShowcasePosition(showcaseX, y);
+    }
+
+    public float getShowcaseX() {
+        return showcaseX;
+    }
+
+    public float getShowcaseY() {
+        return showcaseY;
     }
 
     public void setShowcaseItem(final int itemType, final int actionItemId,
@@ -369,7 +384,11 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void setOnShowcaseEventListener(OnShowcaseEventListener listener) {
-        mEventListener = listener;
+        if (listener != null) {
+            mEventListener = listener;
+        } else {
+            mEventListener = OnShowcaseEventListener.NONE;
+        }
     }
 
     @Override
@@ -384,7 +403,7 @@ public class ShowcaseView extends RelativeLayout
         mAlteredText = false;
 
         // Draw the semi-transparent background
-        canvas.drawColor(backColor);
+        canvas.drawColor(mBackgroundColor);
 
         // Draw the showcase drawable
         mShowcaseDrawer.drawShowcase(canvas, showcaseX, showcaseY, scaleMultiplier, showcaseRadius);
@@ -437,32 +456,31 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void hide() {
-        if (mEventListener != null) {
-            mEventListener.onShowcaseViewHide(this);
-        }
+        mEventListener.onShowcaseViewHide(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
                 && getConfigOptions().fadeOutDuration > 0) {
             fadeOutShowcase();
         } else {
             setVisibility(View.GONE);
+
+            mEventListener.onShowcaseViewDidHide(this);
         }
     }
 
     private void fadeOutShowcase() {
-        AnimationUtils.createFadeOutAnimation(this, getConfigOptions().fadeOutDuration,
-                new AnimationEndListener() {
-                    @Override
-                    public void onAnimationEnd() {
-                        setVisibility(View.GONE);
-                    }
-                }).start();
+        AnimationUtils.createFadeOutAnimation(this, new AnimationEndListener() {
+            @Override
+            public void onAnimationEnd() {
+                setVisibility(View.GONE);
+
+                mEventListener.onShowcaseViewDidHide(ShowcaseView.this);
+            }
+        }).start();
     }
 
     public void show() {
-        if (mEventListener != null) {
-            mEventListener.onShowcaseViewShow(this);
-        }
+        mEventListener.onShowcaseViewShow(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
                 && getConfigOptions().fadeInDuration > 0) {
             fadeInShowcase();
@@ -496,16 +514,12 @@ public class ShowcaseView extends RelativeLayout
         return mOptions.block && distanceFromFocus > showcaseRadius;
     }
 
+    /**
+     * @deprecated Use setScaleMultiplier
+     */
+    @Deprecated
     public void setShowcaseIndicatorScale(float scaleMultiplier) {
-        this.scaleMultiplier = scaleMultiplier;
-    }
-
-    public interface OnShowcaseEventListener {
-
-        public void onShowcaseViewHide(ShowcaseView showcaseView);
-
-        public void onShowcaseViewShow(ShowcaseView showcaseView);
-
+        setScaleMultiplier(scaleMultiplier);
     }
 
     public void setText(int titleTextResId, int subTextResId) {
@@ -553,8 +567,7 @@ public class ShowcaseView extends RelativeLayout
      * @param y Y-coordinate to point to
      */
     public void pointTo(float x, float y) {
-        final View mHandy = ((LayoutInflater) getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
+        mHandy = getHand();
         AnimationUtils.createMovementAnimation(mHandy, x, y).start();
     }
 
@@ -562,7 +575,7 @@ public class ShowcaseView extends RelativeLayout
         mOptions = options;
     }
 
-    protected ConfigOptions getConfigOptions() {
+    public ConfigOptions getConfigOptions() {
         // Make sure that this method never returns null
         if (mOptions == null) {
             return mOptions = new ConfigOptions();
@@ -776,6 +789,14 @@ public class ShowcaseView extends RelativeLayout
          * Allow custom positioning of the button within the showcase view.
          */
         public LayoutParams buttonLayoutParams = null;
+    }
+
+    public float getScaleMultiplier() {
+        return scaleMultiplier;
+    }
+
+    public void setScaleMultiplier(float scaleMultiplier) {
+        this.scaleMultiplier = scaleMultiplier;
     }
 
 }

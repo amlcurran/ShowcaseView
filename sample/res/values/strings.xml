@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">Showcase Sample</string>
-  <string name="button_hide">Gesture up</string>
-  <string name="button_show">Show Single Action Items</string>
+  <string name="button_hide">Gesture down</string>
   <string name="button_blocked">Blocked button</string>
-  <string name="button_go_to_multiple_items_activity">Show Multiple Action Items</string>
-  <string name="button_go_to_multiple_showcases_activity">Show Multiple Showcases</string>
-  <string name="button_go_to_showcase_fragment_activity">Show Fragment Activity</string>
+  <string name="title_action_items">Action Items</string>
+  <string name="title_action_bar">Action Views</string>
+  <string name="title_multiple">Multiple Showcases</string>
+  <string name="title_fragments">Fragments</string>
   <string name="button_like">Like it!</string>
   <string name="error_message">"Your Android version is &lt; Honeycomb. You need actionbar support to run this sample."</string>
   <string name="like_message">PURRRRR!</string>
@@ -29,4 +29,15 @@
   <string name="showcase_menu_item_one_shot_message">This will be shown only once since it uses ShowcaseView.TYPE_ONE_SHOT as the shotType.\nDelete the app data to see it again.</string>
   <string name="does_really_work_with_fragments">Show toast</string>
   <string name="it_does_work">It does work with Fragments. :)</string>
+    <string name="sum_action_items">Showcasing items on the ActionBar (including appcompat and ActionBarSherlock)</string>
+    <string name="sum_action_bar">Other items that can be shown on an ActionBar, such as spinners and titles</string>
+    <string name="sum_multiple">Demonstrates a series of Showcases moving from one to the next</string>
+    <string name="sum_fragments">Usage of ShowcaseView with fragments</string>
+    <string name="anim_first">First we showcase this…</string>
+    <string name="anim_second">Then this…</string>
+    <string name="title_animations">Animations</string>
+    <string name="sum_animations">Using ObjectAnimators to animate ShowcaseViews</string>
+    <string name="anim_third">Finally this!</string>
+    <string name="title_memory">Memory management</string>
+    <string name="sum_memory" />
 </resources>

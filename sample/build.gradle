@@ -4,11 +4,12 @@ dependencies {
 	compile project(':library')
 	compile 'com.android.support:support-v4:18.0.+'
 	compile 'com.nineoldandroids:library:2.4.0+'
+    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
 }
 
 android {
 	compileSdkVersion 18
-	buildToolsVersion "18.0.0"
+	buildToolsVersion "18.1"
 
 	sourceSets {
 		main {
