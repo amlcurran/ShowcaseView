@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewParent;
 
 /**
- * Created by Alex on 27/10/13.
+ * Reflector which finds action items in the standard API 11 ActionBar implementation
  */
 public class ActionBarReflector extends BaseReflector {
 

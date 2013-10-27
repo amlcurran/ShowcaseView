@@ -1,5 +1,6 @@
 package com.espian.showcaseview;
 
+import com.espian.showcaseview.actionbar.ActionBarViewWrapper;
 import com.espian.showcaseview.actionbar.BaseReflector;
 import com.espian.showcaseview.anim.AnimationUtils;
 import com.espian.showcaseview.drawing.ClingDrawer;
@@ -227,6 +228,7 @@ public class ShowcaseView extends RelativeLayout
             public void run() {
                 BaseReflector reflector = BaseReflector.getReflectorForActivity(activity);
                 ViewParent p = reflector.getActionBarView(); //ActionBarView
+                ActionBarViewWrapper wrapper = new ActionBarViewWrapper(p);
 
                 if (!p.getClass().getName().contains("ActionBarView")) {
                     String previousP = p.getClass().getName();
@@ -246,10 +248,10 @@ public class ShowcaseView extends RelativeLayout
                         //setShowcaseView(homeButton);
                         break;
                     case ITEM_SPINNER:
-                        showcaseSpinner(p, abv);
+                        setShowcaseView(wrapper.getSpinnerView());
                         break;
                     case ITEM_TITLE:
-                        showcaseTitle(p, abv);
+                        setShowcaseView(wrapper.getTitleView());
                         break;
                     case ITEM_ACTION_ITEM:
                     case ITEM_ACTION_OVERFLOW:
@@ -314,38 +316,6 @@ public class ShowcaseView extends RelativeLayout
         } catch (NullPointerException npe) {
             throw new RuntimeException("insertShowcaseViewWithType() must be called " +
                     "after or during onCreateOptionsMenu() of the host Activity");
-        }
-    }
-
-    private void showcaseSpinner(ViewParent p, Class abv) {
-        try {
-            Field mSpinnerField = abv.getDeclaredField("mSpinner");
-            mSpinnerField.setAccessible(true);
-            View mSpinnerView = (View) mSpinnerField.get(p);
-            if (mSpinnerView != null) {
-                setShowcaseView(mSpinnerView);
-            }
-        } catch (NoSuchFieldException e) {
-            Log.e("TAG", "Failed to find actionbar spinner", e);
-        } catch (IllegalAccessException e) {
-            Log.e("TAG", "Failed to access actionbar spinner", e);
-
-        }
-    }
-
-    private void showcaseTitle(ViewParent p, Class abv) {
-        try {
-            Field mTitleViewField = abv.getDeclaredField("mTitleView");
-            mTitleViewField.setAccessible(true);
-            View titleView = (View) mTitleViewField.get(p);
-            if (titleView != null) {
-                setShowcaseView(titleView);
-            }
-        } catch (NoSuchFieldException e) {
-            Log.e("TAG", "Failed to find actionbar title", e);
-        } catch (IllegalAccessException e) {
-            Log.e("TAG", "Failed to access actionbar title", e);
-
         }
     }
 
