@@ -15,7 +15,7 @@ public class ActionBarViewWrapper {
     private ViewParent mActionBarView;
     private Class mActionBarViewClass;
     private Class mAbsActionBarViewClass;
-    
+
     public ActionBarViewWrapper(ViewParent actionBarView) {
         if (!actionBarView.getClass().getName().contains("ActionBarView")) {
             String previousP = actionBarView.getClass().getName();
@@ -62,5 +62,65 @@ public class ActionBarViewWrapper {
         }
         return null;
     }
-    
+
+    /**
+     * Return the view which represents the overflow action item on the ActionBar, or null if there isn't one
+     */
+    public View getOverflowView() {
+        try {
+            Field actionMenuPresenterField = mAbsActionBarViewClass.getDeclaredField("mActionMenuPresenter");
+            actionMenuPresenterField.setAccessible(true);
+            Object actionMenuPresenter = actionMenuPresenterField.get(mActionBarView);
+            Field overflowButtonField = actionMenuPresenter.getClass().getDeclaredField("mOverflowButton");
+            overflowButtonField.setAccessible(true);
+            return (View) overflowButtonField.get(actionMenuPresenter);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public View getActionItem(int actionItemId) {
+        try {
+            Field actionMenuPresenterField = mAbsActionBarViewClass.getDeclaredField("mActionMenuPresenter");
+            actionMenuPresenterField.setAccessible(true);
+            Object actionMenuPresenter = actionMenuPresenterField.get(mActionBarView);
+
+            Field menuViewField = actionMenuPresenter.getClass().getSuperclass().getDeclaredField("mMenuView");
+            menuViewField.setAccessible(true);
+            Object menuView = menuViewField.get(actionMenuPresenter);
+
+            Field mChField;
+            if (menuView.getClass().toString().contains("com.actionbarsherlock")) {
+                // There are thousands of superclasses to traverse up
+                // Have to get superclasses because mChildren is private
+                mChField = menuView.getClass().getSuperclass().getSuperclass()
+                        .getSuperclass().getSuperclass().getDeclaredField("mChildren");
+            } else if (menuView.getClass().toString().contains("android.support.v7")) {
+                mChField = menuView.getClass().getSuperclass().getSuperclass()
+                        .getSuperclass().getDeclaredField("mChildren");
+            } else {
+                mChField = menuView.getClass().getSuperclass().getSuperclass()
+                        .getDeclaredField("mChildren");
+            }
+            mChField.setAccessible(true);
+            Object[] mChs = (Object[]) mChField.get(menuView);
+            for (Object mCh : mChs) {
+                if (mCh != null) {
+                    View v = (View) mCh;
+                    if (v.getId() == actionItemId) {
+                        return v;
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
