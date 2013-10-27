@@ -245,7 +245,7 @@ public class ShowcaseView extends RelativeLayout
 
                 switch (itemType) {
                     case ITEM_ACTION_HOME:
-                        //setShowcaseView(homeButton);
+                        setShowcaseView(reflector.getHomeButton());
                         break;
                     case ITEM_SPINNER:
                         setShowcaseView(wrapper.getSpinnerView());
