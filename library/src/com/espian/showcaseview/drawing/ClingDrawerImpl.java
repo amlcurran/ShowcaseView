@@ -34,26 +34,17 @@ public class ClingDrawerImpl implements ClingDrawer {
     }
 
     @Override
-    public void eraseCircle(Canvas canvas, float x, float y, float radius) {
-        canvas.drawCircle(x, y, radius, mEraser);
-    }
-
-    @Override
-    public void scale(Canvas canvas, float x, float y, float scaleMultiplier) {
+    public void drawShowcase(Canvas canvas, float x, float y, float scaleMultiplier, float radius) {
         Matrix mm = new Matrix();
         mm.postScale(scaleMultiplier, scaleMultiplier, x, y);
         canvas.setMatrix(mm);
-    }
 
-    @Override
-    public void revertScale(Canvas canvas) {
-        canvas.setMatrix(new Matrix());
-    }
+        canvas.drawCircle(x, y, radius, mEraser);
 
-    @Override
-    public void drawCling(Canvas canvas) {
         mShowcaseDrawable.setBounds(mShowcaseRect);
         mShowcaseDrawable.draw(canvas);
+
+        canvas.setMatrix(new Matrix());
     }
 
     @Override

@@ -69,7 +69,7 @@ public class ShowcaseView extends RelativeLayout
     private float scaleMultiplier = 1f;
     private int mShowcaseColor;
     private TextDrawer mTextDrawer;
-    private ClingDrawer mClingDrawer;
+    private ClingDrawer mShowcaseDrawer;
 
     protected ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
@@ -100,10 +100,10 @@ public class ShowcaseView extends RelativeLayout
         metricScale = getContext().getResources().getDisplayMetrics().density;
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
 
-        mClingDrawer = new ClingDrawerImpl(getResources(), mShowcaseColor);
+        mShowcaseDrawer = new ClingDrawerImpl(getResources(), mShowcaseColor);
 
         // TODO: This isn't ideal, ClingDrawer and Calculator interfaces should be separate
-        mTextDrawer = new TextDrawerImpl(metricScale, mClingDrawer);
+        mTextDrawer = new TextDrawerImpl(metricScale, mShowcaseDrawer);
         mTextDrawer.setTitleStyling(context, titleTextAppearance);
         mTextDrawer.setDetailStyling(context, detailTextAppearance);
 
@@ -379,24 +379,15 @@ public class ShowcaseView extends RelativeLayout
             return;
         }
 
-        boolean recalculatedCling = mClingDrawer.calculateShowcaseRect(showcaseX, showcaseY);
+        boolean recalculatedCling = mShowcaseDrawer.calculateShowcaseRect(showcaseX, showcaseY);
         boolean recalculateText = recalculatedCling || mAlteredText;
         mAlteredText = false;
 
         // Draw the semi-transparent background
         canvas.drawColor(backColor);
 
-        // Draw to the scale specified
-        mClingDrawer.scale(canvas, showcaseX, showcaseY, scaleMultiplier);
-
-        // Erase the area for the ring
-        mClingDrawer.eraseCircle(canvas, showcaseX, showcaseY, showcaseRadius);
-
         // Draw the showcase drawable
-        mClingDrawer.drawCling(canvas);
-
-        // Revert the scale altered above
-        mClingDrawer.revertScale(canvas);
+        mShowcaseDrawer.drawShowcase(canvas, showcaseX, showcaseY, scaleMultiplier, showcaseRadius);
 
         // Draw the text on the screen, recalculating its position if necessary
         if (recalculateText) {
