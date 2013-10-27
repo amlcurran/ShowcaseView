@@ -34,7 +34,7 @@ public class MultipleActionItemsSampleActivity extends SherlockActivity implemen
     public boolean onCreateOptionsMenu(Menu menu) {
         getSupportMenuInflater().inflate(R.menu.menu, menu);
 
-        ShowcaseViews views = new ShowcaseViews(this, R.layout.showcase_view_template, new ShowcaseViews.OnShowcaseAcknowledged() {
+        ShowcaseViews views = new ShowcaseViews(this, new ShowcaseViews.OnShowcaseAcknowledged() {
             @Override
             public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
                  Toast.makeText(getApplicationContext(), R.string.dismissed_message, Toast.LENGTH_SHORT).show();
