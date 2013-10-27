@@ -16,7 +16,7 @@ public class SherlockReflector extends BaseReflector {
     }
 
     @Override
-    public ViewParent getActionBarView() {
+    public View getHomeButton() {
         int homeId = mActivity.getResources().getIdentifier("abs__home", "id", mActivity.getPackageName());
         View homeButton = mActivity.findViewById(homeId);
         if (homeButton == null) {
@@ -24,7 +24,7 @@ public class SherlockReflector extends BaseReflector {
                     "insertShowcaseViewWithType cannot be used when the theme " +
                             "has no ActionBar");
         }
-        return homeButton.getParent().getParent();
+        return homeButton;
     }
 
     @Override

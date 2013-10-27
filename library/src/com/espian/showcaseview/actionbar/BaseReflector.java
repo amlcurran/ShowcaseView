@@ -1,6 +1,7 @@
 package com.espian.showcaseview.actionbar;
 
 import android.app.Activity;
+import android.view.View;
 import android.view.ViewParent;
 
 /**
@@ -8,8 +9,13 @@ import android.view.ViewParent;
  */
 public abstract class BaseReflector {
 
-    public abstract ViewParent getActionBarView();
+    public abstract View getHomeButton();
+
     public abstract void showcaseActionItem(int itemId);
+
+    public ViewParent getActionBarView() {
+        return getHomeButton().getParent().getParent();
+    }
 
     public static BaseReflector getReflectorForActivity(Activity activity) {
         switch (searchForActivitySuperClass(activity)) {

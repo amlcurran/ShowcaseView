@@ -16,14 +16,14 @@ public class ActionBarReflector extends BaseReflector {
     }
 
     @Override
-    public ViewParent getActionBarView() {
+    public View getHomeButton() {
         View homeButton = mActivity.findViewById(android.R.id.home);
         if (homeButton == null) {
             throw new RuntimeException(
                     "insertShowcaseViewWithType cannot be used when the theme " +
                             "has no ActionBar");
         }
-        return homeButton.getParent().getParent();
+        return homeButton;
     }
 
     @Override
