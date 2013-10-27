@@ -1,11 +1,10 @@
 package com.espian.showcaseview.actionbar;
 
 import android.app.Activity;
-import android.view.View;
 import android.view.ViewParent;
 
 /**
- * Created by Alex on 27/10/13.
+ * Base class which uses reflection to determine how to showcase Action Items and Action Views.
  */
 public abstract class BaseReflector {
 
@@ -13,15 +12,33 @@ public abstract class BaseReflector {
     public abstract void showcaseActionItem(int itemId);
 
     public static BaseReflector getReflectorForActivity(Activity activity) {
-        // This should be looking at superclasses!
-        String classQualifier = activity.getClass().getName();
-        if (classQualifier.contains("SherlockActivity")) {
-            return new SherlockReflector(activity);
-        } else if (classQualifier.contains("ActionBarActivity")) {
-            return new AppCompatReflector(activity);
-        } else {
-            return new ActionBarReflector(activity);
+        switch (searchForActivitySuperClass(activity)) {
+            case STANDARD:
+                return new ActionBarReflector(activity);
+            case APP_COMPAT:
+                return new AppCompatReflector(activity);
+            case ACTIONBAR_SHERLOCK:
+                return new SherlockReflector(activity);
         }
+        return null;
+    }
+
+    private static ActionBarType searchForActivitySuperClass(Activity activity) {
+        Class currentLevel = activity.getClass();
+        while (currentLevel != Activity.class) {
+            if (currentLevel.getSimpleName().equals("SherlockActivity")) {
+                return ActionBarType.ACTIONBAR_SHERLOCK;
+            }
+            if (currentLevel.getSimpleName().equals("ActionBarActivity")) {
+                return ActionBarType.APP_COMPAT;
+            }
+            currentLevel = currentLevel.getSuperclass();
+        }
+        return ActionBarType.STANDARD;
+    }
+
+    private enum ActionBarType {
+        STANDARD, APP_COMPAT, ACTIONBAR_SHERLOCK
     }
 
 }
