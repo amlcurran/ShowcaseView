@@ -100,7 +100,9 @@ public class TextDrawerImpl implements TextDrawer {
     @Override
     public void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView) {
 
-    	Rect showcase = mCalculator.getShowcaseRect();
+    	Rect showcase = showcaseView.hasShowcaseView() ?
+    			mCalculator.getShowcaseRect() :
+    			new Rect();
     	
     	int[] areas = new int[4]; //left, top, right, bottom
     	areas[0] = showcase.left * canvasH;

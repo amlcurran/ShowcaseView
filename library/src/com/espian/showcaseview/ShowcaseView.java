@@ -203,6 +203,10 @@ public class ShowcaseView extends RelativeLayout
         //init();
         invalidate();
     }
+    
+    public boolean hasShowcaseView() {
+    	return showcaseX != 1000000 && showcaseY != 1000000;
+    }
 
     public void setShowcaseItem(final int itemType, final int actionItemId,
             final Activity activity) {
