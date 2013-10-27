@@ -1,23 +1,24 @@
-package com.espian.showcaseview.actionbar;
+package com.espian.showcaseview.actionbar.reflection;
 
 import android.app.Activity;
 import android.view.View;
-import android.view.ViewParent;
 
 /**
- * Reflector which finds action items in the standard API 11 ActionBar implementation
+ * Created by Alex on 27/10/13.
  */
-public class ActionBarReflector extends BaseReflector {
+public class AppCompatReflector extends BaseReflector {
 
     private Activity mActivity;
 
-    public ActionBarReflector(Activity activity) {
+    public AppCompatReflector(Activity activity) {
         mActivity = activity;
     }
 
     @Override
     public View getHomeButton() {
-        View homeButton = mActivity.findViewById(android.R.id.home);
+        int homeId = mActivity.getResources()
+                .getIdentifier("home", "id", mActivity.getPackageName());
+        View homeButton = mActivity.findViewById(homeId);
         if (homeButton == null) {
             throw new RuntimeException(
                     "insertShowcaseViewWithType cannot be used when the theme " +
