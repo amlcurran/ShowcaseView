@@ -8,7 +8,7 @@
         <item name="sv_titleTextAppearance">@style/CustomTitle</item>
     </style>
 
-    <style name="SampleTheme" parent="android:Theme.Light">
+    <style name="SampleTheme" parent="Theme.Sherlock.Light">
         <item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>
     </style>
 

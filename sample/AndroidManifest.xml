@@ -34,5 +34,6 @@
         <activity
                 android:name=".fragments.ShowcaseFragmentActivity"/>
         <activity android:name=".animations.AnimationSampleActivity" />
+        <activity android:name=".MemoryManagementTesting" />
     </application>
 </manifest>

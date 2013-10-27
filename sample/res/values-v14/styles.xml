@@ -1,7 +1,4 @@
 <?xml version="1.0"?>
 <resources>
 
-  <style name="SampleTheme" parent="android:Theme.Holo.Light">
-    <item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>
-  </style>
 </resources>

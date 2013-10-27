@@ -38,4 +38,6 @@
     <string name="title_animations">Animations</string>
     <string name="sum_animations">Using ObjectAnimators to animate ShowcaseViews</string>
     <string name="anim_third">Finally this!</string>
+    <string name="title_memory">Memory management</string>
+    <string name="sum_memory" />
 </resources>

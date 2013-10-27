@@ -45,14 +45,6 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 
         buttonBlocked = (Button) findViewById(R.id.buttonBlocked);
         buttonBlocked.setOnClickListener(this);
-//        buttonTop = (Button) findViewById(R.id.buttonToActionItems);
-//        buttonTop.setOnClickListener(this);
-//        buttonMiddle = (Button) findViewById(R.id.buttonToMultipleItemsActivtiy);
-//        buttonMiddle.setOnClickListener(this);
-//        buttonDown = (Button) findViewById(R.id.buttonToMultipleShowcaseViewsActivity);
-//        buttonDown.setOnClickListener(this);
-//        buttonLowest = (Button) findViewById(R.id.buttonToShowcaseFragmentActivity);
-//        buttonLowest.setOnClickListener(this);
 
         ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
         co.hideOnClickOutside = true;
@@ -86,11 +78,6 @@ public class SampleActivity extends Activity implements View.OnClickListener,
                 sv.animateGesture(0, 0, 0, 400);
                 break;
         }
-    }
-
-    private void startFragmentActivity() {
-        Intent startIntent = new Intent(this, ShowcaseFragmentActivity.class);
-        startActivity(startIntent);
     }
 
 //    private void startSdkLevelAppropriateActivity(int buttonId) {
@@ -148,11 +135,15 @@ public class SampleActivity extends Activity implements View.OnClickListener,
                 break;
 
             case 3:
-                startFragmentActivity();
+                startActivity(new Intent(this, ShowcaseFragmentActivity.class));
                 break;
 
             case 4:
                 startActivity(new Intent(this, AnimationSampleActivity.class));
+                break;
+
+            case 5:
+                startActivity(new Intent(this, MemoryManagementTesting.class));
         }
     }
 
@@ -161,13 +152,13 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         private static final int[] TITLE_RES_IDS = new int[] {
                 R.string.title_action_items, R.string.title_action_bar,
                 R.string.title_multiple, R.string.title_fragments,
-                R.string.title_animations
+                R.string.title_animations, R.string.title_memory
         };
 
         private static final int[] SUMMARY_RES_IDS = new int[] {
                 R.string.sum_action_items, R.string.sum_action_bar,
                 R.string.sum_multiple, R.string.sum_fragments,
-                R.string.sum_animations
+                R.string.sum_animations, R.string.sum_memory
         };
 
         public HardcodedListAdapter(Context context) {
