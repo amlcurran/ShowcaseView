@@ -1,5 +1,6 @@
 package com.espian.showcaseview;
 
+import com.espian.showcaseview.actionbar.BaseReflector;
 import com.espian.showcaseview.anim.AnimationUtils;
 import com.espian.showcaseview.drawing.ClingDrawer;
 import com.espian.showcaseview.drawing.ClingDrawerImpl;
@@ -224,25 +225,8 @@ public class ShowcaseView extends RelativeLayout
         post(new Runnable() {
             @Override
             public void run() {
-                View homeButton = activity.findViewById(android.R.id.home);
-                if (homeButton == null) {
-                    // Thanks to @hameno for this
-                    int homeId = activity.getResources()
-                            .getIdentifier("abs__home", "id", activity.getPackageName());
-                    if (homeId == 0) {
-                        homeId = activity.getResources()
-                                .getIdentifier("home", "id", activity.getPackageName());
-                    }
-                    if (homeId != 0) {
-                        homeButton = activity.findViewById(homeId);
-                    }
-                }
-                if (homeButton == null) {
-                    throw new RuntimeException(
-                            "insertShowcaseViewWithType cannot be used when the theme " +
-                                    "has no ActionBar");
-                }
-                ViewParent p = homeButton.getParent().getParent(); //ActionBarView
+                BaseReflector reflector = BaseReflector.getReflectorForActivity(activity);
+                ViewParent p = reflector.getActionBarView(); //ActionBarView
 
                 if (!p.getClass().getName().contains("ActionBarView")) {
                     String previousP = p.getClass().getName();
@@ -259,7 +243,7 @@ public class ShowcaseView extends RelativeLayout
 
                 switch (itemType) {
                     case ITEM_ACTION_HOME:
-                        setShowcaseView(homeButton);
+                        //setShowcaseView(homeButton);
                         break;
                     case ITEM_SPINNER:
                         showcaseSpinner(p, abv);
@@ -318,6 +302,7 @@ public class ShowcaseView extends RelativeLayout
                         View v = (View) mCh;
                         if (v.getId() == actionItemId) {
                             setShowcaseView(v);
+                            return;
                         }
                     }
                 }
