@@ -1,13 +1,5 @@
 package com.espian.showcaseview;
 
-import com.espian.showcaseview.anim.AnimationUtils;
-import com.espian.showcaseview.drawing.ClingDrawer;
-import com.espian.showcaseview.drawing.ClingDrawerImpl;
-import com.espian.showcaseview.drawing.TextDrawer;
-import com.espian.showcaseview.drawing.TextDrawerImpl;
-import com.espian.showcaseview.utils.Calculator;
-import com.github.espiandev.showcaseview.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -25,6 +17,14 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+
+import com.espian.showcaseview.anim.AnimationUtils;
+import com.espian.showcaseview.drawing.ClingDrawer;
+import com.espian.showcaseview.drawing.ClingDrawerImpl;
+import com.espian.showcaseview.drawing.TextDrawer;
+import com.espian.showcaseview.drawing.TextDrawerImpl;
+import com.espian.showcaseview.utils.Calculator;
+import com.github.espiandev.showcaseview.R;
 
 import java.lang.reflect.Field;
 
@@ -102,7 +102,7 @@ public class ShowcaseView extends RelativeLayout
         metricScale = getContext().getResources().getDisplayMetrics().density;
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
 
-        mShowcaseDrawer = new ClingDrawerImpl(getResources(), mShowcaseColor);
+        mShowcaseDrawer = new ClingDrawerImpl(getResources(), showcaseColor);
 
         // TODO: This isn't ideal, ClingDrawer and Calculator interfaces should be separate
         mTextDrawer = new TextDrawerImpl(metricScale, mShowcaseDrawer);
