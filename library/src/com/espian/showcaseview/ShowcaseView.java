@@ -25,6 +25,7 @@ import com.espian.showcaseview.drawing.ClingDrawer;
 import com.espian.showcaseview.drawing.ClingDrawerImpl;
 import com.espian.showcaseview.drawing.TextDrawer;
 import com.espian.showcaseview.drawing.TextDrawerImpl;
+import com.espian.showcaseview.targets.Target;
 import com.espian.showcaseview.utils.Calculator;
 import com.github.espiandev.showcaseview.R;
 
@@ -164,7 +165,9 @@ public class ShowcaseView extends RelativeLayout
      * Set the view to showcase
      *
      * @param view The {@link View} to showcase.
+     * @deprecated Use setShowcase with a {@link com.espian.showcaseview.targets.ViewTarget}
      */
+    @Deprecated
     public void setShowcaseView(final View view) {
         if (isRedundant || view == null) {
             isRedundant = true;
@@ -183,6 +186,10 @@ public class ShowcaseView extends RelativeLayout
         });
     }
 
+    /**
+     * @deprecated This will soon become private. Use setShowcase with a {@link com.espian.showcaseview.targets.PointTarget}
+     */
+    @Deprecated
     public void setShowcasePosition(Point point) {
         setShowcasePosition(point.x, point.y);
     }
@@ -192,7 +199,9 @@ public class ShowcaseView extends RelativeLayout
      *
      * @param x X co-ordinate
      * @param y Y co-ordinate
+     * @deprecated use setShowcase with a PointTarget
      */
+    @Deprecated
     public void setShowcasePosition(int x, int y) {
         if (isRedundant) {
             return;
@@ -202,7 +211,11 @@ public class ShowcaseView extends RelativeLayout
         //init();
         invalidate();
     }
-    
+
+    public void setShowcase(Target target) {
+        setShowcasePosition(target.getPoint());
+    }
+
     public boolean hasShowcaseView() {
     	return showcaseX != 1000000 && showcaseY != 1000000;
     }
