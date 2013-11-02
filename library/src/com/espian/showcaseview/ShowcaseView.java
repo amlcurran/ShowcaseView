@@ -202,6 +202,10 @@ public class ShowcaseView extends RelativeLayout
         //init();
         invalidate();
     }
+    
+    public boolean hasShowcaseView() {
+    	return showcaseX != 1000000 && showcaseY != 1000000;
+    }
 
     public void setShowcaseX(float x) {
         setShowcasePosition(x, showcaseY);
@@ -789,6 +793,11 @@ public class ShowcaseView extends RelativeLayout
          * Allow custom positioning of the button within the showcase view.
          */
         public LayoutParams buttonLayoutParams = null;
+        
+        /**
+         * Whether the text should be centered or stretched in the available space
+         */
+        public boolean centerText = false;
     }
 
     public float getScaleMultiplier() {

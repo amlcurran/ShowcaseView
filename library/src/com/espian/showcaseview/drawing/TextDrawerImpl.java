@@ -5,6 +5,7 @@ import com.espian.showcaseview.utils.ShowcaseAreaCalculator;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.text.DynamicLayout;
 import android.text.Layout;
 import android.text.SpannableString;
@@ -16,6 +17,9 @@ import android.text.style.TextAppearanceSpan;
  * Draws the text as required by the ShowcaseView
  */
 public class TextDrawerImpl implements TextDrawer {
+	
+	private static final int PADDING = 24;
+	private static final int ACTIONBAR_PADDING = 66;
 
     private final TextPaint mPaintTitle;
     private final TextPaint mPaintDetail;
@@ -52,7 +56,7 @@ public class TextDrawerImpl implements TextDrawer {
                             (int) textPosition[2], Layout.Alignment.ALIGN_NORMAL,
                             1.0f, 1.0f, true);
                 }
-                canvas.translate(textPosition[0], textPosition[1] - textPosition[0]);
+                canvas.translate(textPosition[0], textPosition[1]);
                 mDynamicTitleLayout.draw(canvas);
                 canvas.restore();
             }
@@ -61,13 +65,11 @@ public class TextDrawerImpl implements TextDrawer {
                 canvas.save();
                 if (hasPositionChanged) {
                     mDynamicDetailLayout = new DynamicLayout(mDetails, mPaintDetail,
-                            ((Number) textPosition[2]).intValue(),
+                            (int) textPosition[2],
                             Layout.Alignment.ALIGN_NORMAL,
                             1.2f, 1.0f, true);
                 }
-                canvas.translate(textPosition[0], textPosition[1] + 12 * mDensityScale + (
-                        mDynamicTitleLayout.getLineBottom(mDynamicTitleLayout.getLineCount() - 1)
-                                - mDynamicTitleLayout.getLineBottom(0)));
+                canvas.translate(textPosition[0], textPosition[1] + mDynamicTitleLayout.getHeight());
                 mDynamicDetailLayout.draw(canvas);
                 canvas.restore();
 
@@ -102,19 +104,67 @@ public class TextDrawerImpl implements TextDrawer {
     @Override
     public void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView) {
 
-        //if the width isn't much bigger than the voided area, just consider top & bottom
-        float spaceTop = mCalculator.getShowcaseRect().top;
-        float spaceBottom = canvasH - mCalculator.getShowcaseRect().bottom
-                - 64 * mDensityScale; //64dip considers the OK button
-        //float spaceLeft = voidedArea.left;
-        //float spaceRight = canvasW - voidedArea.right;
-
-        //TODO: currently only considers above or below showcase, deal with left or right
-        mBestTextPosition[0] = 24 * mDensityScale;
-        mBestTextPosition[1] = spaceTop > spaceBottom ? 128 * mDensityScale
-                : 24 * mDensityScale + mCalculator.getShowcaseRect().bottom;
-        mBestTextPosition[2] = canvasW - 48 * mDensityScale;
-
+    	Rect showcase = showcaseView.hasShowcaseView() ?
+    			mCalculator.getShowcaseRect() :
+    			new Rect();
+    	
+    	int[] areas = new int[4]; //left, top, right, bottom
+    	areas[0] = showcase.left * canvasH;
+    	areas[1] = showcase.top * canvasW;
+    	areas[2] = (canvasW - showcase.right) * canvasH;
+    	areas[3] = (canvasH - showcase.bottom) * canvasW;
+    	
+    	int largest = 0;
+    	for(int i = 1; i < areas.length; i++) {
+    		if(areas[i] > areas[largest])
+    			largest = i;
+    	}
+    	
+    	// Position text in largest area
+    	switch(largest) {
+    	case 0:
+    		mBestTextPosition[0] = PADDING * mDensityScale;
+    		mBestTextPosition[1] = PADDING * mDensityScale;
+    		mBestTextPosition[2] = showcase.left - 2 * PADDING * mDensityScale;
+    		break;
+    	case 1:
+    		mBestTextPosition[0] = PADDING * mDensityScale;
+    		mBestTextPosition[1] = (PADDING + ACTIONBAR_PADDING) * mDensityScale;
+    		mBestTextPosition[2] = canvasW - 2 * PADDING * mDensityScale;
+    		break;
+    	case 2:
+    		mBestTextPosition[0] = showcase.right + PADDING * mDensityScale;
+    		mBestTextPosition[1] = PADDING * mDensityScale;
+    		mBestTextPosition[2] = (canvasW - showcase.right) - 2 * PADDING * mDensityScale;
+    		break;
+    	case 3:
+    		mBestTextPosition[0] = PADDING * mDensityScale;
+    		mBestTextPosition[1] = showcase.bottom + PADDING * mDensityScale;
+    		mBestTextPosition[2] = canvasW - 2 * PADDING * mDensityScale;
+    		break;
+    	}
+    	if(showcaseView.getConfigOptions().centerText) {
+	    	// Center text vertically or horizontally
+	    	switch(largest) {
+	    	case 0:
+	    	case 2:
+	    		mBestTextPosition[1] += canvasH / 4;
+	    		break;
+	    	case 1:
+	    	case 3:
+	    		mBestTextPosition[2] /= 2;
+	    		mBestTextPosition[0] += canvasW / 4;
+	    		break;
+	    	} 
+    	} else {
+    		// As text is not centered add actionbar padding if the text is left or right
+	    	switch(largest) {
+	    		case 0:
+	    		case 2:
+	    			mBestTextPosition[1] += ACTIONBAR_PADDING * mDensityScale;
+	    			break;
+	    	}
+    	}
     }
 
     @Override
