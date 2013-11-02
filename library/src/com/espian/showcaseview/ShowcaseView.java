@@ -52,8 +52,8 @@ public class ShowcaseView extends RelativeLayout
     protected static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     public static final int INNER_CIRCLE_RADIUS = 94;
 
-    private float showcaseX = -1;
-    private float showcaseY = -1;
+    private int showcaseX = -1;
+    private int showcaseY = -1;
     private float showcaseRadius = -1;
     private float metricScale = 1.0f;
     private float legacyShowcaseX = -1;
@@ -193,7 +193,7 @@ public class ShowcaseView extends RelativeLayout
      * @param x X co-ordinate
      * @param y Y co-ordinate
      */
-    public void setShowcasePosition(float x, float y) {
+    public void setShowcasePosition(int x, int y) {
         if (isRedundant) {
             return;
         }
@@ -207,19 +207,19 @@ public class ShowcaseView extends RelativeLayout
     	return showcaseX != 1000000 && showcaseY != 1000000;
     }
 
-    public void setShowcaseX(float x) {
+    public void setShowcaseX(int x) {
         setShowcasePosition(x, showcaseY);
     }
 
-    public void setShowcaseY(float y) {
+    public void setShowcaseY(int y) {
         setShowcasePosition(showcaseX, y);
     }
 
-    public float getShowcaseX() {
+    public int getShowcaseX() {
         return showcaseX;
     }
 
-    public float getShowcaseY() {
+    public int getShowcaseY() {
         return showcaseY;
     }
 
@@ -560,7 +560,7 @@ public class ShowcaseView extends RelativeLayout
         return null;
     }
 
-    public static ShowcaseView insertShowcaseView(float x, float y, Activity activity, String title,
+    public static ShowcaseView insertShowcaseView(int x, int y, Activity activity, String title,
             String detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
         if (options != null) {
@@ -576,7 +576,7 @@ public class ShowcaseView extends RelativeLayout
         return sv;
     }
 
-    public static ShowcaseView insertShowcaseView(float x, float y, Activity activity, int title,
+    public static ShowcaseView insertShowcaseView(int x, int y, Activity activity, int title,
             int detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
         if (options != null) {
@@ -652,7 +652,7 @@ public class ShowcaseView extends RelativeLayout
         return sv;
     }
 
-    public static ShowcaseView insertShowcaseView(float x, float y, Activity activity) {
+    public static ShowcaseView insertShowcaseView(int x, int y, Activity activity) {
         return insertShowcaseView(x, y, activity, null, null, null);
     }
 

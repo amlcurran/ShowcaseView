@@ -29,7 +29,7 @@ public class ShowcaseViewBuilder {
         return this;
     }
 
-    public ShowcaseViewBuilder setShowcasePosition(float x, float y) {
+    public ShowcaseViewBuilder setShowcasePosition(int x, int y) {
         showcaseView.setShowcasePosition(x, y);
         return this;
     }
