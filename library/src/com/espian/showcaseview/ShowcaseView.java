@@ -1,15 +1,5 @@
 package com.espian.showcaseview;
 
-import com.espian.showcaseview.actionbar.ActionBarViewWrapper;
-import com.espian.showcaseview.actionbar.reflection.BaseReflector;
-import com.espian.showcaseview.anim.AnimationUtils;
-import com.espian.showcaseview.drawing.ClingDrawer;
-import com.espian.showcaseview.drawing.ClingDrawerImpl;
-import com.espian.showcaseview.drawing.TextDrawer;
-import com.espian.showcaseview.drawing.TextDrawerImpl;
-import com.espian.showcaseview.utils.Calculator;
-import com.github.espiandev.showcaseview.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -28,6 +18,8 @@ import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.espian.showcaseview.actionbar.ActionBarViewWrapper;
+import com.espian.showcaseview.actionbar.reflection.BaseReflector;
 import com.espian.showcaseview.anim.AnimationUtils;
 import com.espian.showcaseview.drawing.ClingDrawer;
 import com.espian.showcaseview.drawing.ClingDrawerImpl;
@@ -35,8 +27,6 @@ import com.espian.showcaseview.drawing.TextDrawer;
 import com.espian.showcaseview.drawing.TextDrawerImpl;
 import com.espian.showcaseview.utils.Calculator;
 import com.github.espiandev.showcaseview.R;
-
-import java.lang.reflect.Field;
 
 import static com.espian.showcaseview.anim.AnimationUtils.AnimationEndListener;
 import static com.espian.showcaseview.anim.AnimationUtils.AnimationStartListener;
@@ -74,7 +64,7 @@ public class ShowcaseView extends RelativeLayout
     private int mBackgroundColor;
     private View mHandy;
     private final Button mEndButton;
-    private OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
+    OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
     private boolean mAlteredText = false;
 
     private final String buttonText;
