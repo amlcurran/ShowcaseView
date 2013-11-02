@@ -510,7 +510,8 @@ public class ShowcaseView extends RelativeLayout
         float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
         double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
 
-        if (mOptions.hideOnClickOutside && distanceFromFocus > showcaseRadius) {
+        if (MotionEvent.ACTION_UP == motionEvent.getAction() &&
+            mOptions.hideOnClickOutside && distanceFromFocus > showcaseRadius) {
             this.hide();
             return true;
         }
