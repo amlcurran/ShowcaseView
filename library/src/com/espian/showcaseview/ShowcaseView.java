@@ -730,6 +730,10 @@ public class ShowcaseView extends RelativeLayout
         return insertShowcaseViewInternal(target, activity, title, detail, options);
     }
 
+    public static ShowcaseView insertShowcaseView(Target target, Activity activity, int title, int detail, ConfigOptions options) {
+        return insertShowcaseViewInternal(target, activity, activity.getString(title), activity.getString(detail), options);
+    }
+
     public static class ConfigOptions {
 
         public boolean block = true, noButton = false;
