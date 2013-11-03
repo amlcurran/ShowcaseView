@@ -36,6 +36,12 @@ To use ShowcaseView, use one of the `insertShowcaseView(..)` calls. These take:
 - *Optional* title and detail strings (or resource ids) which show on the ShowcaseView
 - *Optional* a [`ConfigOptions`]() which can alter the behaviour of ShowcaseView. See the wiki for more details
 
+As an example:
+
+`View showcasedView = findViewById(R.id.view_to_showcase);
+ViewTarget target = new ViewTarget(showcasedView);
+ShowcaseView.insertShowcaseView(target, this, R.string.showcase_title, R.string.showcase_details);`
+
 Copyright and Licensing
 ----
 
