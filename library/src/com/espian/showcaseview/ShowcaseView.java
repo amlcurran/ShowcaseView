@@ -511,7 +511,9 @@ public class ShowcaseView extends RelativeLayout
      * @param detailText     More detailed text. Can be null.
      * @param options        A set of options to customise the ShowcaseView
      * @return the created ShowcaseView instance
+     * @deprecated use insertShowcaseView with {@link Target}
      */
+    @Deprecated
     public static ShowcaseView insertShowcaseView(View viewToShowcase, Activity activity,
             String title,
             String detailText, ConfigOptions options) {
@@ -538,7 +540,9 @@ public class ShowcaseView extends RelativeLayout
      * @param detailText     More detailed text. Can be null.
      * @param options        A set of options to customise the ShowcaseView
      * @return the created ShowcaseView instance
+     * @deprecated use insertShowcaseView with {@link Target}
      */
+    @Deprecated
     public static ShowcaseView insertShowcaseView(View viewToShowcase, Activity activity, int title,
             int detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
@@ -555,6 +559,10 @@ public class ShowcaseView extends RelativeLayout
         return sv;
     }
 
+    /**
+     * @deprecated use insertShowcaseView with {@link Target}
+     */
+    @Deprecated
     public static ShowcaseView insertShowcaseView(int showcaseViewId, Activity activity,
             String title, String detailText, ConfigOptions options) {
         View v = activity.findViewById(showcaseViewId);
@@ -564,6 +572,10 @@ public class ShowcaseView extends RelativeLayout
         return null;
     }
 
+    /**
+     * @deprecated use insertShowcaseView with {@link Target}
+     */
+    @Deprecated
     public static ShowcaseView insertShowcaseView(int showcaseViewId, Activity activity, int title,
             int detailText, ConfigOptions options) {
         View v = activity.findViewById(showcaseViewId);
@@ -573,6 +585,10 @@ public class ShowcaseView extends RelativeLayout
         return null;
     }
 
+    /**
+     * @deprecated use insertShowcaseView with {@link Target}
+     */
+    @Deprecated
     public static ShowcaseView insertShowcaseView(int x, int y, Activity activity, String title,
             String detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
@@ -589,6 +605,10 @@ public class ShowcaseView extends RelativeLayout
         return sv;
     }
 
+    /**
+     * @deprecated use insertShowcaseView with {@link Target}
+     */
+    @Deprecated
     public static ShowcaseView insertShowcaseView(int x, int y, Activity activity, int title,
             int detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
@@ -605,6 +625,10 @@ public class ShowcaseView extends RelativeLayout
         return sv;
     }
 
+    /**
+     * @deprecated use insertShowcaseView with {@link Target}
+     */
+    @Deprecated
     public static ShowcaseView insertShowcaseView(View showcase, Activity activity) {
         return insertShowcaseView(showcase, activity, null, null, null);
     }
@@ -620,7 +644,9 @@ public class ShowcaseView extends RelativeLayout
      * @param detailText More detailed text. Can be null.
      * @param options    A set of options to customise the ShowcaseView
      * @return the created ShowcaseView instance
+     * @deprecated use insertShowcaseView with {@link Target}
      */
+    @Deprecated
     public static ShowcaseView insertShowcaseViewWithType(int type, int itemId, Activity activity,
             String title, String detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
@@ -649,6 +675,7 @@ public class ShowcaseView extends RelativeLayout
      * @param options    A set of options to customise the ShowcaseView
      * @return the created ShowcaseView instance
      */
+    @Deprecated
     public static ShowcaseView insertShowcaseViewWithType(int type, int itemId, Activity activity,
             int title, int detailText, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
@@ -665,8 +692,42 @@ public class ShowcaseView extends RelativeLayout
         return sv;
     }
 
+    @Deprecated
     public static ShowcaseView insertShowcaseView(int x, int y, Activity activity) {
         return insertShowcaseView(x, y, activity, null, null, null);
+    }
+
+    /**
+     * Internal insert method so all inserts are routed through one method
+     */
+    private static ShowcaseView insertShowcaseViewInternal(Target target, Activity activity, String title,
+                                                           String detail, ConfigOptions options) {
+        ShowcaseView sv = new ShowcaseView(activity);
+        sv.setConfigOptions(options);
+        if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
+            ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
+        } else {
+            ((ViewGroup) activity.findViewById(android.R.id.content)).addView(sv);
+        }
+        sv.setShowcase(target);
+        sv.setText(title, detail);
+        return sv;
+    }
+
+    public static ShowcaseView insertShowcaseView(Target target, Activity activity) {
+        return insertShowcaseViewInternal(target, activity, null, null, null);
+    }
+
+    public static ShowcaseView insertShowcaseView(Target target, Activity activity, String title, String detail) {
+        return insertShowcaseViewInternal(target, activity, title, detail, null);
+    }
+
+    public static ShowcaseView insertShowcaseView(Target target, Activity activity, int title, int detail) {
+        return insertShowcaseViewInternal(target, activity, activity.getString(title), activity.getString(detail), null);
+    }
+
+    public static ShowcaseView insertShowcaseView(Target target, Activity activity, String title, String detail, ConfigOptions options) {
+        return insertShowcaseViewInternal(target, activity, title, detail, options);
     }
 
     public static class ConfigOptions {

@@ -1,5 +1,6 @@
 package com.espian.showcaseview.targets;
 
+import android.app.Activity;
 import android.graphics.Point;
 import android.view.View;
 
@@ -12,6 +13,7 @@ import org.robolectric.annotation.Config;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
@@ -27,6 +29,16 @@ public class ViewTargetTests {
         Point actualPoint = target.getPoint();
 
         assertEquals(expectedPoint, actualPoint);
+    }
+
+    @Test
+    public void testIdIsFoundFromActivity() {
+        Activity mockActivity = mock(Activity.class);
+        int MOCK_VIEW_ID = 9090;
+
+        ViewTarget target = new ViewTarget(MOCK_VIEW_ID, mockActivity);
+
+        verify(mockActivity).findViewById(MOCK_VIEW_ID);
     }
 
     public static View getMockView() {
