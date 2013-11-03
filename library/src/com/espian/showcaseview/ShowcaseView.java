@@ -241,6 +241,7 @@ public class ShowcaseView extends RelativeLayout
         return showcaseY;
     }
 
+    @Deprecated
     public void setShowcaseItem(final int itemType, final int actionItemId,
             final Activity activity) {
         post(new Runnable() {
