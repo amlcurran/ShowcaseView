@@ -1,19 +1,14 @@
 package com.espian.showcaseview.sample.animations;
 
 import android.app.Activity;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.sample.R;
+import com.espian.showcaseview.sample.SampleActivity;
 import com.espian.showcaseview.targets.ViewTarget;
-import com.espian.showcaseview.utils.Calculator;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
 
 /**
  * Created by Alex on 26/10/13.
@@ -29,6 +24,7 @@ public class AnimationSampleActivity extends Activity {
         setContentView(R.layout.activity_animation);
         counter = 0;
 
+        final TextView textView1 = (TextView) findViewById(R.id.textView);
         final TextView textView2 = (TextView) findViewById(R.id.textView2);
         final TextView textView3 = (TextView) findViewById(R.id.textView3);
 
@@ -36,30 +32,36 @@ public class AnimationSampleActivity extends Activity {
         showcaseView.overrideButtonClick(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (counter == 0) {
-                    Point textView2Point = Calculator.getShowcasePointFromView(textView2, showcaseView.getConfigOptions());
-                    Animator xAnimation = ObjectAnimator.ofInt(showcaseView, "showcaseX", textView2Point.x);
-                    Animator yAnimation = ObjectAnimator.ofInt(showcaseView, "showcaseY", textView2Point.y);
-                    AnimatorSet set = new AnimatorSet();
-                    set.setInterpolator(new AccelerateDecelerateInterpolator());
-                    set.setDuration(600);
-                    set.playTogether(xAnimation, yAnimation);
-                    set.start();
-                } else if (counter == 1) {
-                    Point textView3Point = Calculator.getShowcasePointFromView(textView3, showcaseView.getConfigOptions());
-                    Animator xAnimation = ObjectAnimator.ofInt(showcaseView, "showcaseX", textView3Point.x);
-                    Animator yAnimation = ObjectAnimator.ofInt(showcaseView, "showcaseY", textView3Point.y);
-                    Animator scaleAnimation = ObjectAnimator.ofFloat(showcaseView, "scaleMultiplier", 0.6f);
-                    AnimatorSet set = new AnimatorSet();
-                    set.setInterpolator(new AccelerateDecelerateInterpolator());
-                    set.setDuration(600);
-                    set.playTogether(xAnimation, yAnimation, scaleAnimation);
-                    set.start();
-                } else {
-                    showcaseView.hide();
+                switch (counter) {
+                    case 0:
+                        showcaseView.setShowcase(new ViewTarget(textView2), true);
+                        break;
+
+                    case 1:
+                        showcaseView.setShowcase(new ViewTarget(textView3), true);
+                        break;
+
+                    case 2:
+                        showcaseView.setShowcase(ShowcaseView.NONE);
+                        showcaseView.setText("Look ma!", "You don't always need a target to showcase");
+                        setAlpha(0.4f, textView1, textView2, textView3);
+                        break;
+
+                    case 3:
+                        showcaseView.hide();
+                        setAlpha(1.0f, textView1, textView2, textView3);
+                        break;
                 }
                 counter++;
             }
         });
+    }
+
+    private void setAlpha(float alpha, View... views) {
+        if (SampleActivity.isHoneycombOrAbove()) {
+            for (View view : views) {
+                view.setAlpha(alpha);
+            }
+        }
     }
 }

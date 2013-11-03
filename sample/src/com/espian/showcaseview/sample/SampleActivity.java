@@ -116,7 +116,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         buttonBlocked.setEnabled(true);
     }
 
-    private static boolean isHoneycombOrAbove() {
+    public static boolean isHoneycombOrAbove() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     }
 
@@ -144,6 +144,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
                 startActivity(new Intent(this, AnimationSampleActivity.class));
                 break;
 
+            // Not currently used
             case 5:
                 startActivity(new Intent(this, MemoryManagementTesting.class));
         }
@@ -154,13 +155,13 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         private static final int[] TITLE_RES_IDS = new int[] {
                 R.string.title_action_items, R.string.title_action_bar,
                 R.string.title_multiple, R.string.title_fragments,
-                R.string.title_animations, R.string.title_memory
+                R.string.title_animations //, R.string.title_memory
         };
 
         private static final int[] SUMMARY_RES_IDS = new int[] {
                 R.string.sum_action_items, R.string.sum_action_bar,
                 R.string.sum_multiple, R.string.sum_fragments,
-                R.string.sum_animations, R.string.sum_memory
+                R.string.sum_animations //, R.string.sum_memory
         };
 
         public HardcodedListAdapter(Context context) {

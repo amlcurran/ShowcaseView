@@ -11,6 +11,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/anim_first"
         android:id="@+id/textView"
+        android:layout_marginTop="64dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true" />
 
