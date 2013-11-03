@@ -22,6 +22,7 @@ import com.espian.showcaseview.sample.fragments.ShowcaseFragmentActivity;
 import com.espian.showcaseview.sample.legacy.MultipleShowcaseSampleActivity;
 import com.espian.showcaseview.sample.v14.ActionItemsSampleActivity;
 import com.espian.showcaseview.sample.v14.MultipleActionItemsSampleActivity;
+import com.espian.showcaseview.targets.ViewTarget;
 
 public class SampleActivity extends Activity implements View.OnClickListener,
         OnShowcaseEventListener, AdapterView.OnItemClickListener {
@@ -57,7 +58,8 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 //        lps.setMargins(margin, margin, margin, margin);
 //        co.buttonLayoutParams = lps;
 
-        sv = ShowcaseView.insertShowcaseView(R.id.buttonBlocked, this, R.string.showcase_main_title, R.string.showcase_main_message, co);
+        ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
+        sv = ShowcaseView.insertShowcaseView(target, this, R.string.showcase_main_title, R.string.showcase_main_message, co);
         sv.setOnShowcaseEventListener(this);
 
     }
