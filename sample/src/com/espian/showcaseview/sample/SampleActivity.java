@@ -82,22 +82,6 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         }
     }
 
-//    private void startSdkLevelAppropriateActivity(int buttonId) {
-//        if (!isHoneycombOrAbove()) {
-//            if (buttonId == R.id.buttonToMultipleShowcaseViewsActivity) {
-//                startActivity(new Intent(this, MultipleShowcaseSampleActivity.class));
-//            } else {
-//                Toast.makeText(this, R.string.error_message, Toast.LENGTH_SHORT).show();
-//            }
-//        } else if (buttonId == R.id.buttonToActionItems) {
-//            startActivity(new Intent(this, ActionItemsSampleActivity.class));
-//        } else if (buttonId == R.id.buttonToMultipleItemsActivtiy) {
-//            startActivity(new Intent(this, MultipleActionItemsSampleActivity.class));
-//        } else if (buttonId == R.id.buttonToMultipleShowcaseViewsActivity) {
-//            startActivity(new Intent(this, MultipleShowcaseSampleActivity.class));
-//        }
-//    }
-
     @Override
     public void onShowcaseViewHide(ShowcaseView showcaseView) {
         if (isHoneycombOrAbove()) {
