@@ -6,7 +6,10 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -132,11 +135,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void init() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            setLayerType(LAYER_TYPE_SOFTWARE, null);
-        } else {
-            setDrawingCacheEnabled(true);
-        }
+        setHardwareAccelerated(true);
 
         boolean hasShot = getContext()
                 .getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
@@ -348,6 +347,30 @@ public class ShowcaseView extends RelativeLayout
             mEventListener = listener;
         } else {
             mEventListener = OnShowcaseEventListener.NONE;
+        }
+    }
+
+    public void setButtonText(CharSequence text) {
+        if (mEndButton != null) {
+            mEndButton.setText(text);
+        }
+    }
+
+    public void setHardwareAccelerated(boolean accelerated) {
+        if (accelerated) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                Paint hardwarePaint = new Paint();
+                hardwarePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
+                setLayerType(LAYER_TYPE_HARDWARE, hardwarePaint);
+            } else {
+                setDrawingCacheEnabled(false);
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                setLayerType(LAYER_TYPE_SOFTWARE, null);
+            } else {
+                setDrawingCacheEnabled(true);
+            }
         }
     }
 

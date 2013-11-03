@@ -1,7 +1,5 @@
 package com.espian.showcaseview.drawing;
 
-import com.github.espiandev.showcaseview.R;
-
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -11,6 +9,8 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+
+import com.github.espiandev.showcaseview.R;
 
 /**
  * Created by curraa01 on 13/10/2013.
@@ -22,7 +22,7 @@ public class ClingDrawerImpl implements ClingDrawer {
     private Rect mShowcaseRect;
 
     public ClingDrawerImpl(Resources resources, int showcaseColor) {
-        PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
+        PorterDuffXfermode mBlender = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
         mEraser = new Paint();
         mEraser.setColor(0xFFFFFF);
         mEraser.setAlpha(0);
