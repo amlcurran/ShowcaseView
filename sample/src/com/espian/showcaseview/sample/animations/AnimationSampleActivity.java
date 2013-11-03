@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.sample.R;
+import com.espian.showcaseview.targets.ViewTarget;
 import com.espian.showcaseview.utils.Calculator;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
@@ -31,14 +32,14 @@ public class AnimationSampleActivity extends Activity {
         final TextView textView2 = (TextView) findViewById(R.id.textView2);
         final TextView textView3 = (TextView) findViewById(R.id.textView3);
 
-        showcaseView = ShowcaseView.insertShowcaseView(findViewById(R.id.textView), this);
+        showcaseView = ShowcaseView.insertShowcaseView(new ViewTarget(findViewById(R.id.textView)), this);
         showcaseView.overrideButtonClick(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (counter == 0) {
                     Point textView2Point = Calculator.getShowcasePointFromView(textView2, showcaseView.getConfigOptions());
-                    Animator xAnimation = ObjectAnimator.ofFloat(showcaseView, "showcaseX", textView2Point.x);
-                    Animator yAnimation = ObjectAnimator.ofFloat(showcaseView, "showcaseY", textView2Point.y);
+                    Animator xAnimation = ObjectAnimator.ofInt(showcaseView, "showcaseX", textView2Point.x);
+                    Animator yAnimation = ObjectAnimator.ofInt(showcaseView, "showcaseY", textView2Point.y);
                     AnimatorSet set = new AnimatorSet();
                     set.setInterpolator(new AccelerateDecelerateInterpolator());
                     set.setDuration(600);
@@ -46,8 +47,8 @@ public class AnimationSampleActivity extends Activity {
                     set.start();
                 } else if (counter == 1) {
                     Point textView3Point = Calculator.getShowcasePointFromView(textView3, showcaseView.getConfigOptions());
-                    Animator xAnimation = ObjectAnimator.ofFloat(showcaseView, "showcaseX", textView3Point.x);
-                    Animator yAnimation = ObjectAnimator.ofFloat(showcaseView, "showcaseY", textView3Point.y);
+                    Animator xAnimation = ObjectAnimator.ofInt(showcaseView, "showcaseX", textView3Point.x);
+                    Animator yAnimation = ObjectAnimator.ofInt(showcaseView, "showcaseY", textView3Point.y);
                     Animator scaleAnimation = ObjectAnimator.ofFloat(showcaseView, "scaleMultiplier", 0.6f);
                     AnimatorSet set = new AnimatorSet();
                     set.setInterpolator(new AccelerateDecelerateInterpolator());
