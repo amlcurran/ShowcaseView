@@ -1,4 +1,4 @@
-Showcase View library  
+ShowcaseView library
 ====
   
 The ShowcaseView library is designed to highlight and showcase specific parts of apps to the user with a distinctive and attractive overlay. This library is great for pointing out points of interest for users, gestures, or obscure but useful items.
@@ -7,31 +7,40 @@ The library is based on the "Cling" view found in the Launcher on Ice-Cream Sand
 
 Please check out [the website](http://espiandev.github.com/ShowcaseView) for more information.
 
-![Example image](https://raw.github.com/Espiandev/ShowcaseView/master/example.png)
+![Example image](./example.png)
+![Example image](./example2.png)
 
 Set-up
 ----
 
-For people who use Maven, ShowcaseView should work immediately without any issues. If you aren't, you'll need to download the [NineOldAndroids library](https://github.com/JakeWharton/NineOldAndroids) and add it as a dependency library to the ShowcaseView library. Then add ShowcaseView as a library dependency to your project, and you're done! 
+Ant:
+Importing the library should work without any issues - but make sure the libraries in /library/libs are imported. To use the sample download [ActionBarSherlock](http://actionbarsherlock.com/usage.html) and add it as a dependency to the library project. Use point 1 on the "Including in your project" instructions at the link.
+
+Android Studio:
+Import using the build.gradle file in the top-most folder, making sure to use the Gradle wrapper. You _may_ be able to import the library by itself but this isn't officially supported. If you'd like to add the library to your project, copy the library folder into your Gradle project folder and follow the instructions on the [Android tools](http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Multi-project-setup) website.
 
 **WARNING:** Sometimes Eclipse/IDEA will automatically import the non-NineOldAndroid versions of the animation classes, which will cause crashes on versions of Android below 3.0. Check that your imports start with `com.nineoldandroids.animation` and not `android.animation`.
+
+The full dependency list for ShowcaseView is as follows:
+- library requires android-support-v4 and nineoldandroids
+- library tests require mockito and robolectric
+- sample app requires ActionBarSherlock
 
 Usage
 ----
 
-v2 brings the ability to showcase items on the ActionBar. Currently built in showcase-able things are:
-- The home button 
-- Your application title or a Spinner if you're using that navigation type
-- Any ActionItem - requires only the item's ID
-- The Overflow icon   
+To use ShowcaseView, use one of the `insertShowcaseView(..)` calls. These take:
 
-Gestures can now be indicated using `animateGesture(...)`, which returns a [NineOldAndroids](http://nineoldandroids.com) `AnimatorSet`, which can be gestured simply by calling `start()` on it. If you want to make your own gestures, `getHand()` will return the View which contains the Ghostly Hand. You can also quickly point to something using the `pointTo(..)` methods.
+- A [`Target`](https://github.com/Espiandev/ShowcaseView/blob/target/library/src/com/espian/showcaseview/targets/Target.java) which represents what should be showcased. See the wiki for more details.
 
-Styles are included to maintain consistently in ShowcaseViews. Buttons should use the style ClingButton, with title text using ClingTitleText and standard text using ClingText.
+- An `Activity`
+
+- *Optional* title and detail strings (or resource ids) which show on the ShowcaseView
+- *Optional* a [`ConfigOptions`]() which can alter the behaviour of ShowcaseView. See the wiki for more details
 
 Copyright and Licensing
 ----
 
 Copyright Alex Curran ([+Alex](https://plus.google.com/110510888639261520925/posts)) © 2012. All rights reserved.
 
-This library is disributed under an Apache 2.0 License.
+This library is distributed under an Apache 2.0 License.
