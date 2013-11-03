@@ -39,15 +39,15 @@ public class ActionItemsSampleActivity extends SherlockActivity {
         int itemId = item.getItemId();
         if (itemId == android.R.id.home) {
             ActionViewTarget target = new ActionViewTarget(this, ActionViewTarget.Type.HOME);
-            sv.setShowcase(target);
+            sv.setShowcase(target, true);
         }
         else if (itemId == R.id.menu_item1) {
             ActionItemTarget target = new ActionItemTarget(this, R.id.menu_item1);
-            sv.setShowcase(target);
+            sv.setShowcase(target, true);
         }
         else if (itemId == R.id.menu_item2) {
             ActionViewTarget target = new ActionViewTarget(this, ActionViewTarget.Type.TITLE);
-            sv.setShowcase(target);
+            sv.setShowcase(target, true);
         }
         return true;
     }
