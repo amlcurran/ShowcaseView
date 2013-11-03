@@ -15,6 +15,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
@@ -27,7 +29,9 @@ import com.espian.showcaseview.drawing.TextDrawer;
 import com.espian.showcaseview.drawing.TextDrawerImpl;
 import com.espian.showcaseview.targets.Target;
 import com.espian.showcaseview.utils.Calculator;
+import com.espian.showcaseview.utils.PointAnimator;
 import com.github.espiandev.showcaseview.R;
+import com.nineoldandroids.animation.Animator;
 
 import static com.espian.showcaseview.anim.AnimationUtils.AnimationEndListener;
 import static com.espian.showcaseview.anim.AnimationUtils.AnimationStartListener;
@@ -52,6 +56,7 @@ public class ShowcaseView extends RelativeLayout
 
     protected static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     public static final int INNER_CIRCLE_RADIUS = 94;
+    private static final Interpolator INTERPOLATOR = new AccelerateDecelerateInterpolator();
 
     private int showcaseX = -1;
     private int showcaseY = -1;
@@ -73,6 +78,15 @@ public class ShowcaseView extends RelativeLayout
     private float scaleMultiplier = 1f;
     private TextDrawer mTextDrawer;
     private ClingDrawer mShowcaseDrawer;
+
+    public static final Target NONE = new Target() {
+        @Override
+        public Point getPoint() {
+            return null;
+        }
+    };
+
+    private boolean mHasNoTarget = false;
 
     protected ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
@@ -157,6 +171,10 @@ public class ShowcaseView extends RelativeLayout
 
     }
 
+    /**
+     * @deprecated Use setShowcase() with the target ShowcaseView.NONE
+     */
+    @Deprecated
     public void setShowcaseNoView() {
         setShowcasePosition(1000000, 1000000);
     }
@@ -213,16 +231,34 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void setShowcase(final Target target) {
+        setShowcase(target, false);
+    }
+
+    public void setShowcase(final Target target, final boolean animate) {
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                setShowcasePosition(target.getPoint());
+                Point targetPoint = target.getPoint();
+                if (targetPoint != null) {
+                    mHasNoTarget = false;
+                    if (animate) {
+                        Animator animator = PointAnimator.ofPoints(ShowcaseView.this, targetPoint);
+                        animator.setDuration(getConfigOptions().fadeInDuration);
+                        animator.setInterpolator(INTERPOLATOR);
+                        animator.start();
+                    } else {
+                        setShowcasePosition(targetPoint);
+                    }
+                } else {
+                    mHasNoTarget = true;
+                    invalidate();
+                }
             }
         }, 100);
     }
 
     public boolean hasShowcaseView() {
-    	return showcaseX != 1000000 && showcaseY != 1000000;
+    	return (showcaseX != 1000000 && showcaseY != 1000000) || !mHasNoTarget;
     }
 
     public void setShowcaseX(int x) {
@@ -330,7 +366,9 @@ public class ShowcaseView extends RelativeLayout
         canvas.drawColor(mBackgroundColor);
 
         // Draw the showcase drawable
-        mShowcaseDrawer.drawShowcase(canvas, showcaseX, showcaseY, scaleMultiplier, showcaseRadius);
+        if (!mHasNoTarget) {
+            mShowcaseDrawer.drawShowcase(canvas, showcaseX, showcaseY, scaleMultiplier, showcaseRadius);
+        }
 
         // Draw the text on the screen, recalculating its position if necessary
         if (recalculateText) {
@@ -387,7 +425,6 @@ public class ShowcaseView extends RelativeLayout
             fadeOutShowcase();
         } else {
             setVisibility(View.GONE);
-
             mEventListener.onShowcaseViewDidHide(this);
         }
     }
@@ -397,7 +434,6 @@ public class ShowcaseView extends RelativeLayout
             @Override
             public void onAnimationEnd() {
                 setVisibility(View.GONE);
-
                 mEventListener.onShowcaseViewDidHide(ShowcaseView.this);
             }
         }).start();
@@ -476,9 +512,10 @@ public class ShowcaseView extends RelativeLayout
 
     /**
      * Point to a specific view
-     *
      * @param view The {@link View} to Showcase
+     * @deprecated use pointTo(Target)
      */
+    @Deprecated
     public void pointTo(View view) {
         float x = AnimationUtils.getX(view) + view.getWidth() / 2;
         float y = AnimationUtils.getY(view) + view.getHeight() / 2;
@@ -490,10 +527,29 @@ public class ShowcaseView extends RelativeLayout
      *
      * @param x X-coordinate to point to
      * @param y Y-coordinate to point to
+     * @deprecated use pointTo(Target)
      */
+    @Deprecated
     public void pointTo(float x, float y) {
         mHandy = getHand();
         AnimationUtils.createMovementAnimation(mHandy, x, y).start();
+    }
+
+    /**
+     * Point to a specific point on the screen
+     * @param target The target to point to
+     * @deprecated use pointTo(Target)
+     */
+    public void pointTo(final Target target) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                mHandy = getHand();
+                Point targetPoint = target.getPoint();
+                AnimationUtils.createMovementAnimation(mHandy, targetPoint.x,
+                        targetPoint.y).start();
+            }
+        });
     }
 
     protected void setConfigOptions(ConfigOptions options) {
