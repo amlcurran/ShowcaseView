@@ -31,10 +31,8 @@ Usage
 
 To use ShowcaseView, use one of the `insertShowcaseView(..)` calls. These take:
 
-- A [`Target`](https://github.com/Espiandev/ShowcaseView/blob/target/library/src/com/espian/showcaseview/targets/Target.java) which represents what should be showcased. See the wiki for more details.
-
+- A [`Target`](https://github.com/Espiandev/ShowcaseView/blob/target/library/src/com/espian/showcaseview/targets/Target.java) which represents what should be showcased. See the [wiki](https://github.com/Espiandev/ShowcaseView/wiki/Target-API) for more details.
 - An `Activity`
-
 - *Optional* title and detail strings (or resource ids) which show on the ShowcaseView
 - *Optional* a [`ConfigOptions`]() which can alter the behaviour of ShowcaseView. See the wiki for more details
 
