@@ -212,8 +212,13 @@ public class ShowcaseView extends RelativeLayout
         invalidate();
     }
 
-    public void setShowcase(Target target) {
-        setShowcasePosition(target.getPoint());
+    public void setShowcase(final Target target) {
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setShowcasePosition(target.getPoint());
+            }
+        }, 100);
     }
 
     public boolean hasShowcaseView() {
@@ -742,7 +747,9 @@ public class ShowcaseView extends RelativeLayout
         /**
          * Does not work with the {@link ShowcaseViews} class as it does not make sense (only with
          * {@link ShowcaseView}).
+         * @deprecated not compatible with Target API
          */
+        @Deprecated
         public int insert = INSERT_TO_DECOR;
 
         /**

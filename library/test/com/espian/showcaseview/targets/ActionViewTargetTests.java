@@ -1,9 +1,11 @@
 package com.espian.showcaseview.targets;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.graphics.Point;
 import android.view.View;
 
+import com.espian.showcaseview.ShowcaseViewTests;
 import com.espian.showcaseview.TestingActivity;
 import com.espian.showcaseview.actionbar.ActionBarViewWrapper;
 import com.espian.showcaseview.actionbar.reflection.BaseReflector;
@@ -15,7 +17,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import static java.lang.Math.random;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,79 +38,83 @@ public class ActionViewTargetTests {
 
         mActivity.getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
-        Point expectedPoint = new Point((int) random(), (int) random());
-        View mockView = ViewTargetTests.getMockView(expectedPoint);
-
+        View mockView = ViewTargetTests.getMockView();
         ActionBarViewWrapper wrapper = mock(ActionBarViewWrapper.class);
         when(wrapper.getSpinnerView()).thenReturn(mockView);
 
-        ActionViewTarget spinnerTarget = new ActionViewTarget(mActivity,
-                ActionViewTarget.Type.SPINNER);
+        ActionViewTarget spinnerTarget = new TestableActionViewTarget(mActivity,
+                ActionViewTarget.Type.SPINNER, wrapper, null);
         spinnerTarget.mActionBarWrapper = wrapper;
 
         Point actualPoint = spinnerTarget.getPoint();
 
-        assertEquals(actualPoint, expectedPoint);
+        assertEquals(ShowcaseViewTests.DEFAULT_POINT, actualPoint);
 
     }
 
     @Test
     public void testHomeTargetWorks() {
 
-        Point expectedPoint = new Point((int) random(), (int) random());
-        View mockView = ViewTargetTests.getMockView(expectedPoint);
-
+        View mockView = ViewTargetTests.getMockView();
         BaseReflector reflector = mock(BaseReflector.class);
         when(reflector.getHomeButton()).thenReturn(mockView);
 
-        ActionViewTarget homeTarget = new ActionViewTarget(mActivity,
-                ActionViewTarget.Type.HOME);
-        homeTarget.mReflector = reflector;
+        ActionViewTarget homeTarget = new TestableActionViewTarget(mActivity,
+                ActionViewTarget.Type.HOME, null, reflector);
 
         Point actualPoint = homeTarget.getPoint();
 
-        assertEquals(actualPoint, expectedPoint);
+        assertEquals(ShowcaseViewTests.DEFAULT_POINT, actualPoint);
 
     }
 
     @Test
     public void testOverflowTargetWorks() {
 
-        Point expectedPoint = new Point((int) random(), (int) random());
-        View mockView = ViewTargetTests.getMockView(expectedPoint);
-
+        View mockView = ViewTargetTests.getMockView();
         ActionBarViewWrapper wrapper = mock(ActionBarViewWrapper.class);
         when(wrapper.getOverflowView()).thenReturn(mockView);
 
-        ActionViewTarget overflowTarget = new ActionViewTarget(mActivity,
-                ActionViewTarget.Type.OVERFLOW);
+        ActionViewTarget overflowTarget = new TestableActionViewTarget(mActivity,
+                ActionViewTarget.Type.OVERFLOW, wrapper, null);
         overflowTarget.mActionBarWrapper = wrapper;
 
         Point actualPoint = overflowTarget.getPoint();
 
-        assertEquals(actualPoint, expectedPoint);
+        assertEquals(ShowcaseViewTests.DEFAULT_POINT, actualPoint);
 
     }
 
     @Test
     public void testTitleTargetWorks() {
 
-        Point expectedPoint = new Point((int) random(), (int) random());
-        View mockView = ViewTargetTests.getMockView(expectedPoint);
-
+        View mockView = ViewTargetTests.getMockView();
         ActionBarViewWrapper wrapper = mock(ActionBarViewWrapper.class);
         when(wrapper.getTitleView()).thenReturn(mockView);
 
-        ActionViewTarget titleTarget = new ActionViewTarget(mActivity,
-                ActionViewTarget.Type.TITLE);
+        TestableActionViewTarget titleTarget = new TestableActionViewTarget(mActivity,
+                ActionViewTarget.Type.TITLE, wrapper, null);
         titleTarget.mActionBarWrapper = wrapper;
 
         Point actualPoint = titleTarget.getPoint();
 
-        assertEquals(actualPoint, expectedPoint);
+        assertEquals(ShowcaseViewTests.DEFAULT_POINT, actualPoint);
 
     }
 
+    private class TestableActionViewTarget extends ActionViewTarget {
 
+        public TestableActionViewTarget(Activity activity, Type type, ActionBarViewWrapper wrapper,
+                                        BaseReflector reflector) {
+            super(activity, type);
+            mActionBarWrapper = wrapper;
+            mReflector = reflector;
+        }
+
+        @Override
+        protected void setUp() {
+            // Don't want to set up - we've manually injected our dependencies
+        }
+    }
 
 }

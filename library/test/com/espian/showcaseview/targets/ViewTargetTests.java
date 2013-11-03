@@ -1,20 +1,22 @@
 package com.espian.showcaseview.targets;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Point;
+import android.util.AttributeSet;
 import android.view.View;
 
 import com.espian.showcaseview.ShowcaseViewTests;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = "../AndroidManifest.xml")
@@ -41,18 +43,33 @@ public class ViewTargetTests {
         verify(mockActivity).findViewById(MOCK_VIEW_ID);
     }
 
-    public static View getMockView() {
-        return getMockView(ShowcaseViewTests.DEFAULT_POINT);
-    }
-
     /**
      * Return a mock view for testing with set values for x and y
      */
-    public static View getMockView(Point point) {
-        View mockView = mock(View.class);
-        when(mockView.getX()).thenReturn(Float.valueOf(point.x));
-        when(mockView.getY()).thenReturn(Float.valueOf(point.y));
+    public static View getMockView() {
+        View mockView = new WrappedView(Robolectric.application);
         return mockView;
+    }
+
+    public static class WrappedView extends View {
+
+        public WrappedView(Context context) {
+            super(context);
+        }
+
+        public WrappedView(Context context, AttributeSet attrs) {
+            super(context, attrs);
+        }
+
+        public WrappedView(Context context, AttributeSet attrs, int defStyle) {
+            super(context, attrs, defStyle);
+        }
+
+        @Override
+        public void getLocationInWindow(int[] location) {
+            location[0] = ShowcaseViewTests.DEFAULT_X_VALUE;
+            location[1] = ShowcaseViewTests.DEFAULT_Y_VALUE;
+        }
     }
 
 }

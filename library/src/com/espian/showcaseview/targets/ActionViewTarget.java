@@ -20,12 +20,16 @@ public class ActionViewTarget implements Target {
         mType = type;
     }
 
+    protected void setUp() {
+        mReflector = BaseReflector.getReflectorForActivity(mActivity);
+        ViewParent p = mReflector.getActionBarView(); //ActionBarView
+        mActionBarWrapper = new ActionBarViewWrapper(p);
+    }
+
     @Override
     public Point getPoint() {
-        BaseReflector reflector = BaseReflector.getReflectorForActivity(mActivity);
-        ViewParent p = reflector.getActionBarView(); //ActionBarView
-        mActionBarWrapper = new ActionBarViewWrapper(p);
         Target internal = null;
+        setUp();
         switch (mType) {
 
             case SPINNER:
