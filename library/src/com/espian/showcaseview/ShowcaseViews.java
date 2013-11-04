@@ -93,22 +93,10 @@ public class ShowcaseViews {
         }
         final ShowcaseView view = views.get(0);
 
-        boolean hasShot = activity.getSharedPreferences(ShowcaseView.PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
-                .getBoolean("hasShot" + view.getConfigOptions().showcaseId, false);
-        if (hasShot && view.getConfigOptions().shotType == ShowcaseView.TYPE_ONE_SHOT) {
-            // The showcase has already been shot once, so we don't need to do show it again.
-            view.setVisibility(View.GONE);
-            views.remove(0);
-            view.getConfigOptions().fadeOutDuration = 0;
-            view.performButtonClick();
-            return;
-        }
-
         view.setVisibility(View.INVISIBLE);
         ((ViewGroup) activity.getWindow().getDecorView()).addView(view);
         view.show();
         views.remove(0);
-
     }
 
     public boolean hasViews(){

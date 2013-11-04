@@ -114,13 +114,12 @@ public class ShowcaseView extends RelativeLayout
         init();
     }
 
-    private void init() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            setLayerType(LAYER_TYPE_SOFTWARE, null);
-        } else {
-            setDrawingCacheEnabled(true);
-        }
-
+    /**
+     * Tell if we want to visualize the run.
+     *
+     * @return if the
+     */
+    private boolean configureVisibility() {
         boolean hasShot = getContext()
                 .getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
                 .getBoolean("hasShot" + getConfigOptions().showcaseId, false);
@@ -128,7 +127,17 @@ public class ShowcaseView extends RelativeLayout
             // The showcase has already been shot once, so we don't need to do anything
             setVisibility(View.GONE);
             isRedundant = true;
-            return;
+            return false;
+        }
+
+        return true;
+    }
+
+    private void init() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            setLayerType(LAYER_TYPE_SOFTWARE, null);
+        } else {
+            setDrawingCacheEnabled(true);
         }
 
         showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
@@ -469,6 +478,8 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void show() {
+        if (!configureVisibility())
+            return;
         if (mEventListener != null) {
             mEventListener.onShowcaseViewShow(this);
         }
@@ -596,6 +607,8 @@ public class ShowcaseView extends RelativeLayout
         if (options != null) {
             sv.setConfigOptions(options);
         }
+        if (!sv.configureVisibility())
+            return sv;
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
         } else {
