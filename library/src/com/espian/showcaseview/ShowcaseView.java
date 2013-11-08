@@ -130,8 +130,6 @@ public class ShowcaseView extends RelativeLayout
         ConfigOptions options = new ConfigOptions();
         options.showcaseId = getId();
         setConfigOptions(options);
-
-        init();
     }
 
     private void init() {
@@ -195,7 +193,7 @@ public class ShowcaseView extends RelativeLayout
         view.post(new Runnable() {
             @Override
             public void run() {
-                //init();
+                init();
                 Point viewPoint = Calculator.getShowcasePointFromView(view, getConfigOptions());
                 setShowcasePosition(viewPoint);
                 invalidate();
@@ -225,7 +223,7 @@ public class ShowcaseView extends RelativeLayout
         }
         showcaseX = x;
         showcaseY = y;
-        //init();
+        init();
         invalidate();
     }
 
