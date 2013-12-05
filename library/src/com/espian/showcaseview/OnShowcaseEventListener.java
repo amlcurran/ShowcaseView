@@ -11,6 +11,10 @@ public interface OnShowcaseEventListener {
 
     public void onShowcaseViewShow(ShowcaseView showcaseView);
 
+    public void onShowcaseViewEndButtonClick(ShowcaseView showcaseView);
+
+    public void onShowcaseViewTargetClick(ShowcaseView showcaseView);
+
     /**
      * Empty implementation of OnShowcaseViewEventListener such that null
      * checks aren't needed
@@ -29,6 +33,14 @@ public interface OnShowcaseEventListener {
         @Override
         public void onShowcaseViewShow(ShowcaseView showcaseView) {
 
+        }
+
+        @Override
+        public void onShowcaseViewEndButtonClick(ShowcaseView showcaseView) {
+        }
+
+        @Override
+        public void onShowcaseViewTargetClick(ShowcaseView showcaseView) {
         }
     };
 

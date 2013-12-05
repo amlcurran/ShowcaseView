@@ -24,4 +24,8 @@ public class ViewTarget implements Target {
         int y = location[1] + mView.getHeight() / 2;
         return new Point(x, y);
     }
+
+    public View getView() {
+        return mView;
+    }
 }
