@@ -358,13 +358,17 @@ public class ShowcaseView extends RelativeLayout
 
     public void setHardwareAccelerated(boolean accelerated) {
         if (accelerated) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                Paint hardwarePaint = new Paint();
-                hardwarePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
-                setLayerType(LAYER_TYPE_HARDWARE, hardwarePaint);
-            } else {
-                setDrawingCacheEnabled(false);
-            }
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				if (isHardwareAccelerated()) {
+					Paint hardwarePaint = new Paint();
+					hardwarePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
+					setLayerType(LAYER_TYPE_HARDWARE, hardwarePaint);
+				} else {
+					setLayerType(LAYER_TYPE_SOFTWARE, null);
+				}
+			} else {
+				setDrawingCacheEnabled(true);
+			}
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 setLayerType(LAYER_TYPE_SOFTWARE, null);
