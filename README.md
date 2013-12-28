@@ -38,9 +38,11 @@ To use ShowcaseView, use one of the `insertShowcaseView(..)` calls. These take:
 
 As an example:
 
-`View showcasedView = findViewById(R.id.view_to_showcase);
+~~~
+View showcasedView = findViewById(R.id.view_to_showcase);
 ViewTarget target = new ViewTarget(showcasedView);
-ShowcaseView.insertShowcaseView(target, this, R.string.showcase_title, R.string.showcase_details);`
+ShowcaseView.insertShowcaseView(target, this, R.string.showcase_title, R.string.showcase_details);
+~~~
 
 Copyright and Licensing
 ----
