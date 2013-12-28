@@ -12,6 +12,7 @@ import java.util.List;
 public class ShowcaseViews {
 
     private final List<ShowcaseView> views = new ArrayList<ShowcaseView>();
+    private final List<float[]> animations = new ArrayList<float[]>();
     private final Activity activity;
     private OnShowcaseAcknowledged showcaseAcknowledgedListener = new OnShowcaseAcknowledged() {
         @Override
@@ -19,6 +20,9 @@ public class ShowcaseViews {
             //DEFAULT LISTENER - DOESN'T DO ANYTHING!
         }
     };
+
+    private static final int ABSOLUTE_COORDINATES = 0;
+    private static final int RELATIVE_COORDINATES = 1;
 
     public interface OnShowcaseAcknowledged {
         void onShowCaseAcknowledged(ShowcaseView showcaseView);
@@ -51,7 +55,37 @@ public class ShowcaseViews {
         showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
         views.add(showcaseView);
 
+        animations.add(null);
+
         return this;
+    }
+
+    /**
+     * Add an animated gesture to the view at position viewIndex.
+     * @param viewIndex     The position of the view the gesture should be added to (beginning with 0 for the view which had been added as the first one)
+     * @param offsetStartX  x-offset of the start position
+     * @param offsetStartY  y-offset of the start position
+     * @param offsetEndX    x-offset of the end position
+     * @param offsetEndY    y-offset of the end position
+     * @see com.espian.showcaseview.ShowcaseView#animateGesture(float, float, float, float)
+     * @see com.espian.showcaseview.ShowcaseViews#addAnimatedGestureToView(int, float, float, float, float, boolean)
+     */
+    public void addAnimatedGestureToView(int viewIndex, float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) throws IndexOutOfBoundsException {
+        addAnimatedGestureToView(viewIndex, offsetStartX, offsetStartY, offsetEndX, offsetEndY, false);
+    }
+
+    /**
+     * Add an animated gesture to the view at position viewIndex.
+     * @param viewIndex             The position of the view the gesture should be added to (beginning with 0 for the view which had been added as the first one)
+     * @param startX                x-coordinate or x-offset of the start position
+     * @param startY                y-coordinate or x-offset of the start position
+     * @param endX                  x-coordinate or x-offset of the end position
+     * @param endY                  y-coordinate or x-offset of the end position
+     * @param absoluteCoordinates   If true, this will use absolute coordinates instead of coordinates relative to the center of the showcased view
+     */
+    public void addAnimatedGestureToView(int viewIndex, float startX, float startY, float endX, float endY, boolean absoluteCoordinates) throws IndexOutOfBoundsException {
+        animations.remove(viewIndex);
+        animations.add(viewIndex, new float[]{absoluteCoordinates?ABSOLUTE_COORDINATES:RELATIVE_COORDINATES, startX, startY, endX, endY});
     }
 
     private boolean showcaseActionBar(ItemViewProperties properties) {
@@ -99,6 +133,7 @@ public class ShowcaseViews {
             // The showcase has already been shot once, so we don't need to do show it again.
             view.setVisibility(View.GONE);
             views.remove(0);
+            animations.remove(0);
             view.getConfigOptions().fadeOutDuration = 0;
             view.performButtonClick();
             return;
@@ -107,8 +142,14 @@ public class ShowcaseViews {
         view.setVisibility(View.INVISIBLE);
         ((ViewGroup) activity.getWindow().getDecorView()).addView(view);
         view.show();
-        views.remove(0);
 
+        float[] animation = animations.get(0);
+        if (animation != null) {
+            view.animateGesture(animation[1], animation[2], animation[3], animation[4], animation[0] == ABSOLUTE_COORDINATES);
+        }
+
+        views.remove(0);
+        animations.remove(0);
     }
 
     public boolean hasViews(){
