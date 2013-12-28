@@ -389,7 +389,13 @@ public class ShowcaseView extends RelativeLayout
         boolean recalculateText = recalculatedCling || mAlteredText;
         mAlteredText = false;
 
-        // Draw the semi-transparent background
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB && !mHasNoTarget) {
+        	Path path = new Path();
+            path.addCircle(showcaseX, showcaseY, showcaseRadius, Path.Direction.CW);
+            canvas.clipPath(path, Op.DIFFERENCE);
+        }
+
+        //Draw background color
         canvas.drawColor(mBackgroundColor);
 
         // Draw the showcase drawable
