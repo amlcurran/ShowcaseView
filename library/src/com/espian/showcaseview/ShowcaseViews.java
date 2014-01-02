@@ -3,6 +3,7 @@ package com.espian.showcaseview;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -10,12 +11,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShowcaseViews {
+    public static final String TAG = "ShowcaseViews";
 
-    private final List<ShowcaseView> views = new ArrayList<ShowcaseView>();
-    private final Activity activity;
+    private final List<ShowcaseView> mViews = new ArrayList<ShowcaseView>();
+    private final Activity mActivity;
+    private Listener mListener;
+
+    public interface Listener {
+        public void showcaseComplete();
+    }
+
+    public void setShowcaseCompleteListener(Listener listener){
+        mListener = listener;
+    }
+
     private OnShowcaseAcknowledged showcaseAcknowledgedListener = new OnShowcaseAcknowledged() {
         @Override
         public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
+            if(mListener != null){
+                mListener.showcaseComplete();
+            }
             //DEFAULT LISTENER - DOESN'T DO ANYTHING!
         }
     };
@@ -25,7 +40,7 @@ public class ShowcaseViews {
     }
 
     public ShowcaseViews(Activity activity) {
-        this.activity = activity;
+        this.mActivity = activity;
     }
 
     public ShowcaseViews(Activity activity, OnShowcaseAcknowledged acknowledgedListener) {
@@ -33,23 +48,48 @@ public class ShowcaseViews {
         this.showcaseAcknowledgedListener = acknowledgedListener;
     }
 
+    public void markViewsAsShown() {
+        for (ShowcaseView myView : mViews) {
+            myView.markViewAsShown();
+        }
+        removeAllViews();
+    }
+
+    public void removeAllViews() {
+        while (mViews.size() >= 1) {
+            mViews.remove(0);
+        }
+        Log.d(TAG, "removeAllViews view count: " + getViewCount());
+    }
+
+    public void markViewsAsNOTShown() {
+        for (ShowcaseView myView : mViews) {
+            myView.markViewAsNOTShown();
+        }
+    }
+
+    public int getViewCount() {
+        return mViews.size();
+    }
+
     public ShowcaseViews addView(ItemViewProperties properties) {
-        ShowcaseViewBuilder builder = new ShowcaseViewBuilder(activity)
+        ShowcaseViewBuilder builder = new ShowcaseViewBuilder(mActivity)
                 .setText(properties.titleResId, properties.messageResId)
                 .setShowcaseIndicatorScale(properties.scale)
                 .setConfigOptions(properties.configOptions);
 
         if(showcaseActionBar(properties)) {
-            builder.setShowcaseItem(properties.itemType, properties.id, activity);
+            builder.setShowcaseItem(properties.itemType, properties.id, mActivity);
         } else if (properties.id == ItemViewProperties.ID_NO_SHOWCASE) {
             builder.setShowcaseNoView();
         } else {
-            builder.setShowcaseView(activity.findViewById(properties.id));
+            builder.setShowcaseView(mActivity.findViewById(properties.id));
         }
 
         ShowcaseView showcaseView = builder.build();
-        showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
-        views.add(showcaseView);
+        showcaseView.overrideOKButtonClick(createShowcaseViewDismissListener(showcaseView));
+        showcaseView.overrideSKIPButtonClick(createShowcaseViewSkipListener(showcaseView));
+        mViews.add(showcaseView);
 
         return this;
     }
@@ -79,8 +119,33 @@ public class ShowcaseViews {
         };
     }
 
+    private View.OnClickListener createShowcaseViewSkipListener(final ShowcaseView showcaseView) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showcaseView.onClick(showcaseView); //Needed for TYPE_ONE_SHOT
+
+                // mark all mViews as fired
+                markViewsAsShown();
+
+                int fadeOutTime = showcaseView.getConfigOptions().fadeOutDuration;
+                if (fadeOutTime > 0) {
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showNextView(showcaseView);
+                        }
+                    }, fadeOutTime);
+                } else {
+                    showNextView(showcaseView);
+                }
+            }
+        };
+    }
+
     private void showNextView(ShowcaseView showcaseView) {
-        if (views.isEmpty()) {
+        if (mViews.isEmpty()) {
             showcaseAcknowledgedListener.onShowCaseAcknowledged(showcaseView);
         } else {
             show();
@@ -88,31 +153,31 @@ public class ShowcaseViews {
     }
 
     public void show() {
-        if (views.isEmpty()) {
+        if (mViews.isEmpty()) {
             return;
         }
-        final ShowcaseView view = views.get(0);
+        final ShowcaseView view = mViews.get(0);
 
-        boolean hasShot = activity.getSharedPreferences(ShowcaseView.PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
+        boolean hasShot = mActivity.getSharedPreferences(ShowcaseView.PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
                 .getBoolean("hasShot" + view.getConfigOptions().showcaseId, false);
         if (hasShot && view.getConfigOptions().shotType == ShowcaseView.TYPE_ONE_SHOT) {
             // The showcase has already been shot once, so we don't need to do show it again.
             view.setVisibility(View.GONE);
-            views.remove(0);
+            mViews.remove(0);
             view.getConfigOptions().fadeOutDuration = 0;
-            view.performButtonClick();
+            view.performOKButtonClick();
             return;
         }
 
         view.setVisibility(View.INVISIBLE);
-        ((ViewGroup) activity.getWindow().getDecorView()).addView(view);
+        ((ViewGroup) mActivity.getWindow().getDecorView()).addView(view);
         view.show();
-        views.remove(0);
+        mViews.remove(0);
 
     }
 
     public boolean hasViews(){
-        return !views.isEmpty();
+        return !mViews.isEmpty();
     }
 
     public static class ItemViewProperties {

@@ -44,8 +44,13 @@ public class ShowcaseViewBuilder {
         return this;
     }
 
-    public ShowcaseViewBuilder overrideButtonClick(View.OnClickListener listener) {
-        showcaseView.overrideButtonClick(listener);
+    public ShowcaseViewBuilder overrideOKButtonClick(View.OnClickListener listener) {
+        showcaseView.overrideOKButtonClick(listener);
+        return this;
+    }
+
+    public ShowcaseViewBuilder overrideSKIPButtonClick(View.OnClickListener listener) {
+        showcaseView.overrideSKIPButtonClick(listener);
         return this;
     }
 
@@ -84,7 +89,7 @@ public class ShowcaseViewBuilder {
         return this;
     }
 
-    public ShowcaseView build(){
+    public ShowcaseView build() {
         return showcaseView;
     }
 }

@@ -29,7 +29,7 @@ public class ActionItemsSampleActivity extends SherlockActivity {
 
         ActionViewTarget target = new ActionViewTarget(this, ActionViewTarget.Type.OVERFLOW);
         sv = ShowcaseView.insertShowcaseView(target, this,
-                R.string.showcase_simple_title, R.string.showcase_simple_message, mOptions);
+                R.string.showcase_simple_title, R.string.showcase_simple_message, mOptions, false);
 
         return super.onCreateOptionsMenu(menu);
     }

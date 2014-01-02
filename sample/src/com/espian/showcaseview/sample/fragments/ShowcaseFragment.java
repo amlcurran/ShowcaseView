@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.sample.R;
+import com.espian.showcaseview.targets.Target;
 import com.espian.showcaseview.targets.ViewTarget;
 
 public class ShowcaseFragment extends Fragment {
@@ -39,6 +40,6 @@ public class ShowcaseFragment extends Fragment {
         //That's why it has to be in onActivityCreated().
         ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
         co.hideOnClickOutside = true;
-        sv = ShowcaseView.insertShowcaseView(new ViewTarget(R.id.buttonFragments, getActivity()), getActivity(), R.string.showcase_fragment_title, R.string.showcase_fragment_message, co);
+        sv = ShowcaseView.insertShowcaseView(new ViewTarget(R.id.buttonFragments, getActivity()), getActivity(), R.string.showcase_fragment_title, R.string.showcase_fragment_message, co, false);
     }
 }
