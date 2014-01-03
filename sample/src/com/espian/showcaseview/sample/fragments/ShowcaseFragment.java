@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.sample.R;
-import com.espian.showcaseview.targets.Target;
 import com.espian.showcaseview.targets.ViewTarget;
 
 public class ShowcaseFragment extends Fragment {
