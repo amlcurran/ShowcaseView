@@ -527,13 +527,19 @@ public class ShowcaseView extends RelativeLayout
         float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
         double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
 
-        if (MotionEvent.ACTION_UP == motionEvent.getAction() &&
-            mOptions.hideOnClickOutside && distanceFromFocus > showcaseRadius) {
-            this.hide();
-            return true;
+        if (MotionEvent.ACTION_UP == motionEvent.getAction()) {
+
+            if(mOptions.hideOnInnerCircleClick && distanceFromFocus <= showcaseRadius) {
+                this.hide();
+                mEventListener.onShowcaseViewHideOnInnerCircle(this);
+                return true;
+            } else if(mOptions.hideOnClickOutside && distanceFromFocus > showcaseRadius ) {
+                this.hide();
+                return true;
+            }
         }
 
-        return mOptions.block && distanceFromFocus > showcaseRadius;
+        return mOptions.hideOnInnerCircleClick || (mOptions.block && distanceFromFocus > showcaseRadius);
     }
 
     /**
@@ -861,6 +867,7 @@ public class ShowcaseView extends RelativeLayout
 
         public boolean block = true, noButton = false;
         public boolean hideOnClickOutside = false;
+        public boolean hideOnInnerCircleClick = false;
 
         /**
          * Does not work with the {@link ShowcaseViews} class as it does not make sense (only with

@@ -7,6 +7,8 @@ public interface OnShowcaseEventListener {
 
     public void onShowcaseViewHide(ShowcaseView showcaseView);
 
+    public void onShowcaseViewHideOnInnerCircle(ShowcaseView showcaseView);
+
     public void onShowcaseViewDidHide(ShowcaseView showcaseView);
 
     public void onShowcaseViewShow(ShowcaseView showcaseView);
@@ -18,6 +20,11 @@ public interface OnShowcaseEventListener {
     public static final OnShowcaseEventListener NONE = new OnShowcaseEventListener() {
         @Override
         public void onShowcaseViewHide(ShowcaseView showcaseView) {
+
+        }
+
+        @Override
+        public void onShowcaseViewHideOnInnerCircle(ShowcaseView showcaseView) {
 
         }
 
