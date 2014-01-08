@@ -3,6 +3,8 @@ package com.espian.showcaseview;
 import android.app.Activity;
 import android.view.View;
 
+import com.espian.showcaseview.targets.ViewTarget;
+
 public class ShowcaseViewBuilder {
 
     private final ShowcaseView showcaseView;
@@ -20,12 +22,12 @@ public class ShowcaseViewBuilder {
     }
 
     public ShowcaseViewBuilder setShowcaseNoView() {
-        showcaseView.setShowcaseNoView();
+        showcaseView.setShowcase(ShowcaseView.NONE);
         return this;
     }
 
     public ShowcaseViewBuilder setShowcaseView(View view) {
-        showcaseView.setShowcaseView(view);
+        showcaseView.setShowcase(new ViewTarget(view));
         return this;
     }
 
@@ -40,7 +42,7 @@ public class ShowcaseViewBuilder {
     }
 
     public ShowcaseViewBuilder setShowcaseIndicatorScale(float scale) {
-        showcaseView.setShowcaseIndicatorScale(scale);
+        showcaseView.setScaleMultiplier(scale);
         return this;
     }
 
