@@ -816,7 +816,6 @@ public class ShowcaseView extends RelativeLayout
         sv.setConfigOptions(options);
 
         if (!manualTrigger) {
-            //sv.markViewAsNOTShown();
             boolean hasShot = activity.getSharedPreferences(ShowcaseView.PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
                     .getBoolean("hasShot" + sv.getConfigOptions().showcaseId, false);
             Log.d(TAG, "hasShot" + hasShot);
@@ -840,27 +839,18 @@ public class ShowcaseView extends RelativeLayout
                 if (lps != null) {
                     mSkipButton.setLayoutParams(lps);
                 }
-                //mSkipButton.bringToFront();
             }
             RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
             if (lps != null) {
                 mOKButton.setLayoutParams(lps);
             }
-            //mOKButton.bringToFront();
         }
 
         sv.setShowcase(target);
         sv.setText(title, detail);
 
-        if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
-            ViewGroup viewGroup = getDecorViewGroup(activity);
-            viewGroup.addView(sv);
-            //viewGroup.bringChildToFront(sv);
-        } else {
-            ViewGroup viewGroup = getContentViewGroup(activity);
-            viewGroup.addView(sv);
-            viewGroup.bringChildToFront(sv);
-        }
+        ViewGroup viewGroup = sv.getConfigOptions().insert == INSERT_TO_DECOR ? getDecorViewGroup(activity) : getContentViewGroup(activity);
+        viewGroup.addView(sv);
 
         return sv;
     }
