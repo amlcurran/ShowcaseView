@@ -530,11 +530,11 @@ public class ShowcaseView extends RelativeLayout
         if (MotionEvent.ACTION_UP == motionEvent.getAction()) {
 
             if(mOptions.hideOnInnerCircleClick && distanceFromFocus <= showcaseRadius) {
-                this.hide();
+                this.onClick(view);
                 mEventListener.onShowcaseViewHideOnInnerCircle(this);
                 return true;
             } else if(mOptions.hideOnClickOutside && distanceFromFocus > showcaseRadius ) {
-                this.hide();
+                this.onClick(view);
                 return true;
             }
         }
