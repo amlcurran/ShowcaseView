@@ -394,7 +394,7 @@ public class ShowcaseView extends RelativeLayout
         boolean recalculateText = recalculatedCling || mAlteredText;
         mAlteredText = false;
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB && !mHasNoTarget) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB && !mHasNoTarget && !mOptions.removeShowcaseHighlight) {
         	Path path = new Path();
             path.addCircle(showcaseX, showcaseY, showcaseRadius, Path.Direction.CW);
             canvas.clipPath(path, Op.DIFFERENCE);
@@ -404,7 +404,7 @@ public class ShowcaseView extends RelativeLayout
         canvas.drawColor(mBackgroundColor);
 
         // Draw the showcase drawable
-        if (!mHasNoTarget) {
+        if (!mHasNoTarget && !mOptions.removeShowcaseHighlight) {
             mShowcaseDrawer.drawShowcase(canvas, showcaseX, showcaseY, scaleMultiplier, showcaseRadius);
         }
 
@@ -868,6 +868,8 @@ public class ShowcaseView extends RelativeLayout
         public boolean block = true, noButton = false;
         public boolean hideOnClickOutside = false;
         public boolean hideOnInnerCircleClick = false;
+
+        public boolean removeShowcaseHighlight = false;
 
         /**
          * Does not work with the {@link ShowcaseViews} class as it does not make sense (only with
