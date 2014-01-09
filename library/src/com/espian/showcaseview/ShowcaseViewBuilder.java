@@ -3,12 +3,14 @@ package com.espian.showcaseview;
 import android.app.Activity;
 import android.view.View;
 
+import com.espian.showcaseview.targets.ViewTarget;
+
 public class ShowcaseViewBuilder {
 
     private final ShowcaseView showcaseView;
 
     public ShowcaseViewBuilder(Activity activity) {
-        this.showcaseView = new ShowcaseView(activity);
+        this.showcaseView = new ShowcaseView(activity, null);
     }
 
     public ShowcaseViewBuilder(ShowcaseView showcaseView) {
@@ -20,12 +22,12 @@ public class ShowcaseViewBuilder {
     }
 
     public ShowcaseViewBuilder setShowcaseNoView() {
-        showcaseView.setShowcaseNoView();
+        showcaseView.setShowcase(ShowcaseView.NONE);
         return this;
     }
 
     public ShowcaseViewBuilder setShowcaseView(View view) {
-        showcaseView.setShowcaseView(view);
+        showcaseView.setShowcase(new ViewTarget(view));
         return this;
     }
 
@@ -40,12 +42,17 @@ public class ShowcaseViewBuilder {
     }
 
     public ShowcaseViewBuilder setShowcaseIndicatorScale(float scale) {
-        showcaseView.setShowcaseIndicatorScale(scale);
+        showcaseView.setScaleMultiplier(scale);
         return this;
     }
 
-    public ShowcaseViewBuilder overrideButtonClick(View.OnClickListener listener) {
-        showcaseView.overrideButtonClick(listener);
+    public ShowcaseViewBuilder overrideOKButtonClick(View.OnClickListener listener) {
+        showcaseView.overrideOKButtonClick(listener);
+        return this;
+    }
+
+    public ShowcaseViewBuilder overrideSKIPButtonClick(View.OnClickListener listener) {
+        showcaseView.overrideSKIPButtonClick(listener);
         return this;
     }
 
@@ -84,7 +91,7 @@ public class ShowcaseViewBuilder {
         return this;
     }
 
-    public ShowcaseView build(){
+    public ShowcaseView build() {
         return showcaseView;
     }
 }

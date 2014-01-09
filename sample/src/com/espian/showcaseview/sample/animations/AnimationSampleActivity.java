@@ -29,7 +29,7 @@ public class AnimationSampleActivity extends Activity {
         final TextView textView3 = (TextView) findViewById(R.id.textView3);
 
         showcaseView = ShowcaseView.insertShowcaseView(new ViewTarget(findViewById(R.id.textView)), this);
-        showcaseView.overrideButtonClick(new View.OnClickListener() {
+        showcaseView.overrideOKButtonClick(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (counter) {
