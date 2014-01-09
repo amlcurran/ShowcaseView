@@ -10,7 +10,7 @@ public class TestingActivity extends Activity {
     @Override
     public void onCreate(Bundle saved) {
         super.onCreate(saved);
-        mShowcaseView = new ShowcaseView(this);
+        mShowcaseView = new ShowcaseView(this, null);
         mShowcaseView.setShowcasePosition(0, 0);
         setContentView(mShowcaseView);
     }

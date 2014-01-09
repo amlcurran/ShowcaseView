@@ -1,6 +1,5 @@
 package com.espian.showcaseview;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,9 +7,11 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Region.Op;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -37,9 +38,11 @@ import com.espian.showcaseview.targets.Target;
 import com.espian.showcaseview.targets.ViewTarget;
 import com.espian.showcaseview.utils.PointAnimator;
 import com.github.espiandev.showcaseview.R;
+import com.nineoldandroids.animation.Animator;
 
 import static com.espian.showcaseview.anim.AnimationUtils.AnimationEndListener;
 import static com.espian.showcaseview.anim.AnimationUtils.AnimationStartListener;
+
 
 /**
  * A view which allows you to showcase areas of your app with an explanation.
@@ -96,11 +99,11 @@ public class ShowcaseView extends RelativeLayout
 
     private boolean mHasNoTarget = false;
 
-    protected ShowcaseView(Context context) {
-        this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
+    protected ShowcaseView(Context context, ConfigOptions options) {
+        this(context, null, R.styleable.CustomTheme_showcaseViewStyle, options);
     }
 
-    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
+    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle, ConfigOptions options) {
         super(context, attrs, defStyle);
 
         // Get the attributes for the ShowcaseView
@@ -134,24 +137,31 @@ public class ShowcaseView extends RelativeLayout
         mTextDrawer.setTitleStyling(context, titleTextAppearance);
         mTextDrawer.setDetailStyling(context, detailTextAppearance);
 
-        ConfigOptions options = new ConfigOptions();
-        options.showcaseId = getId();
+        if (options == null) {
+            options = new ConfigOptions();
+        }
+        if (options.showcaseId == 0) {
+            options.showcaseId = getId();
+        }
         setConfigOptions(options);
 
         init();
     }
 
     private void init() {
-        setHardwareAccelerated(false);
+        setHardwareAccelerated(true);
 
-        boolean hasShot = getContext()
-                .getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
-                .getBoolean("hasShot" + getConfigOptions().showcaseId, false);
-        if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
-            // The showcase has already been shot once, so we don't need to do anything
-            setVisibility(View.GONE);
-            isRedundant = true;
-            return;
+        if (!mOptions.manualTrigger) {
+            boolean hasShot = getContext()
+                    .getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
+                    .getBoolean("hasShot" + getConfigOptions().showcaseId, false);
+            Log.d(TAG, "hasShot" + hasShot);
+            if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
+                // The showcase has already been shot once, so we don't need to do anything
+                setVisibility(View.GONE);
+                isRedundant = true;
+                return;
+            }
         }
 
         showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
@@ -364,11 +374,15 @@ public class ShowcaseView extends RelativeLayout
     public void setHardwareAccelerated(boolean accelerated) {
         if (accelerated) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                Paint hardwarePaint = new Paint();
-                hardwarePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
-                setLayerType(LAYER_TYPE_HARDWARE, hardwarePaint);
+                if (isHardwareAccelerated()) {
+                    Paint hardwarePaint = new Paint();
+                    hardwarePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
+                    setLayerType(LAYER_TYPE_HARDWARE, hardwarePaint);
+                } else {
+                    setLayerType(LAYER_TYPE_SOFTWARE, null);
+                }
             } else {
-                setDrawingCacheEnabled(false);
+                setDrawingCacheEnabled(true);
             }
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -390,7 +404,13 @@ public class ShowcaseView extends RelativeLayout
         boolean recalculateText = recalculatedCling || mAlteredText;
         mAlteredText = false;
 
-        // Draw the semi-transparent background
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB && !mHasNoTarget) {
+            Path path = new Path();
+            path.addCircle(showcaseX, showcaseY, showcaseRadius, Path.Direction.CW);
+            canvas.clipPath(path, Op.DIFFERENCE);
+        }
+
+        //Draw background color
         canvas.drawColor(mBackgroundColor);
 
         // Draw the showcase drawable
@@ -408,12 +428,36 @@ public class ShowcaseView extends RelativeLayout
 
     }
 
+    /**
+     * Adds an animated hand performing a gesture.
+     * All parameters passed to this method are relative to the center of the showcased view.
+     *
+     * @param offsetStartX x-offset of the start position
+     * @param offsetStartY y-offset of the start position
+     * @param offsetEndX   x-offset of the end position
+     * @param offsetEndY   y-offset of the end position
+     * @see com.espian.showcaseview.ShowcaseView#animateGesture(float, float, float, float, boolean)
+     */
     public void animateGesture(float offsetStartX, float offsetStartY, float offsetEndX,
                                float offsetEndY) {
+        animateGesture(offsetStartX, offsetStartY, offsetEndX, offsetEndY, false);
+    }
+
+    /**
+     * Adds an animated hand performing a gesture.
+     *
+     * @param startX              x-coordinate or x-offset of the start position
+     * @param startY              y-coordinate or x-offset of the start position
+     * @param endX                x-coordinate or x-offset of the end position
+     * @param endY                y-coordinate or x-offset of the end position
+     * @param absoluteCoordinates If true, this will use absolute coordinates instead of coordinates relative to the center of the showcased view
+     */
+    public void animateGesture(float startX, float startY, float endX,
+                               float endY, boolean absoluteCoordinates) {
         mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
                 .inflate(R.layout.handy, null);
         addView(mHandy);
-        moveHand(offsetStartX, offsetStartY, offsetEndX, offsetEndY, new AnimationEndListener() {
+        moveHand(startX, startY, endX, endY, absoluteCoordinates, new AnimationEndListener() {
             @Override
             public void onAnimationEnd() {
                 removeView(mHandy);
@@ -421,11 +465,12 @@ public class ShowcaseView extends RelativeLayout
         });
     }
 
-    private void moveHand(float offsetStartX, float offsetStartY, float offsetEndX,
-                          float offsetEndY, AnimationEndListener listener) {
-        AnimationUtils.createMovementAnimation(mHandy, showcaseX, showcaseY,
-                offsetStartX, offsetStartY,
-                offsetEndX, offsetEndY,
+    private void moveHand(float startX, float startY, float endX,
+                          float endY, boolean absoluteCoordinates, AnimationEndListener listener) {
+        AnimationUtils.createMovementAnimation(mHandy, absoluteCoordinates ? 0 : showcaseX,
+                absoluteCoordinates ? 0 : showcaseY,
+                startX, startY,
+                endX, endY,
                 listener).start();
     }
 
@@ -622,10 +667,7 @@ public class ShowcaseView extends RelativeLayout
     public static ShowcaseView insertShowcaseView(View viewToShowcase, Activity activity,
                                                   String title,
                                                   String detailText, ConfigOptions options) {
-        ShowcaseView sv = new ShowcaseView(activity);
-        if (options != null) {
-            sv.setConfigOptions(options);
-        }
+        ShowcaseView sv = new ShowcaseView(activity, options);
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             getDecorViewGroup(activity).addView(sv);
         } else {
@@ -650,10 +692,7 @@ public class ShowcaseView extends RelativeLayout
     @Deprecated
     public static ShowcaseView insertShowcaseView(View viewToShowcase, Activity activity, int title,
                                                   int detailText, ConfigOptions options) {
-        ShowcaseView sv = new ShowcaseView(activity);
-        if (options != null) {
-            sv.setConfigOptions(options);
-        }
+        ShowcaseView sv = new ShowcaseView(activity, options);
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             getDecorViewGroup(activity).addView(sv);
         } else {
@@ -696,10 +735,7 @@ public class ShowcaseView extends RelativeLayout
     @Deprecated
     public static ShowcaseView insertShowcaseView(int x, int y, Activity activity, String title,
                                                   String detailText, ConfigOptions options) {
-        ShowcaseView sv = new ShowcaseView(activity);
-        if (options != null) {
-            sv.setConfigOptions(options);
-        }
+        ShowcaseView sv = new ShowcaseView(activity, options);
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             getDecorViewGroup(activity).addView(sv);
         } else {
@@ -716,10 +752,7 @@ public class ShowcaseView extends RelativeLayout
     @Deprecated
     public static ShowcaseView insertShowcaseView(int x, int y, Activity activity, int title,
                                                   int detailText, ConfigOptions options) {
-        ShowcaseView sv = new ShowcaseView(activity);
-        if (options != null) {
-            sv.setConfigOptions(options);
-        }
+        ShowcaseView sv = new ShowcaseView(activity, options);
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             getDecorViewGroup(activity).addView(sv);
         } else {
@@ -754,10 +787,7 @@ public class ShowcaseView extends RelativeLayout
     @Deprecated
     public static ShowcaseView insertShowcaseViewWithType(int type, int itemId, Activity activity,
                                                           String title, String detailText, ConfigOptions options) {
-        ShowcaseView sv = new ShowcaseView(activity);
-        if (options != null) {
-            sv.setConfigOptions(options);
-        }
+        ShowcaseView sv = new ShowcaseView(activity, options);
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             getDecorViewGroup(activity).addView(sv);
         } else {
@@ -783,10 +813,7 @@ public class ShowcaseView extends RelativeLayout
     @Deprecated
     public static ShowcaseView insertShowcaseViewWithType(int type, int itemId, Activity activity,
                                                           int title, int detailText, ConfigOptions options) {
-        ShowcaseView sv = new ShowcaseView(activity);
-        if (options != null) {
-            sv.setConfigOptions(options);
-        }
+        ShowcaseView sv = new ShowcaseView(activity, options);
         if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
             getDecorViewGroup(activity).addView(sv);
         } else {
@@ -795,10 +822,6 @@ public class ShowcaseView extends RelativeLayout
         sv.setShowcaseItem(type, itemId, activity);
         sv.setText(title, detailText);
         return sv;
-    }
-
-    private static ViewGroup getContentViewGroup(Activity activity) {
-        return (ViewGroup) activity.findViewById(android.R.id.content);
     }
 
     @Deprecated
@@ -810,47 +833,17 @@ public class ShowcaseView extends RelativeLayout
      * Internal insert method so all inserts are routed through one method
      */
     private static ShowcaseView insertShowcaseViewInternal(Target target, Activity activity, String title,
-                                                           String detail, ConfigOptions options, boolean manualTrigger) {
+                                                           String detail, ConfigOptions options) {
 
-        ShowcaseView sv = new ShowcaseView(activity);
-        sv.setConfigOptions(options);
-
-        if (!manualTrigger) {
-            boolean hasShot = activity.getSharedPreferences(ShowcaseView.PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
-                    .getBoolean("hasShot" + sv.getConfigOptions().showcaseId, false);
-            Log.d(TAG, "hasShot" + hasShot);
-            if (hasShot && sv.getConfigOptions().shotType == ShowcaseView.TYPE_ONE_SHOT) {
-                // The showcase has already been shot once, so we don't need to show it again.
-                sv.setVisibility(View.GONE);
-                sv.getConfigOptions().fadeOutDuration = 0;
-            }
-        }
-
-        showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
-
-        if (mOptions.noButtons) {
-            mOKButton.setVisibility(ShowcaseView.GONE);
-            mSkipButton.setVisibility(ShowcaseView.GONE);
+        ShowcaseView sv = new ShowcaseView(activity, options);
+        if (sv.getConfigOptions().insert == INSERT_TO_DECOR) {
+            ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
         } else {
-            if (mOptions.noSkipButton) {
-                mSkipButton.setVisibility(ShowcaseView.GONE);
-            } else {
-                RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
-                if (lps != null) {
-                    mSkipButton.setLayoutParams(lps);
-                }
-            }
-            RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
-            if (lps != null) {
-                mOKButton.setLayoutParams(lps);
-            }
+            ((ViewGroup) activity.findViewById(android.R.id.content)).addView(sv);
         }
 
         sv.setShowcase(target);
         sv.setText(title, detail);
-
-        ViewGroup viewGroup = sv.getConfigOptions().insert == INSERT_TO_DECOR ? getDecorViewGroup(activity) : getContentViewGroup(activity);
-        viewGroup.addView(sv);
 
         return sv;
     }
@@ -859,30 +852,35 @@ public class ShowcaseView extends RelativeLayout
         return (ViewGroup) activity.getWindow().getDecorView();
     }
 
-    public static ShowcaseView insertShowcaseView(Target target, Activity activity, boolean manualTrigger) {
-        return insertShowcaseViewInternal(target, activity, null, null, null, manualTrigger);
+    private static ViewGroup getContentViewGroup(Activity activity) {
+        return (ViewGroup) activity.findViewById(android.R.id.content);
     }
 
-    public static ShowcaseView insertShowcaseView(Target target, Activity activity, String title, String detail, boolean manualTrigger) {
-        return insertShowcaseViewInternal(target, activity, title, detail, null, manualTrigger);
+    public static ShowcaseView insertShowcaseView(Target target, Activity activity) {
+        return insertShowcaseViewInternal(target, activity, null, null, null);
     }
 
-    public static ShowcaseView insertShowcaseView(Target target, Activity activity, int title, int detail, boolean manualTrigger) {
-        return insertShowcaseViewInternal(target, activity, activity.getString(title), activity.getString(detail), null, manualTrigger);
+    public static ShowcaseView insertShowcaseView(Target target, Activity activity, String title, String detail) {
+        return insertShowcaseViewInternal(target, activity, title, detail, null);
     }
 
-    public static ShowcaseView insertShowcaseView(Target target, Activity activity, String title, String detail, ConfigOptions options, boolean manualTrigger) {
-        return insertShowcaseViewInternal(target, activity, title, detail, options, manualTrigger);
+    public static ShowcaseView insertShowcaseView(Target target, Activity activity, int title, int detail) {
+        return insertShowcaseViewInternal(target, activity, activity.getString(title), activity.getString(detail), null);
     }
 
-    public static ShowcaseView insertShowcaseView(Target target, Activity activity, int title, int detail, ConfigOptions options, boolean manualTrigger) {
-        return insertShowcaseViewInternal(target, activity, activity.getString(title), activity.getString(detail), options, manualTrigger);
+    public static ShowcaseView insertShowcaseView(Target target, Activity activity, String title, String detail, ConfigOptions options) {
+        return insertShowcaseViewInternal(target, activity, title, detail, options);
+    }
+
+    public static ShowcaseView insertShowcaseView(Target target, Activity activity, int title, int detail, ConfigOptions options) {
+        return insertShowcaseViewInternal(target, activity, activity.getString(title), activity.getString(detail), options);
     }
 
     public static class ConfigOptions {
 
-        public boolean blockAll = true, block = true, noButtons = false, noSkipButton = false;
+        public boolean blockAll = true, block = true, noButtons = false, noSkipButton = true;
         public boolean hideOnClickOutside = false;
+        public boolean manualTrigger = false;
 
         /**
          * Does not work with the {@link ShowcaseViews} class as it does not make sense (only with

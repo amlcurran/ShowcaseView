@@ -13,33 +13,37 @@ import java.util.List;
 public class ShowcaseViews {
     public static final String TAG = "ShowcaseViews";
 
-    private final List<ShowcaseView> mViews = new ArrayList<ShowcaseView>();
-    private final Activity mActivity;
+    private final List<ShowcaseView> views = new ArrayList<ShowcaseView>();
+    private final List<float[]> animations = new ArrayList<float[]>();
+    private final Activity activity;
     private Listener mListener;
 
     public interface Listener {
         public void showcaseComplete();
     }
 
-    public void setShowcaseCompleteListener(Listener listener){
+    public void setShowcaseCompleteListener(Listener listener) {
         mListener = listener;
     }
 
     private OnShowcaseAcknowledged showcaseAcknowledgedListener = new OnShowcaseAcknowledged() {
         @Override
         public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
-            if(mListener != null){
+            if (mListener != null) {
                 mListener.showcaseComplete();
             }
         }
     };
+
+    private static final int ABSOLUTE_COORDINATES = 0;
+    private static final int RELATIVE_COORDINATES = 1;
 
     public interface OnShowcaseAcknowledged {
         void onShowCaseAcknowledged(ShowcaseView showcaseView);
     }
 
     public ShowcaseViews(Activity activity) {
-        this.mActivity = activity;
+        this.activity = activity;
     }
 
     public ShowcaseViews(Activity activity, OnShowcaseAcknowledged acknowledgedListener) {
@@ -48,49 +52,81 @@ public class ShowcaseViews {
     }
 
     public void markViewsAsShown() {
-        for (ShowcaseView myView : mViews) {
+        for (ShowcaseView myView : views) {
             myView.markViewAsShown();
         }
         removeAllViews();
     }
 
     public void removeAllViews() {
-        while (mViews.size() >= 1) {
-            mViews.remove(0);
+        while (views.size() >= 1) {
+            views.remove(0);
         }
         Log.d(TAG, "removeAllViews view count: " + getViewCount());
     }
 
     public void markViewsAsNOTShown() {
-        for (ShowcaseView myView : mViews) {
+        for (ShowcaseView myView : views) {
             myView.markViewAsNOTShown();
         }
     }
 
     public int getViewCount() {
-        return mViews.size();
+        return views.size();
     }
 
     public ShowcaseViews addView(ItemViewProperties properties) {
-        ShowcaseViewBuilder builder = new ShowcaseViewBuilder(mActivity)
+        ShowcaseViewBuilder builder = new ShowcaseViewBuilder(activity)
                 .setText(properties.titleResId, properties.messageResId)
                 .setShowcaseIndicatorScale(properties.scale)
                 .setConfigOptions(properties.configOptions);
 
-        if(showcaseActionBar(properties)) {
-            builder.setShowcaseItem(properties.itemType, properties.id, mActivity);
+        if (showcaseActionBar(properties)) {
+            builder.setShowcaseItem(properties.itemType, properties.id, activity);
         } else if (properties.id == ItemViewProperties.ID_NO_SHOWCASE) {
             builder.setShowcaseNoView();
         } else {
-            builder.setShowcaseView(mActivity.findViewById(properties.id));
+            builder.setShowcaseView(activity.findViewById(properties.id));
         }
 
         ShowcaseView showcaseView = builder.build();
         showcaseView.overrideOKButtonClick(createShowcaseViewDismissListener(showcaseView));
         showcaseView.overrideSKIPButtonClick(createShowcaseViewSkipListener(showcaseView));
-        mViews.add(showcaseView);
+        views.add(showcaseView);
+
+        animations.add(null);
 
         return this;
+    }
+
+    /**
+     * Add an animated gesture to the view at position viewIndex.
+     *
+     * @param viewIndex    The position of the view the gesture should be added to (beginning with 0 for the view which had been added as the first one)
+     * @param offsetStartX x-offset of the start position
+     * @param offsetStartY y-offset of the start position
+     * @param offsetEndX   x-offset of the end position
+     * @param offsetEndY   y-offset of the end position
+     * @see com.espian.showcaseview.ShowcaseView#animateGesture(float, float, float, float)
+     * @see com.espian.showcaseview.ShowcaseViews#addAnimatedGestureToView(int, float, float, float, float, boolean)
+     */
+    public void addAnimatedGestureToView(int viewIndex, float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) throws IndexOutOfBoundsException {
+        addAnimatedGestureToView(viewIndex, offsetStartX, offsetStartY, offsetEndX, offsetEndY, false);
+    }
+
+    /**
+     * Add an animated gesture to the view at position viewIndex.
+     *
+     * @param viewIndex           The position of the view the gesture should be added to (beginning with 0 for the view which had been added as the first one)
+     * @param startX              x-coordinate or x-offset of the start position
+     * @param startY              y-coordinate or x-offset of the start position
+     * @param endX                x-coordinate or x-offset of the end position
+     * @param endY                y-coordinate or x-offset of the end position
+     * @param absoluteCoordinates If true, this will use absolute coordinates instead of coordinates relative to the center of the showcased view
+     */
+    public void addAnimatedGestureToView(int viewIndex, float startX, float startY, float endX, float endY, boolean absoluteCoordinates) throws IndexOutOfBoundsException {
+        animations.remove(viewIndex);
+        animations.add(viewIndex, new float[]{absoluteCoordinates ? ABSOLUTE_COORDINATES : RELATIVE_COORDINATES, startX, startY, endX, endY});
     }
 
     private boolean showcaseActionBar(ItemViewProperties properties) {
@@ -124,7 +160,7 @@ public class ShowcaseViews {
             public void onClick(View v) {
                 showcaseView.onClick(showcaseView); //Needed for TYPE_ONE_SHOT
 
-                // mark all mViews as fired
+                // mark all views as fired
                 markViewsAsShown();
 
                 int fadeOutTime = showcaseView.getConfigOptions().fadeOutDuration;
@@ -144,7 +180,7 @@ public class ShowcaseViews {
     }
 
     private void showNextView(ShowcaseView showcaseView) {
-        if (mViews.isEmpty()) {
+        if (views.isEmpty()) {
             showcaseAcknowledgedListener.onShowCaseAcknowledged(showcaseView);
         } else {
             show();
@@ -152,31 +188,39 @@ public class ShowcaseViews {
     }
 
     public void show() {
-        if (mViews.isEmpty()) {
+        if (views.isEmpty()) {
             return;
         }
-        final ShowcaseView view = mViews.get(0);
+        final ShowcaseView view = views.get(0);
 
-        boolean hasShot = mActivity.getSharedPreferences(ShowcaseView.PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
+        boolean hasShot = activity.getSharedPreferences(ShowcaseView.PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
                 .getBoolean("hasShot" + view.getConfigOptions().showcaseId, false);
         if (hasShot && view.getConfigOptions().shotType == ShowcaseView.TYPE_ONE_SHOT) {
             // The showcase has already been shot once, so we don't need to do show it again.
             view.setVisibility(View.GONE);
-            mViews.remove(0);
+            views.remove(0);
+            animations.remove(0);
             view.getConfigOptions().fadeOutDuration = 0;
             view.performOKButtonClick();
             return;
         }
 
         view.setVisibility(View.INVISIBLE);
-        ((ViewGroup) mActivity.getWindow().getDecorView()).addView(view);
+        ((ViewGroup) activity.getWindow().getDecorView()).addView(view);
         view.show();
-        mViews.remove(0);
+
+        float[] animation = animations.get(0);
+        if (animation != null) {
+            view.animateGesture(animation[1], animation[2], animation[3], animation[4], animation[0] == ABSOLUTE_COORDINATES);
+        }
+
+        views.remove(0);
+        animations.remove(0);
 
     }
 
-    public boolean hasViews(){
-        return !mViews.isEmpty();
+    public boolean hasViews() {
+        return !views.isEmpty();
     }
 
     public static class ItemViewProperties {
