@@ -78,6 +78,7 @@ public class ShowcaseView extends RelativeLayout
     OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
     private boolean mAlteredText = false;
 
+
     private final String buttonText;
 
     private float scaleMultiplier = 1f;
@@ -133,7 +134,7 @@ public class ShowcaseView extends RelativeLayout
             options = new ConfigOptions();
         }
 
-        options.showcaseId = getId();
+//        options.showcaseId = getId();
         setConfigOptions(options);
 
         init();
@@ -152,7 +153,7 @@ public class ShowcaseView extends RelativeLayout
             return;
         }
 
-        showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
+        showcaseRadius = metricScale * mOptions.showCaseRadius;
         setOnTouchListener(this);
 
         if (!mOptions.noButton && mEndButton.getParent() == null) {
@@ -870,6 +871,8 @@ public class ShowcaseView extends RelativeLayout
         public boolean hideOnInnerCircleClick = false;
 
         public boolean removeShowcaseHighlight = false;
+
+        public int showCaseRadius = 94;
 
         /**
          * Does not work with the {@link ShowcaseViews} class as it does not make sense (only with
