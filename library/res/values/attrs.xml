@@ -4,8 +4,7 @@
         <attr name="sv_backgroundColor" format="color|reference" />
         <attr name="sv_detailTextColor" format="color|reference" />
         <attr name="sv_titleTextColor" format="color|reference" />
-        <attr name="sv_buttonBackgroundColor" format="color|reference" />
-        <attr name="sv_buttonForegroundColor" format="color|reference" />
+        <attr name="sv_buttonBackground" format="reference" />
         <attr name="sv_buttonText" format="string|reference" />
         <attr name="sv_detailTextAppearance" format="reference" />
         <attr name="sv_titleTextAppearance" format="reference" />

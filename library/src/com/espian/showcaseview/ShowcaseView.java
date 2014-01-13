@@ -115,12 +115,21 @@ public class ShowcaseView extends RelativeLayout
         int detailTextAppearance = styled
                 .getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance,
                         R.style.TextAppearance_ShowcaseView_Detail);
+        int buttonBackground = styled
+                .getResourceId(R.styleable.ShowcaseView_sv_buttonBackground, R.drawable.cling_button_bg);
 
         buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
         styled.recycle();
 
         metricScale = getContext().getResources().getDisplayMetrics().density;
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
+
+        int left = mEndButton.getPaddingLeft();
+        int top = mEndButton.getPaddingTop();
+        int right = mEndButton.getPaddingRight();
+        int bottom = mEndButton.getPaddingBottom();
+        mEndButton.setBackgroundResource(buttonBackground);
+        mEndButton.setPadding(left, top, right, bottom);
 
         mShowcaseDrawer = new ClingDrawerImpl(getResources(), showcaseColor);
 
