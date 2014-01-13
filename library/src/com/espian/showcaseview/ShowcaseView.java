@@ -243,6 +243,7 @@ public class ShowcaseView extends RelativeLayout
         postDelayed(new Runnable() {
             @Override
             public void run() {
+
                 Point targetPoint = target.getPoint();
                 if (targetPoint != null) {
                     mHasNoTarget = false;

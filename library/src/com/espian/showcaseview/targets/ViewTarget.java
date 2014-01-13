@@ -2,6 +2,7 @@ package com.espian.showcaseview.targets;
 
 import android.app.Activity;
 import android.graphics.Point;
+import android.util.Log;
 import android.view.View;
 
 public class ViewTarget implements Target {
@@ -18,10 +19,16 @@ public class ViewTarget implements Target {
 
     @Override
     public Point getPoint() {
-        int[] location = new int[2];
-        mView.getLocationInWindow(location);
-        int x = location[0] + mView.getWidth() / 2;
-        int y = location[1] + mView.getHeight() / 2;
-        return new Point(x, y);
+        try {
+            int[] location = new int[2];
+            mView.getLocationInWindow(location);
+            int x = location[0] + mView.getWidth() / 2;
+            int y = location[1] + mView.getHeight() / 2;
+
+            return new Point(x, y);
+        } catch (NullPointerException e) {
+            Log.d("ShowCaseView", "Could not identify Target ");
+        }
+        return null;
     }
 }
