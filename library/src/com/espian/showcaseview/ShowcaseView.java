@@ -4,14 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
+import android.graphics.*;
 import android.graphics.Region.Op;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -116,21 +109,18 @@ public class ShowcaseView extends RelativeLayout
         int detailTextAppearance = styled
                 .getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance,
                         R.style.TextAppearance_ShowcaseView_Detail);
-        int buttonBackground = styled
-                .getResourceId(R.styleable.ShowcaseView_sv_buttonBackground, R.drawable.cling_button_bg);
+        int buttonBackgroundColor = styled
+                .getColor(R.styleable.ShowcaseView_sv_buttonBackgroundColor, Color.parseColor("#33B5E5"));
+        int buttonForegroundColor = styled
+                .getColor(R.styleable.ShowcaseView_sv_buttonForegroundColor, Color.parseColor("#FFFFFF"));
 
         buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
         styled.recycle();
 
         metricScale = getContext().getResources().getDisplayMetrics().density;
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
-
-        int left = mEndButton.getPaddingLeft();
-        int top = mEndButton.getPaddingTop();
-        int right = mEndButton.getPaddingRight();
-        int bottom = mEndButton.getPaddingBottom();
-        mEndButton.setBackgroundResource(buttonBackground);
-        mEndButton.setPadding(left, top, right, bottom);
+        mEndButton.getBackground().setColorFilter(buttonBackgroundColor, PorterDuff.Mode.MULTIPLY);
+        mEndButton.setTextColor(buttonForegroundColor);
 
         mShowcaseDrawer = new ClingDrawerImpl(getResources(), showcaseColor);
 
