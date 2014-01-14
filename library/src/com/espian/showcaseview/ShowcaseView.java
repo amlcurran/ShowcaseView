@@ -4,13 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
+import android.graphics.*;
 import android.graphics.Region.Op;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -115,12 +109,18 @@ public class ShowcaseView extends RelativeLayout
         int detailTextAppearance = styled
                 .getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance,
                         R.style.TextAppearance_ShowcaseView_Detail);
+        int buttonBackgroundColor = styled
+                .getColor(R.styleable.ShowcaseView_sv_buttonBackgroundColor, Color.parseColor("#33B5E5"));
+        int buttonForegroundColor = styled
+                .getColor(R.styleable.ShowcaseView_sv_buttonForegroundColor, Color.parseColor("#FFFFFF"));
 
         buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
         styled.recycle();
 
         metricScale = getContext().getResources().getDisplayMetrics().density;
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
+        mEndButton.getBackground().setColorFilter(buttonBackgroundColor, PorterDuff.Mode.MULTIPLY);
+        mEndButton.setTextColor(buttonForegroundColor);
 
         mShowcaseDrawer = new ClingDrawerImpl(getResources(), showcaseColor);
 
@@ -391,6 +391,10 @@ public class ShowcaseView extends RelativeLayout
         boolean recalculateText = recalculatedCling || mAlteredText;
         mAlteredText = false;
 
+        Matrix mm = new Matrix();
+        mm.postScale(scaleMultiplier, scaleMultiplier, showcaseX, showcaseY);
+        canvas.setMatrix(mm);
+
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB && !mHasNoTarget) {
         	Path path = new Path();
             path.addCircle(showcaseX, showcaseY, showcaseRadius, Path.Direction.CW);
@@ -402,8 +406,10 @@ public class ShowcaseView extends RelativeLayout
 
         // Draw the showcase drawable
         if (!mHasNoTarget) {
-            mShowcaseDrawer.drawShowcase(canvas, showcaseX, showcaseY, scaleMultiplier, showcaseRadius);
+            mShowcaseDrawer.drawShowcase(canvas, showcaseX, showcaseY, showcaseRadius);
         }
+
+        canvas.setMatrix(new Matrix());
 
         // Draw the text on the screen, recalculating its position if necessary
         if (recalculateText) {

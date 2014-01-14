@@ -2,7 +2,6 @@ package com.espian.showcaseview.drawing;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -35,19 +34,13 @@ public class ClingDrawerImpl implements ClingDrawer {
     }
 
     @Override
-    public void drawShowcase(Canvas canvas, float x, float y, float scaleMultiplier, float radius) {
-        Matrix mm = new Matrix();
-        mm.postScale(scaleMultiplier, scaleMultiplier, x, y);
-        canvas.setMatrix(mm);
-
+    public void drawShowcase(Canvas canvas, float x, float y, float radius) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
         	canvas.drawCircle(x, y, radius, mEraser);
         }
 
         mShowcaseDrawable.setBounds(mShowcaseRect);
         mShowcaseDrawable.draw(canvas);
-
-        canvas.setMatrix(new Matrix());
     }
 
     @Override
