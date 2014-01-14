@@ -9,7 +9,7 @@ import android.graphics.Canvas;
  */
 public interface ClingDrawer extends ShowcaseAreaCalculator {
 
-    void drawShowcase(Canvas canvas, float x, float y, float scaleMultiplier, float radius);
+    void drawShowcase(Canvas canvas, float x, float y, float radius);
 
     int getShowcaseWidth();
 

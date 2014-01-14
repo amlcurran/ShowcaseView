@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
@@ -400,6 +401,10 @@ public class ShowcaseView extends RelativeLayout
         boolean recalculateText = recalculatedCling || mAlteredText;
         mAlteredText = false;
 
+        Matrix mm = new Matrix();
+        mm.postScale(scaleMultiplier, scaleMultiplier, showcaseX, showcaseY);
+        canvas.setMatrix(mm);
+
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB && !mHasNoTarget) {
         	Path path = new Path();
             path.addCircle(showcaseX, showcaseY, showcaseRadius, Path.Direction.CW);
@@ -411,8 +416,10 @@ public class ShowcaseView extends RelativeLayout
 
         // Draw the showcase drawable
         if (!mHasNoTarget) {
-            mShowcaseDrawer.drawShowcase(canvas, showcaseX, showcaseY, scaleMultiplier, showcaseRadius);
+            mShowcaseDrawer.drawShowcase(canvas, showcaseX, showcaseY, showcaseRadius);
         }
+
+        canvas.setMatrix(new Matrix());
 
         // Draw the text on the screen, recalculating its position if necessary
         if (recalculateText) {
