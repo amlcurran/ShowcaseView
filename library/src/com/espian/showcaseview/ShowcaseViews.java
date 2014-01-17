@@ -70,8 +70,9 @@ public class ShowcaseViews {
      * @see com.espian.showcaseview.ShowcaseView#animateGesture(float, float, float, float)
      * @see com.espian.showcaseview.ShowcaseViews#addAnimatedGestureToView(int, float, float, float, float, boolean)
      */
-    public void addAnimatedGestureToView(int viewIndex, float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) throws IndexOutOfBoundsException {
+    public ShowcaseViews addAnimatedGestureToView(int viewIndex, float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) throws IndexOutOfBoundsException {
         addAnimatedGestureToView(viewIndex, offsetStartX, offsetStartY, offsetEndX, offsetEndY, false);
+        return this;
     }
 
     /**
@@ -83,9 +84,10 @@ public class ShowcaseViews {
      * @param endY                  y-coordinate or x-offset of the end position
      * @param absoluteCoordinates   If true, this will use absolute coordinates instead of coordinates relative to the center of the showcased view
      */
-    public void addAnimatedGestureToView(int viewIndex, float startX, float startY, float endX, float endY, boolean absoluteCoordinates) throws IndexOutOfBoundsException {
+    public ShowcaseViews addAnimatedGestureToView(int viewIndex, float startX, float startY, float endX, float endY, boolean absoluteCoordinates) throws IndexOutOfBoundsException {
         animations.remove(viewIndex);
         animations.add(viewIndex, new float[]{absoluteCoordinates?ABSOLUTE_COORDINATES:RELATIVE_COORDINATES, startX, startY, endX, endY});
+        return this;
     }
 
     private boolean showcaseActionBar(ItemViewProperties properties) {
