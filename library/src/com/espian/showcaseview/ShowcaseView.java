@@ -15,6 +15,7 @@ import android.graphics.Region.Op;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -117,11 +118,19 @@ public class ShowcaseView extends RelativeLayout
                 .getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance,
                         R.style.TextAppearance_ShowcaseView_Detail);
 
+
+        final TypedArray styledBtn = context.getTheme()
+                .obtainStyledAttributes(attrs, R.styleable.CustomTheme, R.attr.showcaseViewStyle,
+                        0);
+
         buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
+
         styled.recycle();
 
         metricScale = getContext().getResources().getDisplayMetrics().density;
-        mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
+        mEndButton = (Button) LayoutInflater.from(new ContextThemeWrapper(context, styledBtn.getResourceId(R.styleable.CustomTheme_showcaseViewStyle, R.style.ShowcaseView))).inflate(R.layout.showcase_button, null);
+
+        styledBtn.recycle();
 
         mShowcaseDrawer = new ClingDrawerImpl(getResources(), showcaseColor);
 
@@ -157,6 +166,7 @@ public class ShowcaseView extends RelativeLayout
         setOnTouchListener(this);
 
         if (!mOptions.noButton && mEndButton.getParent() == null) {
+
             RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
             if (lps == null) {
                 lps = (LayoutParams) generateDefaultLayoutParams();
