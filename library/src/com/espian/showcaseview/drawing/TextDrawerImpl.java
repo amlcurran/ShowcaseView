@@ -111,7 +111,7 @@ public class TextDrawerImpl implements TextDrawer {
     	int[] areas = new int[4]; //left, top, right, bottom
     	areas[0] = showcase.left * canvasH;
     	areas[1] = showcase.top * canvasW;
-    	areas[2] = (canvasW - showcase.right) * canvasH;
+    	areas[2] = (canvasW - showcase.right) * canvasH / 2;
     	areas[3] = (canvasH - showcase.bottom) * canvasW;
     	
     	int largest = 0;
