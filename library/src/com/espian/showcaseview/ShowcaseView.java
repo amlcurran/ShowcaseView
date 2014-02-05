@@ -393,7 +393,7 @@ public class ShowcaseView extends RelativeLayout
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB && !mHasNoTarget) {
         	Path path = new Path();
-            path.addCircle(showcaseX, showcaseY, showcaseRadius, Path.Direction.CW);
+            path.addCircle(showcaseX, showcaseY, showcaseRadius * scaleMultiplier, Path.Direction.CW);
             canvas.clipPath(path, Op.DIFFERENCE);
         }
 
