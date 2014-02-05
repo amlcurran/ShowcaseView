@@ -33,6 +33,7 @@ import com.espian.showcaseview.drawing.ClingDrawerImpl;
 import com.espian.showcaseview.drawing.TextDrawer;
 import com.espian.showcaseview.drawing.TextDrawerImpl;
 import com.espian.showcaseview.targets.Target;
+import com.espian.showcaseview.targets.ViewTarget;
 import com.espian.showcaseview.utils.Calculator;
 import com.espian.showcaseview.utils.PointAnimator;
 import com.github.espiandev.showcaseview.R;
@@ -236,6 +237,15 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void setShowcase(final Target target, final boolean animate) {
+        if (target instanceof ViewTarget) {
+            ((ViewTarget) target).getView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mEventListener.onShowcaseViewTargetClick(ShowcaseView.this);
+                    hide();
+                }
+            });
+        }
         postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -472,6 +482,7 @@ public class ShowcaseView extends RelativeLayout
                         .commit();
             }
         }
+        mEventListener.onShowcaseViewEndButtonClick(this);
         hide();
     }
 
