@@ -32,7 +32,7 @@ public abstract class BaseReflector {
     private static ActionBarType searchForActivitySuperClass(Activity activity) {
         Class currentLevel = activity.getClass();
         while (currentLevel != Activity.class) {
-            if (currentLevel.getSimpleName().equals("SherlockActivity")) {
+            if (currentLevel.getSimpleName().equals("SherlockActivity") || currentLevel.getSimpleName().equals("SherlockFragmentActivity")) {
                 return ActionBarType.ACTIONBAR_SHERLOCK;
             }
             if (currentLevel.getSimpleName().equals("ActionBarActivity")) {
