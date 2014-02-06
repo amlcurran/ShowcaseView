@@ -1,10 +1,11 @@
 package com.espian.showcaseview.actionbar;
 
+import java.lang.reflect.Field;
+
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
-
-import java.lang.reflect.Field;
 
 /**
  * Class which wraps round the many implementations of ActionBarView and allows finding of Action
@@ -82,6 +83,37 @@ public class ActionBarViewWrapper {
         return null;
     }
 
+    public View getTabItem(int tabId) {
+    	try {
+    		
+            // first we assume that it's in portrait moe
+        	Field tabViewField = mActionBarView.getParent().getClass().getDeclaredField("mTabContainer");
+        	tabViewField.setAccessible(true);
+            Object tabView = tabViewField.get(mActionBarView.getParent());
+            
+            // if tabView is not on parent mTabContainer field
+            if (tabView == null) {
+            	// it's in landscape mode, so me search on mTabScrollView field
+            	tabViewField = mActionBarView.getClass().getDeclaredField("mTabScrollView");
+            	tabViewField.setAccessible(true);
+                tabView = tabViewField.get(mActionBarView);
+            }
+            
+            Field tabLayoutField = tabView.getClass().getDeclaredField("mTabLayout");
+            tabLayoutField.setAccessible(true);
+            ViewGroup tabLayout = (ViewGroup) tabLayoutField.get(tabView);
+            	
+            View view = tabLayout.getChildAt(tabId);
+        	return view;
+        	
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
     public View getActionItem(int actionItemId) {
         try {
             Field actionMenuPresenterField = mAbsActionBarViewClass.getDeclaredField("mActionMenuPresenter");
