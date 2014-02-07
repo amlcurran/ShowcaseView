@@ -5,7 +5,7 @@ The ShowcaseView library is designed to highlight and showcase specific parts of
 
 The library is based on the "Cling" view found in the Launcher on Ice-Cream Sandwich and Jelly Bean, but extended to be easier to use.
 
-Please check out [the website](http://espiandev.github.com/ShowcaseView) for more information.
+Please check out [the website](http://amlcurran.github.io/ShowcaseView/) for more information.
 
 ![Example image](./example.png)
 ![Example image](./example2.png)
