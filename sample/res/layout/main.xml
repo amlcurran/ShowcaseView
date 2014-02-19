@@ -1,38 +1,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:orientation="vertical"
-  android:gravity="center">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
 
-  <Button
-    android:id="@+id/buttonBlocked"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/button_hide"
-    android:layout_marginTop="100dp"/>
+    <Button
+        android:id="@+id/buttonBlocked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_hide"
+        android:layout_margin="16dp"
+        android:layout_gravity="center_horizontal" />
 
-  <Button
-    android:id="@+id/buttonToMultipleItemsActivtiy"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/button_go_to_multiple_items_activity"
-    android:layout_marginTop="10dp"
-    android:visibility="gone"/>
-
-  <Button
-    android:id="@+id/buttonToMultipleShowcaseViewsActivity"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/button_go_to_multiple_showcases_activity"
-    android:layout_marginTop="10dp"
-    android:visibility="gone"/>
-
-  <Button
-    android:id="@+id/buttonToShowcaseFragmentActivity"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/button_go_to_showcase_fragment_activity"
-    android:layout_marginTop="10dp"
-    android:visibility="gone"/>
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
