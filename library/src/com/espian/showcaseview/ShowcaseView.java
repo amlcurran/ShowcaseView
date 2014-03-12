@@ -79,7 +79,7 @@ public class ShowcaseView extends RelativeLayout
     public static final Target NONE = new Target() {
         @Override
         public Point getPoint() {
-            return null;
+            return new Point(1000000, 1000000);
         }
     };
 
@@ -466,6 +466,10 @@ public class ShowcaseView extends RelativeLayout
         return sv;
     }
 
+    private static void insertShowcaseView(ShowcaseView showcaseView, Activity activity) {
+        ((ViewGroup) activity.getWindow().getDecorView()).addView(showcaseView);
+    }
+
     public static ShowcaseView insertShowcaseView(Target target, Activity activity) {
         return insertShowcaseViewInternal(target, activity, null, null, null);
     }
@@ -490,7 +494,7 @@ public class ShowcaseView extends RelativeLayout
         return mTextDrawer.getContentTitle();
     }
 
-    public void setTitle(CharSequence title) {
+    public void setContentTitle(CharSequence title) {
         mTextDrawer.setContentTitle(title);
     }
 
@@ -546,19 +550,38 @@ public class ShowcaseView extends RelativeLayout
         return scaleMultiplier;
     }
 
-    public void setScaleMultiplier(float scaleMultiplier) {
+    private void setScaleMultiplier(float scaleMultiplier) {
         this.scaleMultiplier = scaleMultiplier;
     }
 
     /**
      * Builder class which allows easier creation of {@link ShowcaseView}s. It is recommended that you use this
      */
-    public static class Builder extends ShowcaseViewBuilder {
+    public static class Builder {
+
+        final ShowcaseView showcaseView;
+        private final Activity activity;
 
         public Builder(Activity activity) {
-            super(activity);
+            this.activity = activity;
+            this.showcaseView = new ShowcaseView(activity);
+            this.showcaseView.setShowcase(NONE);
         }
 
+        public Builder setContentTitle(CharSequence title) {
+            showcaseView.setContentTitle(title);
+            return this;
+        }
+
+        public Builder setContentText(CharSequence text) {
+            showcaseView.setContentText(text);
+            return this;
+        }
+
+        public ShowcaseView build() {
+            insertShowcaseView(showcaseView, activity);
+            return showcaseView;
+        }
     }
 
 }
