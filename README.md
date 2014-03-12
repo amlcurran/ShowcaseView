@@ -1,52 +1,34 @@
-ShowcaseView library
+ShowcaseView library : simplicity branch
 ====
-  
-The ShowcaseView library is designed to highlight and showcase specific parts of apps to the user with a distinctive and attractive overlay. This library is great for pointing out points of interest for users, gestures, or obscure but useful items.
 
-The library is based on the "Cling" view found in the Launcher on Ice-Cream Sandwich and Jelly Bean, but extended to be easier to use.
+This library has become more popular than I ever intended - but at the same time more unwieldy.
+This branch (which will become the next version) is intended to be more stable,
+more friendly and better tested. I *will* remove features relative to the previous versions. It
+is hoped than I'll add them back (or of course, you can).
 
-Please check out [the website](http://espiandev.github.com/ShowcaseView) for more information.
+What's missing
+---
 
-![Example image](./example.png)
-![Example image](./example2.png)
+- ShowcaseViews: the class which queues up ShowcaseViews in a tutorial-type method. I never
+really liked this class (generally, you should use SCV sparingly); I'll add it back in based on
+the Builder class when I can.
+- Ghostly hand: this has gone for now until I can test-drive it back in.
+- Scale multiplier: this has gone for simplicity - if people really loved it I'll add in back in
 
-Set-up
-----
+FAQs
+---
 
-Ant:
-Importing the library should work without any issues - but make sure the libraries in /library/libs are imported. To use the sample download [ActionBarSherlock](http://actionbarsherlock.com/usage.html) and add it as a dependency to the library project. Use point 1 on the "Including in your project" instructions at the link.
+**Where has X feature gone?**
 
-Android Studio:
-Import using the build.gradle file in the top-most folder, making sure to use the Gradle wrapper. You _may_ be able to import the library by itself but this isn't officially supported. If you'd like to add the library to your project, copy the library folder into your Gradle project folder and follow the instructions on the [Android tools](http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Multi-project-setup) website.
+Look one paragraph up!
 
-**WARNING:** Sometimes Eclipse/IDEA will automatically import the non-NineOldAndroid versions of the animation classes, which will cause crashes on versions of Android below 3.0. Check that your imports start with `com.nineoldandroids.animation` and not `android.animation`.
+**What happened to all the other constructors?**
 
-The full dependency list for ShowcaseView is as follows:
-- library requires android-support-v4 and nineoldandroids
-- library tests require mockito and robolectric
-- sample app requires ActionBarSherlock
+Gone. You should be using the new Target API.
 
-Usage
-----
+**What if I want to add feature X?**
 
-To use ShowcaseView, use one of the `insertShowcaseView(..)` calls. These take:
-
-- A [`Target`](https://github.com/Espiandev/ShowcaseView/blob/target/library/src/com/espian/showcaseview/targets/Target.java) which represents what should be showcased. See the [wiki](https://github.com/Espiandev/ShowcaseView/wiki/Target-API) for more details.
-- An `Activity`
-- *Optional* title and detail strings (or resource ids) which show on the ShowcaseView
-- *Optional* a [`ConfigOptions`]() which can alter the behaviour of ShowcaseView. See the wiki for more details
-
-As an example:
-
-~~~
-View showcasedView = findViewById(R.id.view_to_showcase);
-ViewTarget target = new ViewTarget(showcasedView);
-ShowcaseView.insertShowcaseView(target, this, R.string.showcase_title, R.string.showcase_details);
-~~~
-
-Copyright and Licensing
-----
-
-Copyright Alex Curran ([+Alex](https://plus.google.com/110510888639261520925/posts)) © 2012. All rights reserved.
-
-This library is distributed under an Apache 2.0 License.
+At the moment, I'm not taking any feature requests. It's unlikely I'll take many anyway,
+unless I feel they are both useful and well tested. If you have some cosmetic tweak then I don't
+want that added into the library as *another* option. But, if you need to make a tweak to the
+library to add such a tweak to your own, overridden ShowcaseView then that is totally great.
