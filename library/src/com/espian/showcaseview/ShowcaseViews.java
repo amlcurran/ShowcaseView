@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class ShowcaseViews {
 
     private final List<ShowcaseView> views = new ArrayList<ShowcaseView>();

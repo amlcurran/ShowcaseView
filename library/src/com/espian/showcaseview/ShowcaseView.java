@@ -176,7 +176,7 @@ public class ShowcaseView extends RelativeLayout
             @Override
             public void run() {
                 //init();
-                Point viewPoint = Calculator.getShowcasePointFromView(view, getConfigOptions());
+                Point viewPoint = Calculator.getShowcasePointFromView(view);
                 setShowcasePosition(viewPoint);
                 invalidate();
             }
