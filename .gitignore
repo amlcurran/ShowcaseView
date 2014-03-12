@@ -39,3 +39,5 @@ settings.xml
 # Gradle
 .gradle
 build
+
+library/coverage-error.log
