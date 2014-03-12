@@ -26,14 +26,14 @@
         <activity
                 android:name=".v14.ActionItemsSampleActivity"
                 android:theme="@style/SampleTheme"/>
-        <activity
-                android:name=".v14.MultipleActionItemsSampleActivity"
-                android:theme="@style/SampleTheme"/>
-        <activity
-                android:name=".legacy.MultipleShowcaseSampleActivity"/>
+        <!--<activity-->
+                <!--android:name=".v14.MultipleActionItemsSampleActivity"-->
+                <!--android:theme="@style/SampleTheme"/>-->
+        <!--<activity-->
+                <!--android:name=".legacy.MultipleShowcaseSampleActivity"/>-->
         <activity
                 android:name=".fragments.ShowcaseFragmentActivity"/>
         <activity android:name=".animations.AnimationSampleActivity" />
-        <activity android:name=".MemoryManagementTesting" />
+        <!--<activity android:name=".MemoryManagementTesting" />-->
     </application>
 </manifest>

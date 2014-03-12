@@ -19,9 +19,7 @@ import com.espian.showcaseview.OnShowcaseEventListener;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.sample.animations.AnimationSampleActivity;
 import com.espian.showcaseview.sample.fragments.ShowcaseFragmentActivity;
-import com.espian.showcaseview.sample.legacy.MultipleShowcaseSampleActivity;
 import com.espian.showcaseview.sample.v14.ActionItemsSampleActivity;
-import com.espian.showcaseview.sample.v14.MultipleActionItemsSampleActivity;
 import com.espian.showcaseview.targets.ViewTarget;
 
 public class SampleActivity extends Activity implements View.OnClickListener,
@@ -113,23 +111,15 @@ public class SampleActivity extends Activity implements View.OnClickListener,
                 break;
 
             case 1:
-                startActivity(new Intent(this, MultipleActionItemsSampleActivity.class));
-                break;
-
-            case 2:
-                startActivity(new Intent(this, MultipleShowcaseSampleActivity.class));
-                break;
-
-            case 3:
                 startActivity(new Intent(this, ShowcaseFragmentActivity.class));
                 break;
 
-            case 4:
+            case 2:
                 startActivity(new Intent(this, AnimationSampleActivity.class));
                 break;
 
             // Not currently used
-            case 5:
+            case 3:
                 startActivity(new Intent(this, MemoryManagementTesting.class));
         }
     }
@@ -137,14 +127,14 @@ public class SampleActivity extends Activity implements View.OnClickListener,
     private static class HardcodedListAdapter extends ArrayAdapter {
 
         private static final int[] TITLE_RES_IDS = new int[] {
-                R.string.title_action_items, R.string.title_action_bar,
-                R.string.title_multiple, R.string.title_fragments,
+                R.string.title_action_items,
+                R.string.title_fragments,
                 R.string.title_animations //, R.string.title_memory
         };
 
         private static final int[] SUMMARY_RES_IDS = new int[] {
-                R.string.sum_action_items, R.string.sum_action_bar,
-                R.string.sum_multiple, R.string.sum_fragments,
+                R.string.sum_action_items,
+                R.string.sum_fragments,
                 R.string.sum_animations //, R.string.sum_memory
         };
 

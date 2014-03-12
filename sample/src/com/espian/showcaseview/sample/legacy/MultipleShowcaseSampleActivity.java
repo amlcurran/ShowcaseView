@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.espian.showcaseview.ShowcaseView;
-import com.espian.showcaseview.ShowcaseViews;
 import com.espian.showcaseview.sample.R;
 
 public class MultipleShowcaseSampleActivity extends Activity {
@@ -17,7 +16,7 @@ public class MultipleShowcaseSampleActivity extends Activity {
     private static final float SHOWCASE_KITTEN_SCALE = 1.2f;
     private static final float SHOWCASE_LIKE_SCALE = 0.5f;
     ShowcaseView.ConfigOptions mOptions = new ShowcaseView.ConfigOptions();
-    ShowcaseViews mViews;
+    //ShowcaseViews mViews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,22 +33,22 @@ public class MultipleShowcaseSampleActivity extends Activity {
         mOptions.block = false;
         mOptions.hideOnClickOutside = false;
 
-        mViews = new ShowcaseViews(this,
-                new ShowcaseViews.OnShowcaseAcknowledged() {
-            @Override
-            public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
-                Toast.makeText(MultipleShowcaseSampleActivity.this, R.string.dismissed_message, Toast.LENGTH_SHORT).show();
-            }
-        });
-        mViews.addView( new ShowcaseViews.ItemViewProperties(R.id.image,
-                R.string.showcase_image_title,
-                R.string.showcase_image_message,
-                SHOWCASE_KITTEN_SCALE));
-        mViews.addView( new ShowcaseViews.ItemViewProperties(R.id.buttonLike,
-                R.string.showcase_like_title,
-                R.string.showcase_like_message,
-                SHOWCASE_LIKE_SCALE));
-        mViews.show();
+//        mViews = new ShowcaseViews(this,
+//                new ShowcaseViews.OnShowcaseAcknowledged() {
+//            @Override
+//            public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
+//                Toast.makeText(MultipleShowcaseSampleActivity.this, R.string.dismissed_message, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        mViews.addView( new ShowcaseViews.ItemViewProperties(R.id.image,
+//                R.string.showcase_image_title,
+//                R.string.showcase_image_message,
+//                SHOWCASE_KITTEN_SCALE));
+//        mViews.addView( new ShowcaseViews.ItemViewProperties(R.id.buttonLike,
+//                R.string.showcase_like_title,
+//                R.string.showcase_like_message,
+//                SHOWCASE_LIKE_SCALE));
+//        mViews.show();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             enableUp();
