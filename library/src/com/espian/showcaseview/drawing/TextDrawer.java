@@ -18,9 +18,9 @@ public interface TextDrawer {
 
     void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView);
 
-    void setTitleStyling(Context context, int styleId);
+    void setTitleStyling(int styleId);
 
-    void setDetailStyling(Context context, int styleId);
+    void setDetailStyling(int styleId);
 
     CharSequence getContentTitle();
 

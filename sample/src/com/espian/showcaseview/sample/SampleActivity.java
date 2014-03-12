@@ -57,7 +57,12 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 //        co.buttonLayoutParams = lps;
 
         ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
-        sv = ShowcaseView.insertShowcaseView(target, this, R.string.showcase_main_title, R.string.showcase_main_message, co);
+        sv = new ShowcaseView.Builder(this)
+                .setContentTitle(R.string.showcase_main_title)
+                .setContentText(R.string.showcase_main_message)
+                .setTarget(target)
+                .setStyle(R.style.CustomShowcaseTheme2)
+                .build();
         sv.setOnShowcaseEventListener(this);
 
     }

@@ -42,7 +42,7 @@ public class AnimationSampleActivity extends Activity {
                         break;
 
                     case 2:
-                        showcaseView.setShowcase(ShowcaseView.NONE);
+                        showcaseView.setTarget(ShowcaseView.NONE);
                         showcaseView.setText("Look ma!", "You don't always need a target to showcase");
                         setAlpha(0.4f, textView1, textView2, textView3);
                         break;

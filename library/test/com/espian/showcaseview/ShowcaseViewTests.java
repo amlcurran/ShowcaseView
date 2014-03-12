@@ -60,7 +60,7 @@ public class ShowcaseViewTests {
         Target target = mock(Target.class);
         when(target.getPoint()).thenReturn(new Point());
 
-        showcaseView.setShowcase(target);
+        showcaseView.setTarget(target);
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
 
         verify(target).getPoint();

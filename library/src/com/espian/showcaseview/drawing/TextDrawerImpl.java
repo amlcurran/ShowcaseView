@@ -27,15 +27,17 @@ public class TextDrawerImpl implements TextDrawer {
     private CharSequence mTitle, mDetails;
     private float mDensityScale;
     private ShowcaseAreaCalculator mCalculator;
+    private final Context context;
     private float[] mBestTextPosition = new float[3];
     private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
     private TextAppearanceSpan mTitleSpan;
     private TextAppearanceSpan mDetailSpan;
 
-    public TextDrawerImpl(float densityScale, ShowcaseAreaCalculator calculator) {
+    public TextDrawerImpl(float densityScale, ShowcaseAreaCalculator calculator, Context context) {
         mDensityScale = densityScale;
         mCalculator = calculator;
+        this.context = context;
 
         mPaintTitle = new TextPaint();
         mPaintTitle.setAntiAlias(true);
@@ -168,13 +170,13 @@ public class TextDrawerImpl implements TextDrawer {
     }
 
     @Override
-    public void setTitleStyling(Context context, int styleId) {
-        mTitleSpan = new TextAppearanceSpan(context, styleId);
+    public void setTitleStyling(int styleId) {
+        mTitleSpan = new TextAppearanceSpan(this.context, styleId);
     }
 
     @Override
-    public void setDetailStyling(Context context, int styleId) {
-        mDetailSpan = new TextAppearanceSpan(context, styleId);
+    public void setDetailStyling(int styleId) {
+        mDetailSpan = new TextAppearanceSpan(this.context, styleId);
     }
 
     @Override

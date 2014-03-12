@@ -70,8 +70,6 @@ public class ShowcaseView extends RelativeLayout
     OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
     private boolean mAlteredText = false;
 
-    private final String buttonText;
-
     private float scaleMultiplier = 1f;
     TextDrawer textDrawer;
     private ClingDrawer mShowcaseDrawer;
@@ -96,30 +94,12 @@ public class ShowcaseView extends RelativeLayout
         final TypedArray styled = context.getTheme()
                 .obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle,
                         R.style.ShowcaseView);
-        mBackgroundColor = styled
-                .getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
-        int showcaseColor = styled
-                .getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor("#33B5E5"));
 
-        int titleTextAppearance = styled
-                .getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance,
-                        R.style.TextAppearance_ShowcaseView_Title);
-        int detailTextAppearance = styled
-                .getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance,
-                        R.style.TextAppearance_ShowcaseView_Detail);
-
-        buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
-        styled.recycle();
-
+        // TODO: This isn't ideal, ClingDrawer and Calculator interfaces should be separate
         metricScale = getContext().getResources().getDisplayMetrics().density;
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
 
-        mShowcaseDrawer = new ClingDrawerImpl(getResources(), showcaseColor);
-
-        // TODO: This isn't ideal, ClingDrawer and Calculator interfaces should be separate
-        textDrawer = new TextDrawerImpl(metricScale, mShowcaseDrawer);
-        textDrawer.setTitleStyling(context, titleTextAppearance);
-        textDrawer.setDetailStyling(context, detailTextAppearance);
+        updateStyle(styled, false);
 
         ConfigOptions options = new ConfigOptions();
         options.showcaseId = getId();
@@ -154,8 +134,7 @@ public class ShowcaseView extends RelativeLayout
                 lps.setMargins(margin, margin, margin, margin);
             }
             mEndButton.setLayoutParams(lps);
-            mEndButton.setText(
-                    buttonText != null ? buttonText : getResources().getString(R.string.ok));
+            mEndButton.setText(R.string.ok);
             if (!hasCustomClickListener) {
                 mEndButton.setOnClickListener(this);
             }
@@ -196,7 +175,7 @@ public class ShowcaseView extends RelativeLayout
         invalidate();
     }
 
-    public void setShowcase(final Target target) {
+    public void setTarget(final Target target) {
         setShowcase(target, false);
     }
 
@@ -461,7 +440,7 @@ public class ShowcaseView extends RelativeLayout
         ShowcaseView sv = new ShowcaseView(activity);
         sv.setConfigOptions(options);
         ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
-        sv.setShowcase(target);
+        sv.setTarget(target);
         sv.setText(title, detail);
         return sv;
     }
@@ -565,7 +544,16 @@ public class ShowcaseView extends RelativeLayout
         public Builder(Activity activity) {
             this.activity = activity;
             this.showcaseView = new ShowcaseView(activity);
-            this.showcaseView.setShowcase(NONE);
+            this.showcaseView.setTarget(NONE);
+        }
+
+        public ShowcaseView build() {
+            insertShowcaseView(showcaseView, activity);
+            return showcaseView;
+        }
+
+        public Builder setContentTitle(int resId) {
+            return setContentTitle(activity.getString(resId));
         }
 
         public Builder setContentTitle(CharSequence title) {
@@ -573,14 +561,51 @@ public class ShowcaseView extends RelativeLayout
             return this;
         }
 
+        public Builder setContentText(int resId) {
+            return setContentText(activity.getString(resId));
+        }
+
         public Builder setContentText(CharSequence text) {
             showcaseView.setContentText(text);
             return this;
         }
 
-        public ShowcaseView build() {
-            insertShowcaseView(showcaseView, activity);
-            return showcaseView;
+        public Builder setTarget(Target target) {
+            showcaseView.setTarget(target);
+            return this;
+        }
+
+        public Builder setStyle(int theme) {
+            showcaseView.setStyle(theme);
+            return this;
+        }
+    }
+
+    public void setStyle(int theme) {
+        TypedArray array = getContext().obtainStyledAttributes(theme, R.styleable.ShowcaseView);
+        updateStyle(array, true);
+    }
+
+    private void updateStyle(TypedArray styled, boolean invalidate) {
+        mBackgroundColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
+        int showcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor("#33B5E5"));
+
+        int titleTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance,
+                R.style.TextAppearance_ShowcaseView_Title);
+        int detailTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_detailTextAppearance,
+                R.style.TextAppearance_ShowcaseView_Detail);
+
+        styled.recycle();
+
+        mShowcaseDrawer = new ClingDrawerImpl(getResources(), showcaseColor);
+
+        // TODO: This isn't ideal, ClingDrawer and Calculator interfaces should be separate
+        textDrawer = new TextDrawerImpl(metricScale, mShowcaseDrawer, getContext());
+        textDrawer.setTitleStyling(titleTextAppearance);
+        textDrawer.setDetailStyling(detailTextAppearance);
+
+        if (invalidate) {
+            invalidate();
         }
     }
 
