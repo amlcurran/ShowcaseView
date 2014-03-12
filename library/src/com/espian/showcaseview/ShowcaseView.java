@@ -66,7 +66,6 @@ public class ShowcaseView extends RelativeLayout
     private boolean hasCustomClickListener = false;
     private ConfigOptions mOptions;
     private int mBackgroundColor;
-    private View mHandy;
     private final Button mEndButton;
     OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
     private boolean mAlteredText = false;
@@ -341,52 +340,6 @@ public class ShowcaseView extends RelativeLayout
 
     }
 
-    /**
-     * Adds an animated hand performing a gesture.
-     * All parameters passed to this method are relative to the center of the showcased view.
-     *
-     * @param offsetStartX x-offset of the start position
-     * @param offsetStartY y-offset of the start position
-     * @param offsetEndX   x-offset of the end position
-     * @param offsetEndY   y-offset of the end position
-     * @see com.espian.showcaseview.ShowcaseView#animateGesture(float, float, float, float, boolean)
-     */
-    public void animateGesture(float offsetStartX, float offsetStartY, float offsetEndX,
-                               float offsetEndY) {
-        animateGesture(offsetStartX, offsetStartY, offsetEndX, offsetEndY, false);
-    }
-
-    /**
-     * Adds an animated hand performing a gesture.
-     *
-     * @param startX              x-coordinate or x-offset of the start position
-     * @param startY              y-coordinate or x-offset of the start position
-     * @param endX                x-coordinate or x-offset of the end position
-     * @param endY                y-coordinate or x-offset of the end position
-     * @param absoluteCoordinates If true, this will use absolute coordinates instead of coordinates relative to the center of the showcased view
-     */
-    public void animateGesture(float startX, float startY, float endX,
-                               float endY, boolean absoluteCoordinates) {
-        mHandy = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE))
-                .inflate(R.layout.handy, null);
-        addView(mHandy);
-        moveHand(startX, startY, endX, endY, absoluteCoordinates, new AnimationEndListener() {
-            @Override
-            public void onAnimationEnd() {
-                removeView(mHandy);
-            }
-        });
-    }
-
-    private void moveHand(float startX, float startY, float endX,
-                          float endY, boolean absoluteCoordinates, AnimationEndListener listener) {
-        AnimationUtils.createMovementAnimation(mHandy, absoluteCoordinates ? 0 : showcaseX,
-                absoluteCoordinates ? 0 : showcaseY,
-                startX, startY,
-                endX, endY,
-                listener).start();
-    }
-
     @Override
     public void onClick(View view) {
         // If the type is set to one-shot, store that it has shot
@@ -486,24 +439,6 @@ public class ShowcaseView extends RelativeLayout
         AnimationUtils.hide(mHandy);
 
         return mHandy;
-    }
-
-    /**
-     * Point to a specific point on the screen
-     *
-     * @param target The target to point to
-     * @deprecated use pointTo(Target)
-     */
-    public void pointTo(final Target target) {
-        post(new Runnable() {
-            @Override
-            public void run() {
-                mHandy = getHand();
-                Point targetPoint = target.getPoint();
-                AnimationUtils.createMovementAnimation(mHandy, targetPoint.x,
-                        targetPoint.y).start();
-            }
-        });
     }
 
     protected void setConfigOptions(ConfigOptions options) {
@@ -615,6 +550,9 @@ public class ShowcaseView extends RelativeLayout
         this.scaleMultiplier = scaleMultiplier;
     }
 
+    /**
+     * Builder class which allows easier creation of {@link ShowcaseView}s. It is recommended that you use this
+     */
     public static class Builder extends ShowcaseViewBuilder {
 
         public Builder(Activity activity) {

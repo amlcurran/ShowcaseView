@@ -3,9 +3,6 @@ package com.espian.showcaseview;
 import android.app.Activity;
 import android.view.View;
 
-import com.espian.showcaseview.targets.PointTarget;
-import com.espian.showcaseview.targets.ViewTarget;
-
 class ShowcaseViewBuilder {
 
     final ShowcaseView showcaseView;
@@ -47,11 +44,6 @@ class ShowcaseViewBuilder {
         return this;
     }
 
-    public ShowcaseViewBuilder animateGesture(float offsetStartX, float offsetStartY, float offsetEndX, float offsetEndY) {
-        showcaseView.animateGesture(offsetStartX, offsetStartY, offsetEndX, offsetEndY);
-        return this;
-    }
-
 //    public ShowcaseViewBuilder setTextColors(int titleTextColor, int detailTextColor) {
 //        showcaseView.setTextColors(titleTextColor, detailTextColor);
 //        return this;
@@ -64,16 +56,6 @@ class ShowcaseViewBuilder {
 
     public ShowcaseViewBuilder setText(int titleText, int subText) {
         showcaseView.setText(titleText, subText);
-        return this;
-    }
-
-    public ShowcaseViewBuilder pointTo(View view) {
-        showcaseView.pointTo(new ViewTarget(view));
-        return this;
-    }
-
-    public ShowcaseViewBuilder pointTo(float x, float y) {
-        showcaseView.pointTo(new PointTarget((int) x, (int) y));
         return this;
     }
 
