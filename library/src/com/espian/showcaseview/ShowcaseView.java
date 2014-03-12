@@ -73,7 +73,7 @@ public class ShowcaseView extends RelativeLayout
     private final String buttonText;
 
     private float scaleMultiplier = 1f;
-    private TextDrawer mTextDrawer;
+    TextDrawer textDrawer;
     private ClingDrawer mShowcaseDrawer;
 
     public static final Target NONE = new Target() {
@@ -117,9 +117,9 @@ public class ShowcaseView extends RelativeLayout
         mShowcaseDrawer = new ClingDrawerImpl(getResources(), showcaseColor);
 
         // TODO: This isn't ideal, ClingDrawer and Calculator interfaces should be separate
-        mTextDrawer = new TextDrawerImpl(metricScale, mShowcaseDrawer);
-        mTextDrawer.setTitleStyling(context, titleTextAppearance);
-        mTextDrawer.setDetailStyling(context, detailTextAppearance);
+        textDrawer = new TextDrawerImpl(metricScale, mShowcaseDrawer);
+        textDrawer.setTitleStyling(context, titleTextAppearance);
+        textDrawer.setDetailStyling(context, detailTextAppearance);
 
         ConfigOptions options = new ConfigOptions();
         options.showcaseId = getId();
@@ -332,9 +332,9 @@ public class ShowcaseView extends RelativeLayout
 
         // Draw the text on the screen, recalculating its position if necessary
         if (recalculateText) {
-            mTextDrawer.calculateTextPosition(canvas.getWidth(), canvas.getHeight(), this);
+            textDrawer.calculateTextPosition(canvas.getWidth(), canvas.getHeight(), this);
         }
-        mTextDrawer.draw(canvas, recalculateText);
+        textDrawer.draw(canvas, recalculateText);
 
         super.dispatchDraw(canvas);
 
@@ -421,8 +421,8 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void setText(String titleText, String subText) {
-        mTextDrawer.setContentTitle(titleText);
-        mTextDrawer.setContentText(subText);
+        textDrawer.setContentTitle(titleText);
+        textDrawer.setContentText(subText);
         mAlteredText = true;
         invalidate();
     }
@@ -491,19 +491,19 @@ public class ShowcaseView extends RelativeLayout
     }
 
     CharSequence getContentTitle() {
-        return mTextDrawer.getContentTitle();
+        return textDrawer.getContentTitle();
     }
 
     public void setContentTitle(CharSequence title) {
-        mTextDrawer.setContentTitle(title);
+        textDrawer.setContentTitle(title);
     }
 
     CharSequence getContentText() {
-        return mTextDrawer.getContentText();
+        return textDrawer.getContentText();
     }
 
     public void setContentText(CharSequence text) {
-        mTextDrawer.setContentText(text);
+        textDrawer.setContentText(text);
     }
 
     public static class ConfigOptions {
