@@ -6,7 +6,7 @@ import android.view.View;
 /**
  * Reflector which finds action items in the standard API 11 ActionBar implementation
  */
-public class ActionBarReflector extends BaseReflector {
+class ActionBarReflector extends BaseReflector {
 
     private Activity mActivity;
 

@@ -6,7 +6,7 @@ import android.view.View;
 /**
  * Created by Alex on 27/10/13.
  */
-public class AppCompatReflector extends BaseReflector {
+class AppCompatReflector extends BaseReflector {
 
     private Activity mActivity;
 

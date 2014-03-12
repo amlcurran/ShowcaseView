@@ -87,7 +87,7 @@ class ShowcaseViewBuilder {
         return this;
     }
 
-    public ShowcaseView build(){
+    public ShowcaseView build() {
         return showcaseView;
     }
 

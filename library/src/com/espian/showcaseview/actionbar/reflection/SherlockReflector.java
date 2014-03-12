@@ -6,7 +6,7 @@ import android.view.View;
 /**
  * Created by Alex on 27/10/13.
  */
-public class SherlockReflector extends BaseReflector {
+class SherlockReflector extends BaseReflector {
 
     private Activity mActivity;
 
