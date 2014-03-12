@@ -6,9 +6,9 @@ import android.view.View;
 import com.espian.showcaseview.targets.PointTarget;
 import com.espian.showcaseview.targets.ViewTarget;
 
-public class ShowcaseViewBuilder {
+class ShowcaseViewBuilder {
 
-    private final ShowcaseView showcaseView;
+    final ShowcaseView showcaseView;
 
     public ShowcaseViewBuilder(Activity activity) {
         this.showcaseView = new ShowcaseView(activity);
@@ -89,5 +89,13 @@ public class ShowcaseViewBuilder {
 
     public ShowcaseView build(){
         return showcaseView;
+    }
+
+    public void setContentTitle(CharSequence title) {
+        showcaseView.setTitle(title);
+    }
+
+    public void setContentText(String text) {
+        showcaseView.setContentText(text);
     }
 }

@@ -512,8 +512,8 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void setText(String titleText, String subText) {
-        mTextDrawer.setTitle(titleText);
-        mTextDrawer.setDetails(subText);
+        mTextDrawer.setContentTitle(titleText);
+        mTextDrawer.setContentText(subText);
         mAlteredText = true;
         invalidate();
     }
@@ -569,7 +569,7 @@ public class ShowcaseView extends RelativeLayout
                                                            String detail, ConfigOptions options) {
         ShowcaseView sv = new ShowcaseView(activity);
         sv.setConfigOptions(options);
-        ((ViewGroup) activity.findViewById(android.R.id.content)).addView(sv);
+        ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
         sv.setShowcase(target);
         sv.setText(title, detail);
         return sv;
@@ -593,6 +593,22 @@ public class ShowcaseView extends RelativeLayout
 
     public static ShowcaseView insertShowcaseView(Target target, Activity activity, int title, int detail, ConfigOptions options) {
         return insertShowcaseViewInternal(target, activity, activity.getString(title), activity.getString(detail), options);
+    }
+
+    CharSequence getContentTitle() {
+        return mTextDrawer.getContentTitle();
+    }
+
+    public void setTitle(CharSequence title) {
+        mTextDrawer.setContentTitle(title);
+    }
+
+    CharSequence getContentText() {
+        return mTextDrawer.getContentText();
+    }
+
+    public void setContentText(CharSequence text) {
+        mTextDrawer.setContentText(text);
     }
 
     public static class ConfigOptions {
@@ -641,6 +657,14 @@ public class ShowcaseView extends RelativeLayout
 
     public void setScaleMultiplier(float scaleMultiplier) {
         this.scaleMultiplier = scaleMultiplier;
+    }
+
+    public static class Builder extends ShowcaseViewBuilder {
+
+        public Builder(Activity activity) {
+            super(activity);
+        }
+
     }
 
 }

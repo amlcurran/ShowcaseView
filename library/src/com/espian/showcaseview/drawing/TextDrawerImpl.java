@@ -1,8 +1,5 @@
 package com.espian.showcaseview.drawing;
 
-import com.espian.showcaseview.ShowcaseView;
-import com.espian.showcaseview.utils.ShowcaseAreaCalculator;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -12,6 +9,9 @@ import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
+
+import com.espian.showcaseview.ShowcaseView;
+import com.espian.showcaseview.utils.ShowcaseAreaCalculator;
 
 /**
  * Draws the text as required by the ShowcaseView
@@ -78,7 +78,7 @@ public class TextDrawerImpl implements TextDrawer {
     }
 
     @Override
-    public void setDetails(CharSequence details) {
+    public void setContentText(CharSequence details) {
         if (details != null) {
             SpannableString ssbDetail = new SpannableString(details);
             ssbDetail.setSpan(mDetailSpan, 0, ssbDetail.length(), 0);
@@ -87,7 +87,7 @@ public class TextDrawerImpl implements TextDrawer {
     }
 
     @Override
-    public void setTitle(CharSequence title) {
+    public void setContentTitle(CharSequence title) {
         if (title != null) {
             SpannableString ssbTitle = new SpannableString(title);
             ssbTitle.setSpan(mTitleSpan, 0, ssbTitle.length(), 0);
@@ -175,6 +175,16 @@ public class TextDrawerImpl implements TextDrawer {
     @Override
     public void setDetailStyling(Context context, int styleId) {
         mDetailSpan = new TextAppearanceSpan(context, styleId);
+    }
+
+    @Override
+    public CharSequence getContentTitle() {
+        return mTitle;
+    }
+
+    @Override
+    public CharSequence getContentText() {
+        return mDetails;
     }
 
     public float[] getBestTextPosition() {
