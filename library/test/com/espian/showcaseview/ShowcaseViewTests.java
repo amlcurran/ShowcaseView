@@ -24,10 +24,12 @@ public class ShowcaseViewTests {
     public static final int DEFAULT_X_VALUE = 90;
     public static final int DEFAULT_Y_VALUE = 70;
     public static final Point DEFAULT_POINT = new Point(DEFAULT_X_VALUE, DEFAULT_Y_VALUE);
-    private ShowcaseView mShowcaseView;
+    protected ShowcaseView mShowcaseView;
+    protected OnShowcaseEventListener mockListener;
 
     @Before
     public void setup() {
+        mockListener = mock(OnShowcaseEventListener.class);
         ActivityController<TestingActivity> controller = Robolectric.buildActivity(TestingActivity.class);
         TestingActivity activity = controller.create().start().resume().get();
         mShowcaseView = activity.mShowcaseView;
@@ -36,24 +38,8 @@ public class ShowcaseViewTests {
 
     @Test
     public void testSetOnShowcaseViewListenerIsSet() {
-        OnShowcaseEventListener listener = new OnShowcaseEventListener() {
-            @Override
-            public void onShowcaseViewHide(ShowcaseView showcaseView) {
-
-            }
-
-            @Override
-            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-
-            }
-
-            @Override
-            public void onShowcaseViewShow(ShowcaseView showcaseView) {
-
-            }
-        };
-        mShowcaseView.setOnShowcaseEventListener(listener);
-        assertEquals(listener, mShowcaseView.mEventListener);
+        mShowcaseView.setOnShowcaseEventListener(mockListener);
+        assertEquals(mockListener, mShowcaseView.mEventListener);
     }
 
     @Test
@@ -77,6 +63,24 @@ public class ShowcaseViewTests {
         Robolectric.runUiThreadTasksIncludingDelayedTasks();
 
         verify(target).getPoint();
+    }
+
+    @Test
+    public void testWhenAShowcaseIsShown_TheListenerIsNotified() {
+        mShowcaseView.setOnShowcaseEventListener(mockListener);
+
+        mShowcaseView.show();
+
+        verify(mockListener).onShowcaseViewShow(mShowcaseView);
+    }
+
+    @Test
+    public void testWhenAShowcaseIsHidden_TheListenerIsNotified() {
+        mShowcaseView.setOnShowcaseEventListener(mockListener);
+
+        mShowcaseView.hide();
+
+        verify(mockListener).onShowcaseViewHide(mShowcaseView);
     }
 
 }
