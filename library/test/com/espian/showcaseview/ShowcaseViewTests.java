@@ -14,6 +14,7 @@ import org.robolectric.util.ActivityController;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -81,6 +82,15 @@ public class ShowcaseViewTests {
         mShowcaseView.hide();
 
         verify(mockListener).onShowcaseViewHide(mShowcaseView);
+    }
+
+    @Test
+    public void testWhenAShowcaseIsHidden_TheListenerIsNotNotified_AboutHidingImmediately() {
+        mShowcaseView.setOnShowcaseEventListener(mockListener);
+
+        mShowcaseView.hide();
+
+        verify(mockListener, never()).onShowcaseViewDidHide(mShowcaseView);
     }
 
 }
