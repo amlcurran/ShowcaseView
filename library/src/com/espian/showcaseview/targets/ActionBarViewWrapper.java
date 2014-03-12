@@ -1,4 +1,4 @@
-package com.espian.showcaseview.actionbar;
+package com.espian.showcaseview.targets;
 
 import android.util.Log;
 import android.view.View;
@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
  * Class which wraps round the many implementations of ActionBarView and allows finding of Action
  * items
  */
-public class ActionBarViewWrapper {
+class ActionBarViewWrapper {
 
     private ViewParent mActionBarView;
     private Class mActionBarViewClass;

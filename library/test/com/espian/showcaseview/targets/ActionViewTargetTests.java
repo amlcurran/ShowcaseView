@@ -7,7 +7,6 @@ import android.view.View;
 
 import com.espian.showcaseview.ShowcaseViewTests;
 import com.espian.showcaseview.TestingActivity;
-import com.espian.showcaseview.actionbar.ActionBarViewWrapper;
 import com.espian.showcaseview.actionbar.reflection.Reflector;
 
 import org.junit.Before;

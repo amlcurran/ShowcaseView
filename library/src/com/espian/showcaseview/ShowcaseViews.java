@@ -44,7 +44,7 @@ public class ShowcaseViews {
                 .setConfigOptions(properties.configOptions);
 
         if(showcaseActionBar(properties)) {
-            builder.setShowcaseItem(properties.itemType, properties.id, activity);
+            //builder.setShowcaseItem(properties.itemType, properties.id, activity);
         } else if (properties.id == ItemViewProperties.ID_NO_SHOWCASE) {
             builder.setShowcaseNoView();
         } else {

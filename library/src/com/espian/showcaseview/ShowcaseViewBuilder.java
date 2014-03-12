@@ -37,11 +37,6 @@ class ShowcaseViewBuilder {
         return this;
     }
 
-    public ShowcaseViewBuilder setShowcaseItem(int itemType, int actionItemId, Activity activity) {
-        showcaseView.setShowcaseItem(itemType, actionItemId, activity);
-        return this;
-    }
-
     public ShowcaseViewBuilder setShowcaseIndicatorScale(float scale) {
         showcaseView.setScaleMultiplier(scale);
         return this;

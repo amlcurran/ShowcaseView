@@ -14,20 +14,15 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Region.Op;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-import com.espian.showcaseview.actionbar.ActionBarViewWrapper;
-import com.espian.showcaseview.actionbar.reflection.ReflectorFactory;
-import com.espian.showcaseview.actionbar.reflection.Reflector;
 import com.espian.showcaseview.anim.AnimationUtils;
 import com.espian.showcaseview.drawing.ClingDrawer;
 import com.espian.showcaseview.drawing.ClingDrawerImpl;
@@ -247,46 +242,6 @@ public class ShowcaseView extends RelativeLayout
 
     public int getShowcaseY() {
         return showcaseY;
-    }
-
-    @Deprecated
-    void setShowcaseItem(final int itemType, final int actionItemId,
-                                final Activity activity) {
-        post(new Runnable() {
-            @Override
-            public void run() {
-                Reflector reflector = ReflectorFactory.getReflectorForActivity(activity);
-                ViewParent p = reflector.getActionBarView(); //ActionBarView
-                ActionBarViewWrapper wrapper = new ActionBarViewWrapper(p);
-
-                switch (itemType) {
-                    case ITEM_ACTION_HOME:
-                        setShowcaseView(reflector.getHomeButton());
-                        break;
-                    case ITEM_SPINNER:
-                        setShowcaseView(wrapper.getSpinnerView());
-                        break;
-                    case ITEM_TITLE:
-                        setShowcaseView(wrapper.getTitleView());
-                        break;
-                    case ITEM_ACTION_ITEM:
-                        setShowcaseView(wrapper.getActionItem(actionItemId));
-                        break;
-                    case ITEM_ACTION_OVERFLOW:
-                        View overflow = wrapper.getOverflowView();
-                        // This check essentially checks if we are on a device with a legacy menu key
-                        if (overflow != null) {
-                            setShowcaseView(wrapper.getOverflowView());
-                        } else {
-                            setShowcasePosition(getLegacyOverflowPoint());
-                        }
-                        break;
-                    default:
-                        Log.e("TAG", "Unknown item type");
-                }
-            }
-        });
-
     }
 
     /**

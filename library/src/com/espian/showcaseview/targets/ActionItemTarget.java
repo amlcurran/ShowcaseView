@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.Point;
 import android.view.ViewParent;
 
-import com.espian.showcaseview.actionbar.ActionBarViewWrapper;
 import com.espian.showcaseview.actionbar.reflection.ReflectorFactory;
 import com.espian.showcaseview.actionbar.reflection.Reflector;
 
