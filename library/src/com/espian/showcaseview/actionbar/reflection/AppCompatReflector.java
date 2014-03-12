@@ -2,16 +2,22 @@ package com.espian.showcaseview.actionbar.reflection;
 
 import android.app.Activity;
 import android.view.View;
+import android.view.ViewParent;
 
 /**
  * Created by Alex on 27/10/13.
  */
-class AppCompatReflector extends BaseReflector {
+class AppCompatReflector implements Reflector {
 
     private Activity mActivity;
 
     public AppCompatReflector(Activity activity) {
         mActivity = activity;
+    }
+
+    @Override
+    public ViewParent getActionBarView() {
+        return getHomeButton().getParent().getParent();
     }
 
     @Override

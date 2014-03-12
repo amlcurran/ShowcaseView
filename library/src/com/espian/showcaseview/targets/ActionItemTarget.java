@@ -5,7 +5,8 @@ import android.graphics.Point;
 import android.view.ViewParent;
 
 import com.espian.showcaseview.actionbar.ActionBarViewWrapper;
-import com.espian.showcaseview.actionbar.reflection.BaseReflector;
+import com.espian.showcaseview.actionbar.reflection.ReflectorFactory;
+import com.espian.showcaseview.actionbar.reflection.Reflector;
 
 public class ActionItemTarget implements Target {
 
@@ -26,7 +27,7 @@ public class ActionItemTarget implements Target {
     }
 
     protected void setUp() {
-        BaseReflector reflector = BaseReflector.getReflectorForActivity(mActivity);
+        Reflector reflector = ReflectorFactory.getReflectorForActivity(mActivity);
         ViewParent p = reflector.getActionBarView(); //ActionBarView
         mActionBarWrapper = new ActionBarViewWrapper(p);
     }

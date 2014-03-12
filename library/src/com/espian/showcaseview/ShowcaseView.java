@@ -26,7 +26,8 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.espian.showcaseview.actionbar.ActionBarViewWrapper;
-import com.espian.showcaseview.actionbar.reflection.BaseReflector;
+import com.espian.showcaseview.actionbar.reflection.ReflectorFactory;
+import com.espian.showcaseview.actionbar.reflection.Reflector;
 import com.espian.showcaseview.anim.AnimationUtils;
 import com.espian.showcaseview.drawing.ClingDrawer;
 import com.espian.showcaseview.drawing.ClingDrawerImpl;
@@ -254,7 +255,7 @@ public class ShowcaseView extends RelativeLayout
         post(new Runnable() {
             @Override
             public void run() {
-                BaseReflector reflector = BaseReflector.getReflectorForActivity(activity);
+                Reflector reflector = ReflectorFactory.getReflectorForActivity(activity);
                 ViewParent p = reflector.getActionBarView(); //ActionBarView
                 ActionBarViewWrapper wrapper = new ActionBarViewWrapper(p);
 

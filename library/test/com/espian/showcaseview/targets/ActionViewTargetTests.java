@@ -8,7 +8,7 @@ import android.view.View;
 import com.espian.showcaseview.ShowcaseViewTests;
 import com.espian.showcaseview.TestingActivity;
 import com.espian.showcaseview.actionbar.ActionBarViewWrapper;
-import com.espian.showcaseview.actionbar.reflection.BaseReflector;
+import com.espian.showcaseview.actionbar.reflection.Reflector;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class ActionViewTargetTests {
     public void testHomeTargetWorks() {
 
         View mockView = ViewTargetTests.getMockView();
-        BaseReflector reflector = mock(BaseReflector.class);
+        Reflector reflector = mock(Reflector.class);
         when(reflector.getHomeButton()).thenReturn(mockView);
 
         ActionViewTarget homeTarget = new TestableActionViewTarget(mActivity,
@@ -105,7 +105,7 @@ public class ActionViewTargetTests {
     private class TestableActionViewTarget extends ActionViewTarget {
 
         public TestableActionViewTarget(Activity activity, Type type, ActionBarViewWrapper wrapper,
-                                        BaseReflector reflector) {
+                                        Reflector reflector) {
             super(activity, type);
             mActionBarWrapper = wrapper;
             mReflector = reflector;
