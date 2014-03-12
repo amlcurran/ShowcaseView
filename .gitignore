@@ -13,6 +13,7 @@ bin/
 gen/
 lib/
 target/
+out/
 sample/gen-external-apklibs
 
 # Local configuration file (sdk path, etc)
