@@ -71,7 +71,9 @@ public class TextDrawerImpl implements TextDrawer {
                             Layout.Alignment.ALIGN_NORMAL,
                             1.2f, 1.0f, true);
                 }
-                canvas.translate(textPosition[0], textPosition[1] + mDynamicTitleLayout.getHeight());
+                float offsetForTitle = mDynamicTitleLayout != null ? mDynamicTitleLayout.getHeight() :
+                        0;
+                canvas.translate(textPosition[0], textPosition[1] + offsetForTitle);
                 mDynamicDetailLayout.draw(canvas);
                 canvas.restore();
 
