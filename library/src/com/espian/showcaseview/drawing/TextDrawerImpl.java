@@ -1,6 +1,7 @@
 package com.espian.showcaseview.drawing;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.text.DynamicLayout;
@@ -12,6 +13,7 @@ import android.text.style.TextAppearanceSpan;
 
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.utils.ShowcaseAreaCalculator;
+import com.github.espiandev.showcaseview.R;
 
 /**
  * Draws the text as required by the ShowcaseView
@@ -25,7 +27,6 @@ public class TextDrawerImpl implements TextDrawer {
     private final TextPaint mPaintDetail;
 
     private CharSequence mTitle, mDetails;
-    private float mDensityScale;
     private ShowcaseAreaCalculator mCalculator;
     private final Context context;
     private float[] mBestTextPosition = new float[3];
@@ -33,9 +34,13 @@ public class TextDrawerImpl implements TextDrawer {
     private DynamicLayout mDynamicDetailLayout;
     private TextAppearanceSpan mTitleSpan;
     private TextAppearanceSpan mDetailSpan;
+    private final float padding;
+    private final float actionBarOffset;
 
-    public TextDrawerImpl(float densityScale, ShowcaseAreaCalculator calculator, Context context) {
-        mDensityScale = densityScale;
+    public TextDrawerImpl(Resources resources, ShowcaseAreaCalculator calculator, Context context) {
+        padding = resources.getDimension(R.dimen.text_padding);
+        actionBarOffset = resources.getDimension(R.dimen.action_bar_offset);
+
         mCalculator = calculator;
         this.context = context;
 
@@ -127,24 +132,24 @@ public class TextDrawerImpl implements TextDrawer {
     	// Position text in largest area
     	switch(largest) {
     	case 0:
-    		mBestTextPosition[0] = PADDING * mDensityScale;
-    		mBestTextPosition[1] = PADDING * mDensityScale;
-    		mBestTextPosition[2] = showcase.left - 2 * PADDING * mDensityScale;
+    		mBestTextPosition[0] = padding;
+    		mBestTextPosition[1] = padding;
+    		mBestTextPosition[2] = showcase.left - 2 * padding;
     		break;
     	case 1:
-    		mBestTextPosition[0] = PADDING * mDensityScale;
-    		mBestTextPosition[1] = (PADDING + ACTIONBAR_PADDING) * mDensityScale;
-    		mBestTextPosition[2] = canvasW - 2 * PADDING * mDensityScale;
+    		mBestTextPosition[0] = padding;
+    		mBestTextPosition[1] = padding + actionBarOffset;
+    		mBestTextPosition[2] = canvasW - 2 * padding;
     		break;
     	case 2:
-    		mBestTextPosition[0] = showcase.right + PADDING * mDensityScale;
-    		mBestTextPosition[1] = PADDING * mDensityScale;
-    		mBestTextPosition[2] = (canvasW - showcase.right) - 2 * PADDING * mDensityScale;
+    		mBestTextPosition[0] = showcase.right + padding;
+    		mBestTextPosition[1] = padding;
+    		mBestTextPosition[2] = (canvasW - showcase.right) - 2 * padding;
     		break;
     	case 3:
-    		mBestTextPosition[0] = PADDING * mDensityScale;
-    		mBestTextPosition[1] = showcase.bottom + PADDING * mDensityScale;
-    		mBestTextPosition[2] = canvasW - 2 * PADDING * mDensityScale;
+    		mBestTextPosition[0] = padding;
+    		mBestTextPosition[1] = showcase.bottom + padding;
+    		mBestTextPosition[2] = canvasW - 2 * padding;
     		break;
     	}
     	if(showcaseView.getConfigOptions().centerText) {
@@ -165,7 +170,7 @@ public class TextDrawerImpl implements TextDrawer {
 	    	switch(largest) {
 	    		case 0:
 	    		case 2:
-	    			mBestTextPosition[1] += ACTIONBAR_PADDING * mDensityScale;
+	    			mBestTextPosition[1] += actionBarOffset;
 	    			break;
 	    	}
     	}

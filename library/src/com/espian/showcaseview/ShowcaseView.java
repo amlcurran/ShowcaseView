@@ -1,5 +1,6 @@
 package com.espian.showcaseview;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -46,20 +47,12 @@ public class ShowcaseView extends RelativeLayout
     public static final int TYPE_NO_LIMIT = 0;
     public static final int TYPE_ONE_SHOT = 1;
 
-    public static final int ITEM_ACTION_HOME = 0;
-    public static final int ITEM_TITLE = 1;
-    public static final int ITEM_SPINNER = 2;
-    public static final int ITEM_ACTION_ITEM = 3;
-    public static final int ITEM_ACTION_OVERFLOW = 6;
-
     protected static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
-    public static final int INNER_CIRCLE_RADIUS = 94;
     private static final Interpolator INTERPOLATOR = new AccelerateDecelerateInterpolator();
 
     private int showcaseX = -1;
     private int showcaseY = -1;
     private float showcaseRadius = -1;
-    private float metricScale = 1.0f;
     private float legacyShowcaseX = -1;
     private float legacyShowcaseY = -1;
     private boolean isRedundant = false;
@@ -95,8 +88,6 @@ public class ShowcaseView extends RelativeLayout
                 .obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle,
                         R.style.ShowcaseView);
 
-        // TODO: This isn't ideal, ClingDrawer and Calculator interfaces should be separate
-        metricScale = getContext().getResources().getDisplayMetrics().density;
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
 
         updateStyle(styled, false);
@@ -109,7 +100,6 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void init() {
-        setHardwareAccelerated(true);
 
         boolean hasShot = getContext()
                 .getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
@@ -121,16 +111,16 @@ public class ShowcaseView extends RelativeLayout
             return;
         }
 
-        showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
+        showcaseRadius = getResources().getDimension(R.dimen.showcase_radius);
         setOnTouchListener(this);
 
         if (!mOptions.noButton && mEndButton.getParent() == null) {
             RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
             if (lps == null) {
+                int margin = (int) getResources().getDimension(R.dimen.button_margin);
                 lps = (LayoutParams) generateDefaultLayoutParams();
                 lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                 lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                int margin = ((Number) (metricScale * 12)).intValue();
                 lps.setMargins(margin, margin, margin, margin);
             }
             mEndButton.setLayoutParams(lps);
@@ -262,28 +252,6 @@ public class ShowcaseView extends RelativeLayout
         }
     }
 
-    public void setHardwareAccelerated(boolean accelerated) {
-        if (accelerated) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                if (isHardwareAccelerated()) {
-                    Paint hardwarePaint = new Paint();
-                    hardwarePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.OVERLAY));
-                    setLayerType(LAYER_TYPE_HARDWARE, hardwarePaint);
-                } else {
-                    setLayerType(LAYER_TYPE_SOFTWARE, null);
-                }
-            } else {
-                setDrawingCacheEnabled(true);
-            }
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                setLayerType(LAYER_TYPE_SOFTWARE, null);
-            } else {
-                setDrawingCacheEnabled(true);
-            }
-        }
-    }
-
     @Override
     protected void dispatchDraw(Canvas canvas) {
         if (showcaseX < 0 || showcaseY < 0 || isRedundant) {
@@ -320,6 +288,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     @Override
+    @TargetApi(9)
     public void onClick(View view) {
         // If the type is set to one-shot, store that it has shot
         if (mOptions.shotType == TYPE_ONE_SHOT) {
@@ -600,7 +569,7 @@ public class ShowcaseView extends RelativeLayout
         mShowcaseDrawer = new ClingDrawerImpl(getResources(), showcaseColor);
 
         // TODO: This isn't ideal, ClingDrawer and Calculator interfaces should be separate
-        textDrawer = new TextDrawerImpl(metricScale, mShowcaseDrawer, getContext());
+        textDrawer = new TextDrawerImpl(getResources(), mShowcaseDrawer, getContext());
         textDrawer.setTitleStyling(titleTextAppearance);
         textDrawer.setDetailStyling(detailTextAppearance);
 
