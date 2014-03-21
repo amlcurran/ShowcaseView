@@ -8,7 +8,7 @@ public class ShowcaseViewBuilder {
     private final ShowcaseView showcaseView;
 
     public ShowcaseViewBuilder(Activity activity) {
-        this.showcaseView = new ShowcaseView(activity);
+        this.showcaseView = new ShowcaseView(activity, null);
     }
 
     public ShowcaseViewBuilder(ShowcaseView showcaseView) {

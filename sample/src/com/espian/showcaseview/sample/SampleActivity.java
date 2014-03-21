@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.espian.showcaseview.OnShowcaseEventListener;
@@ -51,12 +52,12 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         co.hideOnClickOutside = true;
 
         // The following code will reposition the OK button to the left.
-//        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//        lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//        int margin = ((Number) (getResources().getDisplayMetrics().density * 12)).intValue();
-//        lps.setMargins(margin, margin, margin, margin);
-//        co.buttonLayoutParams = lps;
+        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        int margin = ((Number) (getResources().getDisplayMetrics().density * 12)).intValue();
+        lps.setMargins(margin, margin, margin, margin);
+        co.buttonLayoutParams = lps;
 
         ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
         sv = ShowcaseView.insertShowcaseView(target, this, R.string.showcase_main_title, R.string.showcase_main_message, co);
