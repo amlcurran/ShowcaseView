@@ -1,6 +1,5 @@
 package com.espian.showcaseview.drawing;
 
-import android.content.Context;
 import android.graphics.Canvas;
 
 import com.espian.showcaseview.ShowcaseView;
@@ -16,7 +15,7 @@ public interface TextDrawer {
 
     void setContentTitle(CharSequence title);
 
-    void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView);
+    void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView, boolean shouldCentreText);
 
     void setTitleStyling(int styleId);
 

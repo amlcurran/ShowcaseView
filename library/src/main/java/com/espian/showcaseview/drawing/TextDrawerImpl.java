@@ -106,12 +106,12 @@ public class TextDrawerImpl implements TextDrawer {
 
     /**
      * Calculates the best place to position text
-     *
-     * @param canvasW width of the screen
+     *  @param canvasW width of the screen
      * @param canvasH height of the screen
+     * @param shouldCentreText
      */
     @Override
-    public void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView) {
+    public void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView, boolean shouldCentreText) {
 
     	Rect showcase = showcaseView.hasShowcaseView() ?
     			mCalculator.getShowcaseRect() :
@@ -152,7 +152,7 @@ public class TextDrawerImpl implements TextDrawer {
     		mBestTextPosition[2] = canvasW - 2 * padding;
     		break;
     	}
-    	if(showcaseView.getConfigOptions().centerText) {
+    	if(shouldCentreText) {
 	    	// Center text vertically or horizontally
 	    	switch(largest) {
 	    	case 0:

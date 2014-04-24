@@ -8,14 +8,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.sample.R;
 
 public class MultipleShowcaseSampleActivity extends Activity {
 
     private static final float SHOWCASE_KITTEN_SCALE = 1.2f;
     private static final float SHOWCASE_LIKE_SCALE = 0.5f;
-    ShowcaseView.ConfigOptions mOptions = new ShowcaseView.ConfigOptions();
     //ShowcaseViews mViews;
 
     @Override

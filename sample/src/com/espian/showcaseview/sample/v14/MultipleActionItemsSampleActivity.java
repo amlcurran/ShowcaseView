@@ -7,14 +7,12 @@ import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.sample.R;
 
 public class MultipleActionItemsSampleActivity extends SherlockActivity implements com.actionbarsherlock.app.ActionBar.OnNavigationListener {
 
     public static final float SHOWCASE_SPINNER_SCALE = 1f;
     public static final float SHOWCASE_OVERFLOW_ITEM_SCALE = 0.5f;
-    ShowcaseView.ConfigOptions mOptions = new ShowcaseView.ConfigOptions();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

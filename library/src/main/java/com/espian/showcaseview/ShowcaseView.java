@@ -40,9 +40,6 @@ import static com.espian.showcaseview.anim.AnimationUtils.AnimationStartListener
 public class ShowcaseView extends RelativeLayout
         implements View.OnClickListener, View.OnTouchListener {
 
-    public static final int TYPE_NO_LIMIT = 0;
-    public static final int TYPE_ONE_SHOT = 1;
-
     protected static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     private static final Interpolator INTERPOLATOR = new AccelerateDecelerateInterpolator();
     private final Paint basicPaint;
@@ -59,14 +56,13 @@ public class ShowcaseView extends RelativeLayout
     private boolean blockTouches = true;
     private boolean hideOnTouch = false;
 
-    private ConfigOptions mOptions;
     private int mBackgroundColor;
     private final Button mEndButton;
-    OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
+    private OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
     private boolean mAlteredText = false;
 
     private float scaleMultiplier = 1f;
-    TextDrawer textDrawer;
+    private TextDrawer textDrawer;
     private ClingDrawer mShowcaseDrawer;
 
     public static final Target NONE = new Target() {
@@ -80,6 +76,9 @@ public class ShowcaseView extends RelativeLayout
     private Bitmap bitmapBuffer;
     private long fadeInMillis;
     private long fadeOutMillis;
+    private long shotId;
+    private ShotType selectedShotType = ShotType.NO_LIMIT;
+    private boolean shouldCentreText;
 
     protected ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
@@ -101,20 +100,13 @@ public class ShowcaseView extends RelativeLayout
 
         updateStyle(styled, false);
 
-        ConfigOptions options = new ConfigOptions();
-        options.showcaseId = getId();
-        setConfigOptions(options);
-
         init();
         basicPaint = new Paint();
     }
 
     private void init() {
 
-        boolean hasShot = getContext()
-                .getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
-                .getBoolean("hasShot" + getConfigOptions().showcaseId, false);
-        if (hasShot && mOptions.shotType == TYPE_ONE_SHOT) {
+        if (selectedShotType == ShotType.SINGLE_SHOT && hasShot()) {
             // The showcase has already been shot once, so we don't need to do anything
             setVisibility(View.GONE);
             isRedundant = true;
@@ -124,15 +116,12 @@ public class ShowcaseView extends RelativeLayout
         showcaseRadius = getResources().getDimension(R.dimen.showcase_radius);
         setOnTouchListener(this);
 
-        if (!mOptions.noButton && mEndButton.getParent() == null) {
-            RelativeLayout.LayoutParams lps = getConfigOptions().buttonLayoutParams;
-            if (lps == null) {
-                int margin = (int) getResources().getDimension(R.dimen.button_margin);
-                lps = (LayoutParams) generateDefaultLayoutParams();
-                lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                lps.setMargins(margin, margin, margin, margin);
-            }
+        if (mEndButton.getParent() == null) {
+            int margin = (int) getResources().getDimension(R.dimen.button_margin);
+            RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
+            lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            lps.setMargins(margin, margin, margin, margin);
             mEndButton.setLayoutParams(lps);
             mEndButton.setText(R.string.ok);
             if (!hasCustomClickListener) {
@@ -141,6 +130,12 @@ public class ShowcaseView extends RelativeLayout
             addView(mEndButton);
         }
 
+    }
+
+    private boolean hasShot() {
+        return getContext()
+                .getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
+                .getBoolean("hasShot" + shotId, false);
     }
 
     void setShowcaseView(final View view) {
@@ -235,13 +230,6 @@ public class ShowcaseView extends RelativeLayout
     }
 
     /**
-     * Gets the bottom centre of the screen, where a legacy menu would pop up
-     */
-    private Point getLegacyOverflowPoint() {
-        return new Point(getLeft() + getWidth() / 2, getBottom());
-    }
-
-    /**
      * Override the standard button click event
      *
      * @param listener Listener to listen to on click events
@@ -254,10 +242,6 @@ public class ShowcaseView extends RelativeLayout
             mEndButton.setOnClickListener(listener != null ? listener : this);
         }
         hasCustomClickListener = true;
-    }
-
-    protected void performButtonClick() {
-        mEndButton.performClick();
     }
 
     public void setOnShowcaseEventListener(OnShowcaseEventListener listener) {
@@ -296,7 +280,7 @@ public class ShowcaseView extends RelativeLayout
 
         // Draw the text on the screen, recalculating its position if necessary
         if (recalculateText) {
-            textDrawer.calculateTextPosition(canvas.getWidth(), canvas.getHeight(), this);
+            textDrawer.calculateTextPosition(canvas.getWidth(), canvas.getHeight(), this, shouldCentreText);
         }
         textDrawer.draw(canvas, recalculateText);
 
@@ -308,9 +292,9 @@ public class ShowcaseView extends RelativeLayout
     @TargetApi(9)
     public void onClick(View view) {
         // If the type is set to one-shot, store that it has shot
-        if (mOptions.shotType == TYPE_ONE_SHOT) {
+        if (selectedShotType == ShotType.SINGLE_SHOT) {
             SharedPreferences internal = getContext().getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE);
-            internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).apply();
+            internal.edit().putBoolean("hasShot" + shotId, true).apply();
         }
         hide();
     }
@@ -342,7 +326,8 @@ public class ShowcaseView extends RelativeLayout
                     public void onAnimationStart() {
                         setVisibility(View.VISIBLE);
                     }
-                }).start();
+                }
+        ).start();
     }
 
     @Override
@@ -353,7 +338,7 @@ public class ShowcaseView extends RelativeLayout
         double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
 
         if (MotionEvent.ACTION_UP == motionEvent.getAction() &&
-               hideOnTouch && distanceFromFocus > showcaseRadius) {
+                hideOnTouch && distanceFromFocus > showcaseRadius) {
             this.hide();
             return true;
         }
@@ -388,18 +373,6 @@ public class ShowcaseView extends RelativeLayout
         return mHandy;
     }
 
-    protected void setConfigOptions(ConfigOptions options) {
-        mOptions = options;
-    }
-
-    public ConfigOptions getConfigOptions() {
-        // Make sure that this method never returns null
-        if (mOptions == null) {
-            return mOptions = new ConfigOptions();
-        }
-        return mOptions;
-    }
-
     private static void insertShowcaseView(ShowcaseView showcaseView, Activity activity) {
         ((ViewGroup) activity.getWindow().getDecorView()).addView(showcaseView);
     }
@@ -410,40 +383,6 @@ public class ShowcaseView extends RelativeLayout
 
     public void setContentText(CharSequence text) {
         textDrawer.setContentText(text);
-    }
-
-    public static class ConfigOptions {
-
-        public boolean noButton = false;
-
-        /**
-         * If you want to use more than one Showcase with the {@link ConfigOptions#shotType} {@link
-         * ShowcaseView#TYPE_ONE_SHOT} in one Activity, set a unique value for every different
-         * Showcase you want to use.
-         */
-        public int showcaseId = 0;
-
-        /**
-         * If you want to use more than one Showcase with {@link ShowcaseView#TYPE_ONE_SHOT} in one
-         * Activity, set a unique {@link ConfigOptions#showcaseId} value for every different
-         * Showcase you want to use. If you want to use this in the {@link ShowcaseViews} class, you
-         * need to set a custom showcaseId for each {@link ShowcaseView}.
-         */
-        public int shotType = TYPE_NO_LIMIT;
-
-        /**
-         * Allow custom positioning of the button within the showcase view.
-         */
-        public LayoutParams buttonLayoutParams = null;
-
-        /**
-         * Whether the text should be centered or stretched in the available space
-         */
-        public boolean centerText = false;
-    }
-
-    public float getScaleMultiplier() {
-        return scaleMultiplier;
     }
 
     private void setScaleMultiplier(float scaleMultiplier) {
@@ -505,7 +444,7 @@ public class ShowcaseView extends RelativeLayout
         /**
          * Don't make the ShowcaseView block touches on itself. This doesn't
          * block touches in the showcased area.
-         *
+         * <p/>
          * By default, the ShowcaseView does block touches
          */
         public Builder doNotBlockTouches() {
@@ -516,7 +455,7 @@ public class ShowcaseView extends RelativeLayout
         /**
          * Make this ShowcaseView hide when the user touches outside the showcased area.
          * This enables {@link #doNotBlockTouches()} as well.
-         *
+         * <p/>
          * By default, the ShowcaseView doesn't hide on touch.
          */
         public Builder hideOnTouchOutside() {
@@ -525,8 +464,36 @@ public class ShowcaseView extends RelativeLayout
             return this;
         }
 
+        /**
+         * Set the ShowcaseView to only ever show once.
+         *
+         * @param shotId a unique identifier (<em>across the app</em>) to store
+         *               whether this ShowcaseView has been shown.
+         */
+        public Builder singleShot(long shotId) {
+            showcaseView.setSingleShot(shotId);
+            return this;
+        }
+
     }
 
+    public void setShouldCentreText(boolean shouldCentreText) {
+        this.shouldCentreText = shouldCentreText;
+        mAlteredText = true;
+        invalidate();
+    }
+
+    private void setSingleShot(long shotId) {
+        this.shotId = shotId;
+    }
+
+    public void setButtonLayoutParams(RelativeLayout.LayoutParams layoutParams) {
+        mEndButton.setLayoutParams(layoutParams);
+    }
+
+    /**
+     * Set the duration of the fading in and fading out of the ShowcaseView
+     */
     private void setFadeDurations(long fadeInMillis, long fadeOutMillis) {
         this.fadeInMillis = fadeInMillis;
         this.fadeOutMillis = fadeOutMillis;
@@ -572,6 +539,10 @@ public class ShowcaseView extends RelativeLayout
         if (invalidate) {
             invalidate();
         }
+    }
+
+    public enum ShotType {
+        NO_LIMIT, SINGLE_SHOT
     }
 
 }
