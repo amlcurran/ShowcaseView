@@ -35,7 +35,7 @@
     </style>
 
     <style name="TextAppearance.ShowcaseView.Detail.Light">
-        <item name="android:textColor">#666666</item>
+        <item name="android:textColor">#333333</item>
         <item name="android:shadowColor">#FF0000</item>
         <item name="android:shadowRadius">0</item>
     </style>

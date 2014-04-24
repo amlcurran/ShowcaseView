@@ -19,36 +19,33 @@ import com.github.espiandev.showcaseview.R;
  * Draws the text as required by the ShowcaseView
  */
 public class TextDrawerImpl implements TextDrawer {
-	
-	private static final int PADDING = 24;
-	private static final int ACTIONBAR_PADDING = 66;
 
-    private final TextPaint mPaintTitle;
-    private final TextPaint mPaintDetail;
+    private final TextPaint titlePaint;
+    private final TextPaint textPaint;
+    private final Context context;
+    private final ShowcaseAreaCalculator calculator;
+    private final float padding;
+    private final float actionBarOffset;
 
     private CharSequence mTitle, mDetails;
-    private ShowcaseAreaCalculator mCalculator;
-    private final Context context;
     private float[] mBestTextPosition = new float[3];
     private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
     private TextAppearanceSpan mTitleSpan;
     private TextAppearanceSpan mDetailSpan;
-    private final float padding;
-    private final float actionBarOffset;
 
     public TextDrawerImpl(Resources resources, ShowcaseAreaCalculator calculator, Context context) {
         padding = resources.getDimension(R.dimen.text_padding);
         actionBarOffset = resources.getDimension(R.dimen.action_bar_offset);
 
-        mCalculator = calculator;
+        this.calculator = calculator;
         this.context = context;
 
-        mPaintTitle = new TextPaint();
-        mPaintTitle.setAntiAlias(true);
+        titlePaint = new TextPaint();
+        titlePaint.setAntiAlias(true);
 
-        mPaintDetail = new TextPaint();
-        mPaintDetail.setAntiAlias(true);
+        textPaint = new TextPaint();
+        textPaint.setAntiAlias(true);
     }
 
     @Override
@@ -59,7 +56,7 @@ public class TextDrawerImpl implements TextDrawer {
             if (!TextUtils.isEmpty(mTitle)) {
                 canvas.save();
                 if (hasPositionChanged) {
-                    mDynamicTitleLayout = new DynamicLayout(mTitle, mPaintTitle,
+                    mDynamicTitleLayout = new DynamicLayout(mTitle, titlePaint,
                             (int) textPosition[2], Layout.Alignment.ALIGN_NORMAL,
                             1.0f, 1.0f, true);
                 }
@@ -71,7 +68,7 @@ public class TextDrawerImpl implements TextDrawer {
             if (!TextUtils.isEmpty(mDetails)) {
                 canvas.save();
                 if (hasPositionChanged) {
-                    mDynamicDetailLayout = new DynamicLayout(mDetails, mPaintDetail,
+                    mDynamicDetailLayout = new DynamicLayout(mDetails, textPaint,
                             (int) textPosition[2],
                             Layout.Alignment.ALIGN_NORMAL,
                             1.2f, 1.0f, true);
@@ -114,7 +111,7 @@ public class TextDrawerImpl implements TextDrawer {
     public void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView, boolean shouldCentreText) {
 
     	Rect showcase = showcaseView.hasShowcaseView() ?
-    			mCalculator.getShowcaseRect() :
+    			calculator.getShowcaseRect() :
     			new Rect();
     	
     	int[] areas = new int[4]; //left, top, right, bottom

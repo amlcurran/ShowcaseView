@@ -450,6 +450,10 @@ public class ShowcaseView extends RelativeLayout
             return this;
         }
 
+        public Builder setShowcaseEventListener(OnShowcaseEventListener showcaseEventListener) {
+            showcaseView.setOnShowcaseEventListener(showcaseEventListener);
+            return this;
+        }
     }
 
     public void setShouldCentreText(boolean shouldCentreText) {
