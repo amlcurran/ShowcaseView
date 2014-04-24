@@ -22,7 +22,7 @@ public class ClingDrawerImpl implements ClingDrawer {
     private Drawable mShowcaseDrawable;
     private Rect mShowcaseRect;
 
-    public ClingDrawerImpl(Resources resources, int showcaseColor) {
+    public ClingDrawerImpl(Resources resources) {
         PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
         mEraser = new Paint();
         mEraser.setColor(0xFFFFFF);
@@ -31,7 +31,11 @@ public class ClingDrawerImpl implements ClingDrawer {
         mEraser.setAntiAlias(true);
 
         mShowcaseDrawable = resources.getDrawable(R.drawable.cling_bleached);
-        mShowcaseDrawable.setColorFilter(showcaseColor, PorterDuff.Mode.MULTIPLY);
+    }
+
+    @Override
+    public void setShowcaseColour(int color) {
+        mShowcaseDrawable.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
     }
 
     @Override

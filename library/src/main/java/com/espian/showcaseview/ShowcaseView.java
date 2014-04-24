@@ -62,8 +62,8 @@ public class ShowcaseView extends RelativeLayout
     private boolean mAlteredText = false;
 
     private float scaleMultiplier = 1f;
-    private TextDrawer textDrawer;
-    private ClingDrawer mShowcaseDrawer;
+    private final TextDrawer textDrawer;
+    private final ClingDrawer showcaseDrawer;
 
     public static final Target NONE = new Target() {
         @Override
@@ -97,6 +97,8 @@ public class ShowcaseView extends RelativeLayout
         fadeOutMillis = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
+        showcaseDrawer = new ClingDrawerImpl(getResources());
+        textDrawer = new TextDrawerImpl(getResources(), showcaseDrawer, getContext());
 
         updateStyle(styled, false);
 
@@ -265,7 +267,7 @@ public class ShowcaseView extends RelativeLayout
             return;
         }
 
-        boolean recalculatedCling = mShowcaseDrawer.calculateShowcaseRect(showcaseX, showcaseY);
+        boolean recalculatedCling = showcaseDrawer.calculateShowcaseRect(showcaseX, showcaseY);
         boolean recalculateText = recalculatedCling || mAlteredText;
         mAlteredText = false;
 
@@ -274,7 +276,7 @@ public class ShowcaseView extends RelativeLayout
 
         // Draw the showcase drawable
         if (!mHasNoTarget) {
-            mShowcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY, scaleMultiplier, showcaseRadius, mBackgroundColor);
+            showcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY, scaleMultiplier, showcaseRadius, mBackgroundColor);
             canvas.drawBitmap(bitmapBuffer, 0, 0, basicPaint);
         }
 
@@ -344,33 +346,6 @@ public class ShowcaseView extends RelativeLayout
         }
 
         return blockTouches && distanceFromFocus > showcaseRadius;
-    }
-
-    public void setText(int titleTextResId, int subTextResId) {
-        String titleText = getContext().getResources().getString(titleTextResId);
-        String subText = getContext().getResources().getString(subTextResId);
-        setText(titleText, subText);
-    }
-
-    public void setText(String titleText, String subText) {
-        textDrawer.setContentTitle(titleText);
-        textDrawer.setContentText(subText);
-        mAlteredText = true;
-        invalidate();
-    }
-
-    /**
-     * Get the ghostly gesture hand for custom gestures
-     *
-     * @return a View representing the ghostly hand
-     */
-    public View getHand() {
-        final View mHandy = ((LayoutInflater) getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.handy, null);
-        addView(mHandy);
-        AnimationUtils.hide(mHandy);
-
-        return mHandy;
     }
 
     private static void insertShowcaseView(ShowcaseView showcaseView, Activity activity) {
@@ -529,10 +504,7 @@ public class ShowcaseView extends RelativeLayout
 
         styled.recycle();
 
-        mShowcaseDrawer = new ClingDrawerImpl(getResources(), showcaseColor);
-
-        // TODO: This isn't ideal, ClingDrawer and Calculator interfaces should be separate
-        textDrawer = new TextDrawerImpl(getResources(), mShowcaseDrawer, getContext());
+        showcaseDrawer.setShowcaseColour(showcaseColor);
         textDrawer.setTitleStyling(titleTextAppearance);
         textDrawer.setDetailStyling(detailTextAppearance);
 

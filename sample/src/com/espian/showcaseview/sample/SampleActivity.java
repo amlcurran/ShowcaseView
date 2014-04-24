@@ -55,11 +55,10 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 
         ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
         sv = new ShowcaseView.Builder(this)
+                .setTarget(target)
                 .setContentTitle(R.string.showcase_main_title)
                 .setContentText(R.string.showcase_main_message)
-                .setTarget(target)
                 .setStyle(R.style.CustomShowcaseTheme2)
-                .hideOnTouchOutside()
                 .build();
         sv.setOnShowcaseEventListener(this);
 

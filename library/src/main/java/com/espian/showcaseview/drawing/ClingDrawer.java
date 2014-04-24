@@ -9,6 +9,8 @@ import com.espian.showcaseview.utils.ShowcaseAreaCalculator;
  */
 public interface ClingDrawer extends ShowcaseAreaCalculator {
 
+    void setShowcaseColour(int color);
+
     void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier, float radius, int backgroundColor);
 
     int getShowcaseWidth();
