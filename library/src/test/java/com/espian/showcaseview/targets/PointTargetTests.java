@@ -2,16 +2,16 @@ package com.espian.showcaseview.targets;
 
 import android.graphics.Point;
 
+import com.espian.showcaseview.RobolectricGradleRunner;
 import com.espian.showcaseview.ShowcaseViewTests;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static junit.framework.Assert.assertEquals;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(RobolectricGradleRunner.class)
 @Config(manifest = "../AndroidManifest.xml")
 public class PointTargetTests {
 

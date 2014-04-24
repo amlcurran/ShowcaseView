@@ -9,12 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Region.Op;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -58,7 +53,12 @@ public class ShowcaseView extends RelativeLayout
     private float legacyShowcaseX = -1;
     private float legacyShowcaseY = -1;
     private boolean isRedundant = false;
+
+    // Touch items
     private boolean hasCustomClickListener = false;
+    private boolean blockTouches = true;
+    private boolean hideOnTouch = false;
+
     private ConfigOptions mOptions;
     private int mBackgroundColor;
     private final Button mEndButton;
@@ -78,6 +78,8 @@ public class ShowcaseView extends RelativeLayout
 
     private boolean mHasNoTarget = false;
     private Bitmap bitmapBuffer;
+    private long fadeInMillis;
+    private long fadeOutMillis;
 
     protected ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
@@ -90,6 +92,10 @@ public class ShowcaseView extends RelativeLayout
         final TypedArray styled = context.getTheme()
                 .obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle,
                         R.style.ShowcaseView);
+
+        // Set the default animation times
+        fadeInMillis = getResources().getInteger(android.R.integer.config_mediumAnimTime);
+        fadeOutMillis = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
 
@@ -183,7 +189,7 @@ public class ShowcaseView extends RelativeLayout
                     mHasNoTarget = false;
                     if (animate) {
                         Animator animator = PointAnimator.ofPoints(ShowcaseView.this, targetPoint);
-                        animator.setDuration(getConfigOptions().fadeInDuration);
+                        animator.setDuration(fadeInMillis);
                         animator.setInterpolator(INTERPOLATOR);
                         animator.start();
                     } else {
@@ -303,32 +309,19 @@ public class ShowcaseView extends RelativeLayout
     public void onClick(View view) {
         // If the type is set to one-shot, store that it has shot
         if (mOptions.shotType == TYPE_ONE_SHOT) {
-            SharedPreferences internal = getContext()
-                    .getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-                internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).apply();
-            } else {
-                internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true)
-                        .commit();
-            }
+            SharedPreferences internal = getContext().getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE);
+            internal.edit().putBoolean("hasShot" + getConfigOptions().showcaseId, true).apply();
         }
         hide();
     }
 
     public void hide() {
         mEventListener.onShowcaseViewHide(this);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
-                && getConfigOptions().fadeOutDuration > 0) {
-            fadeOutShowcase();
-        } else {
-            setVisibility(View.GONE);
-            mEventListener.onShowcaseViewDidHide(this);
-        }
+        fadeOutShowcase();
     }
 
     private void fadeOutShowcase() {
-        AnimationUtils.createFadeOutAnimation(this, new AnimationEndListener() {
+        AnimationUtils.createFadeOutAnimation(this, fadeOutMillis, new AnimationEndListener() {
             @Override
             public void onAnimationEnd() {
                 setVisibility(View.GONE);
@@ -339,16 +332,11 @@ public class ShowcaseView extends RelativeLayout
 
     public void show() {
         mEventListener.onShowcaseViewShow(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
-                && getConfigOptions().fadeInDuration > 0) {
-            fadeInShowcase();
-        } else {
-            setVisibility(View.VISIBLE);
-        }
+        fadeInShowcase();
     }
 
     private void fadeInShowcase() {
-        AnimationUtils.createFadeInAnimation(this, getConfigOptions().fadeInDuration,
+        AnimationUtils.createFadeInAnimation(this, fadeInMillis,
                 new AnimationStartListener() {
                     @Override
                     public void onAnimationStart() {
@@ -365,12 +353,12 @@ public class ShowcaseView extends RelativeLayout
         double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
 
         if (MotionEvent.ACTION_UP == motionEvent.getAction() &&
-                mOptions.hideOnClickOutside && distanceFromFocus > showcaseRadius) {
+               hideOnTouch && distanceFromFocus > showcaseRadius) {
             this.hide();
             return true;
         }
 
-        return mOptions.block && distanceFromFocus > showcaseRadius;
+        return blockTouches && distanceFromFocus > showcaseRadius;
     }
 
     public void setText(int titleTextResId, int subTextResId) {
@@ -412,41 +400,12 @@ public class ShowcaseView extends RelativeLayout
         return mOptions;
     }
 
-    /**
-     * Internal insert method so all inserts are routed through one method
-     */
-    private static ShowcaseView insertShowcaseViewInternal(Target target, Activity activity, String title,
-                                                           String detail, ConfigOptions options) {
-        ShowcaseView sv = new ShowcaseView(activity);
-        sv.setConfigOptions(options);
-        ((ViewGroup) activity.getWindow().getDecorView()).addView(sv);
-        sv.setTarget(target);
-        sv.setText(title, detail);
-        return sv;
-    }
-
     private static void insertShowcaseView(ShowcaseView showcaseView, Activity activity) {
         ((ViewGroup) activity.getWindow().getDecorView()).addView(showcaseView);
     }
 
-    public static ShowcaseView insertShowcaseView(Target target, Activity activity) {
-        return insertShowcaseViewInternal(target, activity, null, null, null);
-    }
-
-    public static ShowcaseView insertShowcaseView(Target target, Activity activity, int title, int detail, ConfigOptions options) {
-        return insertShowcaseViewInternal(target, activity, activity.getString(title), activity.getString(detail), options);
-    }
-
-    CharSequence getContentTitle() {
-        return textDrawer.getContentTitle();
-    }
-
     public void setContentTitle(CharSequence title) {
         textDrawer.setContentTitle(title);
-    }
-
-    CharSequence getContentText() {
-        return textDrawer.getContentText();
     }
 
     public void setContentText(CharSequence text) {
@@ -455,8 +414,7 @@ public class ShowcaseView extends RelativeLayout
 
     public static class ConfigOptions {
 
-        public boolean block = true, noButton = false;
-        public boolean hideOnClickOutside = false;
+        public boolean noButton = false;
 
         /**
          * If you want to use more than one Showcase with the {@link ConfigOptions#shotType} {@link
@@ -473,15 +431,6 @@ public class ShowcaseView extends RelativeLayout
          */
         public int shotType = TYPE_NO_LIMIT;
 
-        /**
-         * Default duration for fade in animation. Set to 0 to disable.
-         */
-        public int fadeInDuration = AnimationUtils.DEFAULT_DURATION;
-
-        /**
-         * Default duration for fade out animation. Set to 0 to disable.
-         */
-        public int fadeOutDuration = AnimationUtils.DEFAULT_DURATION;
         /**
          * Allow custom positioning of the button within the showcase view.
          */
@@ -547,6 +496,54 @@ public class ShowcaseView extends RelativeLayout
             showcaseView.setStyle(theme);
             return this;
         }
+
+        public Builder setOnClickListener(OnClickListener onClickListener) {
+            showcaseView.overrideButtonClick(onClickListener);
+            return this;
+        }
+
+        /**
+         * Don't make the ShowcaseView block touches on itself. This doesn't
+         * block touches in the showcased area.
+         *
+         * By default, the ShowcaseView does block touches
+         */
+        public Builder doNotBlockTouches() {
+            showcaseView.setBlocksTouches(false);
+            return this;
+        }
+
+        /**
+         * Make this ShowcaseView hide when the user touches outside the showcased area.
+         * This enables {@link #doNotBlockTouches()} as well.
+         *
+         * By default, the ShowcaseView doesn't hide on touch.
+         */
+        public Builder hideOnTouchOutside() {
+            showcaseView.setBlocksTouches(true);
+            showcaseView.setHideOnTouchOutside(true);
+            return this;
+        }
+
+    }
+
+    private void setFadeDurations(long fadeInMillis, long fadeOutMillis) {
+        this.fadeInMillis = fadeInMillis;
+        this.fadeOutMillis = fadeOutMillis;
+    }
+
+    /**
+     * @see com.espian.showcaseview.ShowcaseView.Builder#hideOnTouchOutside()
+     */
+    public void setHideOnTouchOutside(boolean hideOnTouch) {
+        this.hideOnTouch = hideOnTouch;
+    }
+
+    /**
+     * @see com.espian.showcaseview.ShowcaseView.Builder#doNotBlockTouches()
+     */
+    public void setBlocksTouches(boolean blockTouches) {
+        this.blockTouches = blockTouches;
     }
 
     public void setStyle(int theme) {

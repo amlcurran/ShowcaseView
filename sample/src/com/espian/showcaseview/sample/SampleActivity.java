@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.espian.showcaseview.OnShowcaseEventListener;
 import com.espian.showcaseview.ShowcaseView;
 import com.espian.showcaseview.sample.animations.AnimationSampleActivity;
-import com.espian.showcaseview.sample.fragments.ShowcaseFragmentActivity;
 import com.espian.showcaseview.sample.v14.ActionItemsSampleActivity;
 import com.espian.showcaseview.targets.ViewTarget;
 
@@ -45,8 +44,6 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         buttonBlocked = (Button) findViewById(R.id.buttonBlocked);
         buttonBlocked.setOnClickListener(this);
 
-        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-        co.hideOnClickOutside = true;
 
         // The following code will reposition the OK button to the left.
 //        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -62,6 +59,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
                 .setContentText(R.string.showcase_main_message)
                 .setTarget(target)
                 .setStyle(R.style.CustomShowcaseTheme2)
+                .hideOnTouchOutside()
                 .build();
         sv.setOnShowcaseEventListener(this);
 
@@ -116,10 +114,6 @@ public class SampleActivity extends Activity implements View.OnClickListener,
                 break;
 
             case 1:
-                startActivity(new Intent(this, ShowcaseFragmentActivity.class));
-                break;
-
-            case 2:
                 startActivity(new Intent(this, AnimationSampleActivity.class));
                 break;
 
@@ -133,13 +127,11 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 
         private static final int[] TITLE_RES_IDS = new int[] {
                 R.string.title_action_items,
-                R.string.title_fragments,
                 R.string.title_animations //, R.string.title_memory
         };
 
         private static final int[] SUMMARY_RES_IDS = new int[] {
                 R.string.sum_action_items,
-                R.string.sum_fragments,
                 R.string.sum_animations //, R.string.sum_memory
         };
 

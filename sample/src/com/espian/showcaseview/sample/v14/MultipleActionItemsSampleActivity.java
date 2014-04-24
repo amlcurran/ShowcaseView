@@ -23,13 +23,14 @@ public class MultipleActionItemsSampleActivity extends SherlockActivity implemen
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         getSupportActionBar().setListNavigationCallbacks(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, new String[]{"Item1", "Item2", "Item3"}), this);
-        mOptions.block = false;
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getSupportMenuInflater().inflate(R.menu.menu, menu);
 
+        //mOptions.block = false;
 //        ShowcaseViews views = new ShowcaseViews(this, new ShowcaseViews.OnShowcaseAcknowledged() {
 //            @Override
 //            public void onShowCaseAcknowledged(ShowcaseView showcaseView) {

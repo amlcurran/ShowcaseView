@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.graphics.Point;
 import android.view.View;
 
+import com.espian.showcaseview.RobolectricGradleRunner;
 import com.espian.showcaseview.ShowcaseViewTests;
 import com.espian.showcaseview.TestingActivity;
 import com.espian.showcaseview.actionbar.reflection.Reflector;
@@ -13,14 +14,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(RobolectricGradleRunner.class)
 @Config(manifest = "AndroidManifest.xml")
 public class ActionViewTargetTests {
 

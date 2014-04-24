@@ -30,9 +30,7 @@ public class MultipleShowcaseSampleActivity extends Activity {
             }
         });
 
-        mOptions.block = false;
-        mOptions.hideOnClickOutside = false;
-
+        //mOptions.block = false;
 //        mViews = new ShowcaseViews(this,
 //                new ShowcaseViews.OnShowcaseAcknowledged() {
 //            @Override

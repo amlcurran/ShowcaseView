@@ -13,14 +13,12 @@ import com.espian.showcaseview.targets.ActionViewTarget;
 public class ActionItemsSampleActivity extends SherlockActivity {
 
     ShowcaseView sv;
-    ShowcaseView.ConfigOptions mOptions = new ShowcaseView.ConfigOptions();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mOptions.block = false;
     }
 
     @Override
@@ -28,8 +26,12 @@ public class ActionItemsSampleActivity extends SherlockActivity {
         getSupportMenuInflater().inflate(R.menu.menu, menu);
 
         ActionViewTarget target = new ActionViewTarget(this, ActionViewTarget.Type.OVERFLOW);
-        sv = ShowcaseView.insertShowcaseView(target, this,
-                R.string.showcase_simple_title, R.string.showcase_simple_message, mOptions);
+        sv = new ShowcaseView.Builder(this)
+                .setTarget(target)
+                .setContentTitle(R.string.showcase_simple_title)
+                .setContentText(R.string.showcase_simple_message)
+                .doNotBlockTouches()
+                .build();
 
         return super.onCreateOptionsMenu(menu);
     }

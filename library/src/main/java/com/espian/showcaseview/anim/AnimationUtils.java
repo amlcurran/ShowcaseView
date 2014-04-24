@@ -43,7 +43,7 @@ public class AnimationUtils {
         return createFadeInAnimation(target, DEFAULT_DURATION, listener);
     }
 
-    public static ObjectAnimator createFadeInAnimation(Object target, int duration, final AnimationStartListener listener) {
+    public static ObjectAnimator createFadeInAnimation(Object target, long duration, final AnimationStartListener listener) {
         ObjectAnimator oa = ObjectAnimator.ofFloat(target, ALPHA, INVISIBLE, VISIBLE);
         oa.setDuration(duration).addListener(new Animator.AnimatorListener() {
             @Override
@@ -70,7 +70,7 @@ public class AnimationUtils {
         return createFadeOutAnimation(target, DEFAULT_DURATION, listener);
     }
 
-    public static ObjectAnimator createFadeOutAnimation(Object target, int duration, final AnimationEndListener listener) {
+    public static ObjectAnimator createFadeOutAnimation(Object target, long duration, final AnimationEndListener listener) {
         ObjectAnimator oa = ObjectAnimator.ofFloat(target, ALPHA, INVISIBLE);
         oa.setDuration(duration).addListener(new Animator.AnimatorListener() {
             @Override

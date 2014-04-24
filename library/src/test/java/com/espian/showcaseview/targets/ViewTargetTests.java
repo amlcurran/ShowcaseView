@@ -6,19 +6,19 @@ import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.espian.showcaseview.RobolectricGradleRunner;
 import com.espian.showcaseview.ShowcaseViewTests;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(RobolectricGradleRunner.class)
 @Config(manifest = "../AndroidManifest.xml")
 public class ViewTargetTests {
 
