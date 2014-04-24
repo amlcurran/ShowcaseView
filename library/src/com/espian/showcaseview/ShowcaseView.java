@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -49,6 +50,7 @@ public class ShowcaseView extends RelativeLayout
 
     protected static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     private static final Interpolator INTERPOLATOR = new AccelerateDecelerateInterpolator();
+    private final Paint basicPaint;
 
     private int showcaseX = -1;
     private int showcaseY = -1;
@@ -75,6 +77,7 @@ public class ShowcaseView extends RelativeLayout
     };
 
     private boolean mHasNoTarget = false;
+    private Bitmap bitmapBuffer;
 
     protected ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
@@ -97,6 +100,7 @@ public class ShowcaseView extends RelativeLayout
         setConfigOptions(options);
 
         init();
+        basicPaint = new Paint();
     }
 
     private void init() {
@@ -173,6 +177,7 @@ public class ShowcaseView extends RelativeLayout
         postDelayed(new Runnable() {
             @Override
             public void run() {
+                updateBitmap();
                 Point targetPoint = target.getPoint();
                 if (targetPoint != null) {
                     mHasNoTarget = false;
@@ -190,6 +195,17 @@ public class ShowcaseView extends RelativeLayout
                 }
             }
         }, 100);
+    }
+
+    private void updateBitmap() {
+        if (bitmapBuffer == null || haveBoundsChanged()) {
+            bitmapBuffer = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        }
+    }
+
+    private boolean haveBoundsChanged() {
+        return getMeasuredWidth() != bitmapBuffer.getWidth() ||
+                getMeasuredHeight() != bitmapBuffer.getHeight();
     }
 
     public boolean hasShowcaseView() {
@@ -263,18 +279,13 @@ public class ShowcaseView extends RelativeLayout
         boolean recalculateText = recalculatedCling || mAlteredText;
         mAlteredText = false;
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB && !mHasNoTarget) {
-            Path path = new Path();
-            path.addCircle(showcaseX, showcaseY, showcaseRadius, Path.Direction.CW);
-            canvas.clipPath(path, Op.DIFFERENCE);
-        }
-
         //Draw background color
-        canvas.drawColor(mBackgroundColor);
+        //canvas.drawColor(mBackgroundColor);
 
         // Draw the showcase drawable
         if (!mHasNoTarget) {
-            mShowcaseDrawer.drawShowcase(canvas, showcaseX, showcaseY, scaleMultiplier, showcaseRadius);
+            mShowcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY, scaleMultiplier, showcaseRadius, mBackgroundColor);
+            canvas.drawBitmap(bitmapBuffer, 0, 0, basicPaint);
         }
 
         // Draw the text on the screen, recalculating its position if necessary
@@ -420,18 +431,6 @@ public class ShowcaseView extends RelativeLayout
 
     public static ShowcaseView insertShowcaseView(Target target, Activity activity) {
         return insertShowcaseViewInternal(target, activity, null, null, null);
-    }
-
-    public static ShowcaseView insertShowcaseView(Target target, Activity activity, String title, String detail) {
-        return insertShowcaseViewInternal(target, activity, title, detail, null);
-    }
-
-    public static ShowcaseView insertShowcaseView(Target target, Activity activity, int title, int detail) {
-        return insertShowcaseViewInternal(target, activity, activity.getString(title), activity.getString(detail), null);
-    }
-
-    public static ShowcaseView insertShowcaseView(Target target, Activity activity, String title, String detail, ConfigOptions options) {
-        return insertShowcaseViewInternal(target, activity, title, detail, options);
     }
 
     public static ShowcaseView insertShowcaseView(Target target, Activity activity, int title, int detail, ConfigOptions options) {
