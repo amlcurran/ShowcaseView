@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.9.+'
+    }
+}
+
 apply plugin: 'android-library'
 apply plugin: 'android-test'
 
