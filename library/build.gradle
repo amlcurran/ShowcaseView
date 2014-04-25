@@ -11,6 +11,7 @@ buildscript {
 
 apply plugin: 'android-library'
 apply plugin: 'android-test'
+apply plugin: 'maven'
 
 dependencies {
     repositories {
@@ -26,3 +27,5 @@ android {
 	compileSdkVersion 19
 	buildToolsVersion "19.0.3"
 }
+
+apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'

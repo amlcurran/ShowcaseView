@@ -1,6 +1,10 @@
+def isReleaseBuild() {
+    return version.contains("SNAPSHOT") == false
+}
+
 allprojects {
-  group = 'com.github.espiandev'
-  version = '3.2.0'
+  group = GROUP
+  version = VERSION_CODE
 
   repositories {
     mavenCentral()
