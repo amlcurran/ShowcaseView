@@ -15,12 +15,4 @@ dependencies {
 android {
 	compileSdkVersion 19
 	buildToolsVersion "19.0.3"
-
-//	sourceSets {
-//		main {
-//			manifest.srcFile 'AndroidManifest.xml'
-//			java.srcDirs = ['src']
-//			res.srcDirs = ['res']
-//		}
-//	}
 }
