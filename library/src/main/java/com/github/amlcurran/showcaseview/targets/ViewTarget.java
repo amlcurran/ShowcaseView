@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.graphics.Point;
 import android.view.View;
 
+/**
+ * Target a view on the screen. This will centre the target on the view.
+ */
 public class ViewTarget implements Target {
 
     private final View mView;

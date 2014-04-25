@@ -357,7 +357,8 @@ public class ShowcaseView extends RelativeLayout
     }
 
     /**
-     * Builder class which allows easier creation of {@link ShowcaseView}s. It is recommended that you use this
+     * Builder class which allows easier creation of {@link ShowcaseView}s.
+     * It is recommended that you use this Builder class.
      */
     public static class Builder {
 
@@ -370,39 +371,68 @@ public class ShowcaseView extends RelativeLayout
             this.showcaseView.setTarget(NONE);
         }
 
+        /**
+         * Create the {@link com.github.amlcurran.showcaseview.ShowcaseView} and show it.
+         * @return the created ShowcaseView
+         */
         public ShowcaseView build() {
             insertShowcaseView(showcaseView, activity);
             return showcaseView;
         }
 
+        /**
+         * Set the title text shown on the ShowcaseView.
+         */
         public Builder setContentTitle(int resId) {
             return setContentTitle(activity.getString(resId));
         }
 
+        /**
+         * Set the title text shown on the ShowcaseView.
+         */
         public Builder setContentTitle(CharSequence title) {
             showcaseView.setContentTitle(title);
             return this;
         }
 
+        /**
+         * Set the descriptive text shown on the ShowcaseView.
+         */
         public Builder setContentText(int resId) {
             return setContentText(activity.getString(resId));
         }
 
+        /**
+         * Set the descriptive text shown on the ShowcaseView.
+         */
         public Builder setContentText(CharSequence text) {
             showcaseView.setContentText(text);
             return this;
         }
 
+        /**
+         * Set the target of the showcase.
+         * @param target a {@link com.github.amlcurran.showcaseview.targets.Target} representing
+         *               the item to showcase (e.g., a button, or action item).
+         */
         public Builder setTarget(Target target) {
             showcaseView.setTarget(target);
             return this;
         }
 
+        /**
+         * Set the style of the ShowcaseView. See the sample app for example styles.
+         */
         public Builder setStyle(int theme) {
             showcaseView.setStyle(theme);
             return this;
         }
 
+        /**
+         * Set a listener which will override the button clicks.
+         *
+         * Note that you will have to manually hide the ShowcaseView
+         */
         public Builder setOnClickListener(OnClickListener onClickListener) {
             showcaseView.overrideButtonClick(onClickListener);
             return this;
@@ -448,17 +478,28 @@ public class ShowcaseView extends RelativeLayout
         }
     }
 
+    /**
+     * Set whether the text should be centred in the screen, or left-aligned (which is the default).
+     */
     public void setShouldCentreText(boolean shouldCentreText) {
         this.shouldCentreText = shouldCentreText;
         mAlteredText = true;
         invalidate();
     }
 
+    /**
+     * @see com.github.amlcurran.showcaseview.ShowcaseView.Builder#setSingleShot(long)
+     */
     private void setSingleShot(long shotId) {
         this.shotId = shotId;
     }
 
-    public void setButtonLayoutParams(RelativeLayout.LayoutParams layoutParams) {
+    /**
+     * Change the position of the ShowcaseView's button from the default bottom-right position.
+     * @param layoutParams a {@link android.widget.RelativeLayout.LayoutParams} representing
+     *          the new position of the button
+     */
+    public void setButtonPosition(RelativeLayout.LayoutParams layoutParams) {
         mEndButton.setLayoutParams(layoutParams);
     }
 
@@ -484,6 +525,9 @@ public class ShowcaseView extends RelativeLayout
         this.blockTouches = blockTouches;
     }
 
+    /**
+     * @see com.github.amlcurran.showcaseview.ShowcaseView.Builder#setStyle(int)
+     */
     public void setStyle(int theme) {
         TypedArray array = getContext().obtainStyledAttributes(theme, R.styleable.ShowcaseView);
         updateStyle(array, true);
@@ -509,7 +553,7 @@ public class ShowcaseView extends RelativeLayout
         }
     }
 
-    public enum ShotType {
+    private enum ShotType {
         NO_LIMIT, SINGLE_SHOT
     }
 
