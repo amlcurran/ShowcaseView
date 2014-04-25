@@ -7,7 +7,7 @@ import android.graphics.Canvas;
  */
 interface TextDrawer {
 
-    void draw(Canvas canvas, boolean hasPositionChanged);
+    void draw(Canvas canvas);
 
     void setContentText(CharSequence details);
 

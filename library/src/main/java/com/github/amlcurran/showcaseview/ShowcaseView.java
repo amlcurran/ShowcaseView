@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
@@ -30,7 +31,7 @@ import static com.github.amlcurran.showcaseview.AnimationUtils.AnimationStartLis
  * A view which allows you to showcase areas of your app with an explanation.
  */
 public class ShowcaseView extends RelativeLayout
-        implements View.OnClickListener, View.OnTouchListener {
+        implements View.OnClickListener, View.OnTouchListener, ViewTreeObserver.OnPreDrawListener, ViewTreeObserver.OnGlobalLayoutListener {
 
     private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     private static final Interpolator INTERPOLATOR = new AccelerateDecelerateInterpolator();
@@ -74,6 +75,8 @@ public class ShowcaseView extends RelativeLayout
 
     protected ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        getViewTreeObserver().addOnPreDrawListener(this);
+        getViewTreeObserver().addOnGlobalLayoutListener(this);
 
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme()
@@ -85,7 +88,7 @@ public class ShowcaseView extends RelativeLayout
         fadeOutMillis = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
-        showcaseDrawer = new ClingDrawerImpl(getResources());
+        showcaseDrawer = new StandardClingDrawer(getResources());
         textDrawer = new TextDrawerImpl(getResources(), showcaseDrawer, getContext());
 
         updateStyle(styled, false);
@@ -249,18 +252,24 @@ public class ShowcaseView extends RelativeLayout
     }
 
     @Override
+    public boolean onPreDraw() {
+        boolean recalculatedCling = showcaseDrawer.calculateShowcaseRect(showcaseX, showcaseY);
+        boolean recalculateText = recalculatedCling || hasAlteredText;
+        if (recalculateText) {
+            textDrawer.calculateTextPosition(getMeasuredWidth(), getMeasuredHeight(), this, shouldCentreText);
+        }
+        hasAlteredText = false;
+        return true;
+    }
+
+    @Override
     protected void dispatchDraw(Canvas canvas) {
         if (showcaseX < 0 || showcaseY < 0 || isRedundant) {
             super.dispatchDraw(canvas);
             return;
         }
-
-        boolean recalculatedCling = showcaseDrawer.calculateShowcaseRect(showcaseX, showcaseY);
-        boolean recalculateText = recalculatedCling || hasAlteredText;
-        hasAlteredText = false;
-
         //Draw background color
-        //canvas.drawColor(backgroundColor);
+        bitmapBuffer.eraseColor(backgroundColor);
 
         // Draw the showcase drawable
         if (!hasNoTarget) {
@@ -269,10 +278,7 @@ public class ShowcaseView extends RelativeLayout
         }
 
         // Draw the text on the screen, recalculating its position if necessary
-        if (recalculateText) {
-            textDrawer.calculateTextPosition(canvas.getWidth(), canvas.getHeight(), this, shouldCentreText);
-        }
-        textDrawer.draw(canvas, recalculateText);
+        textDrawer.draw(canvas);
 
         super.dispatchDraw(canvas);
 
@@ -350,6 +356,11 @@ public class ShowcaseView extends RelativeLayout
 
     private void setScaleMultiplier(float scaleMultiplier) {
         this.scaleMultiplier = scaleMultiplier;
+    }
+
+    @Override
+    public void onGlobalLayout() {
+        updateBitmap();
     }
 
     /**

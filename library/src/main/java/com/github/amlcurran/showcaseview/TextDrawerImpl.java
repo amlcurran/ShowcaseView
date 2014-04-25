@@ -29,6 +29,7 @@ class TextDrawerImpl implements TextDrawer {
     private DynamicLayout mDynamicDetailLayout;
     private TextAppearanceSpan mTitleSpan;
     private TextAppearanceSpan mDetailSpan;
+    private boolean hasRecalculated;
 
     public TextDrawerImpl(Resources resources, ShowcaseAreaCalculator calculator, Context context) {
         padding = resources.getDimension(R.dimen.text_padding);
@@ -45,13 +46,13 @@ class TextDrawerImpl implements TextDrawer {
     }
 
     @Override
-    public void draw(Canvas canvas, boolean hasPositionChanged) {
+    public void draw(Canvas canvas) {
         if (shouldDrawText()) {
             float[] textPosition = getBestTextPosition();
 
             if (!TextUtils.isEmpty(mTitle)) {
                 canvas.save();
-                if (hasPositionChanged) {
+                if (hasRecalculated) {
                     mDynamicTitleLayout = new DynamicLayout(mTitle, titlePaint,
                             (int) textPosition[2], Layout.Alignment.ALIGN_NORMAL,
                             1.0f, 1.0f, true);
@@ -63,7 +64,7 @@ class TextDrawerImpl implements TextDrawer {
 
             if (!TextUtils.isEmpty(mDetails)) {
                 canvas.save();
-                if (hasPositionChanged) {
+                if (hasRecalculated) {
                     mDynamicDetailLayout = new DynamicLayout(mDetails, textPaint,
                             (int) textPosition[2],
                             Layout.Alignment.ALIGN_NORMAL,
@@ -77,6 +78,7 @@ class TextDrawerImpl implements TextDrawer {
 
             }
         }
+        hasRecalculated = false;
     }
 
     @Override
@@ -167,6 +169,8 @@ class TextDrawerImpl implements TextDrawer {
 	    			break;
 	    	}
     	}
+
+        hasRecalculated = true;
     }
 
     @Override

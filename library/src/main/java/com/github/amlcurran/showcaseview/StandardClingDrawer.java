@@ -3,7 +3,6 @@ package com.github.amlcurran.showcaseview;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -14,13 +13,13 @@ import android.util.Log;
 /**
  * Created by curraa01 on 13/10/2013.
  */
-class ClingDrawerImpl implements ClingDrawer {
+class StandardClingDrawer implements ClingDrawer {
 
     private Paint mEraser;
     private Drawable mShowcaseDrawable;
     private Rect mShowcaseRect;
 
-    public ClingDrawerImpl(Resources resources) {
+    public StandardClingDrawer(Resources resources) {
         PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
         mEraser = new Paint();
         mEraser.setColor(0xFFFFFF);
@@ -38,16 +37,9 @@ class ClingDrawerImpl implements ClingDrawer {
 
     @Override
     public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier, float radius, int backgroundColor) {
-
-        // Horrible that we have to create this in the drawing routine
-        buffer.eraseColor(Color.TRANSPARENT);
         Canvas bufferCanvas = new Canvas(buffer);
-
-        bufferCanvas.drawColor(backgroundColor);
         bufferCanvas.drawCircle(x, y, radius, mEraser);
-
         mShowcaseDrawable.draw(bufferCanvas);
-
     }
 
     @Override
