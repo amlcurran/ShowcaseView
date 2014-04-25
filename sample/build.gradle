@@ -21,6 +21,10 @@ android {
 	compileSdkVersion 19
 	buildToolsVersion "19.0.0"
 
+    defaultConfig {
+        versionCode Integer.parseInt(project.VERSION_CODE)
+    }
+
     lintOptions {
         abortOnError false
     }

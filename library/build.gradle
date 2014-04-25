@@ -17,15 +17,19 @@ dependencies {
     repositories {
         mavenCentral()
     }
-	compile 'com.android.support:support-v4:19.+'
+    compile 'com.android.support:support-v4:19.+'
     androidTestCompile 'junit:junit:4.11'
     androidTestCompile 'org.mockito:mockito-all:1.9.5'
     androidTestCompile 'org.robolectric:robolectric:2.2'
 }
 
 android {
-	compileSdkVersion 19
-	buildToolsVersion "19.0.3"
+    compileSdkVersion 19
+    buildToolsVersion "19.0.3"
+
+    defaultConfig {
+        versionCode Integer.parseInt(project.VERSION_CODE)
+    }
 }
 
 apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn-push.gradle'
