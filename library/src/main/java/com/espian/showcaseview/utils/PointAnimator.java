@@ -1,11 +1,11 @@
 package com.espian.showcaseview.utils;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.graphics.Point;
 
 import com.espian.showcaseview.ShowcaseView;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
 
 public class PointAnimator {
 

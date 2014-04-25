@@ -17,7 +17,6 @@ dependencies {
         mavenCentral()
     }
 	compile 'com.android.support:support-v4:19.+'
-	compile 'com.nineoldandroids:library:2.4.0+'
     androidTestCompile 'junit:junit:4.11'
     androidTestCompile 'org.mockito:mockito-all:1.9.5'
     androidTestCompile 'org.robolectric:robolectric:2.2'
