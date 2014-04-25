@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.sample.R;
 import com.github.amlcurran.showcaseview.sample.SampleActivity;
+import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 /**
@@ -57,7 +58,7 @@ public class AnimationSampleActivity extends Activity implements View.OnClickLis
                 break;
 
             case 2:
-                showcaseView.setTarget(ShowcaseView.NONE);
+                showcaseView.setTarget(Target.NONE);
                 showcaseView.setContentTitle("Check it out");
                 showcaseView.setContentText("You don't always need a target to showcase");
                 setAlpha(0.4f, textView1, textView2, textView3);

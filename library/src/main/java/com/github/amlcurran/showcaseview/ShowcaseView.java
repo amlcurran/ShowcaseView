@@ -32,45 +32,41 @@ import static com.github.amlcurran.showcaseview.AnimationUtils.AnimationStartLis
 public class ShowcaseView extends RelativeLayout
         implements View.OnClickListener, View.OnTouchListener {
 
-    protected static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
+    private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     private static final Interpolator INTERPOLATOR = new AccelerateDecelerateInterpolator();
-    private final Paint basicPaint;
 
+    private final Paint basicPaint;
+    private final Button mEndButton;
+    private final TextDrawer textDrawer;
+    private final ClingDrawer showcaseDrawer;
+
+    // Showcase metrics
     private int showcaseX = -1;
     private int showcaseY = -1;
+    private float scaleMultiplier = 1f;
     private float showcaseRadius = -1;
-    private float legacyShowcaseX = -1;
-    private float legacyShowcaseY = -1;
-    private boolean isRedundant = false;
 
     // Touch items
     private boolean hasCustomClickListener = false;
     private boolean blockTouches = true;
     private boolean hideOnTouch = false;
-
-    private int mBackgroundColor;
-    private final Button mEndButton;
     private OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
-    private boolean mAlteredText = false;
 
-    private float scaleMultiplier = 1f;
-    private final TextDrawer textDrawer;
-    private final ClingDrawer showcaseDrawer;
-
-    public static final Target NONE = new Target() {
-        @Override
-        public Point getPoint() {
-            return new Point(1000000, 1000000);
-        }
-    };
-
-    private boolean mHasNoTarget = false;
+    // Drawing items
+    private int backgroundColor;
+    private boolean hasAlteredText = false;
+    private boolean isRedundant = false;
+    private boolean hasNoTarget = false;
+    private boolean shouldCentreText;
     private Bitmap bitmapBuffer;
+
+    // Animation items
     private long fadeInMillis;
     private long fadeOutMillis;
+
+    // Shot items
     private long shotId;
     private ShotType selectedShotType = ShotType.NO_LIMIT;
-    private boolean shouldCentreText;
 
     protected ShowcaseView(Context context) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
@@ -175,7 +171,7 @@ public class ShowcaseView extends RelativeLayout
                 updateBitmap();
                 Point targetPoint = target.getPoint();
                 if (targetPoint != null) {
-                    mHasNoTarget = false;
+                    hasNoTarget = false;
                     if (animate) {
                         Animator animator = PointAnimator.ofPoints(ShowcaseView.this, targetPoint);
                         animator.setDuration(fadeInMillis);
@@ -185,7 +181,7 @@ public class ShowcaseView extends RelativeLayout
                         setShowcasePosition(targetPoint);
                     }
                 } else {
-                    mHasNoTarget = true;
+                    hasNoTarget = true;
                     invalidate();
                 }
             }
@@ -204,7 +200,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public boolean hasShowcaseView() {
-        return (showcaseX != 1000000 && showcaseY != 1000000) || !mHasNoTarget;
+        return (showcaseX != 1000000 && showcaseY != 1000000) || !hasNoTarget;
     }
 
     public void setShowcaseX(int x) {
@@ -260,15 +256,15 @@ public class ShowcaseView extends RelativeLayout
         }
 
         boolean recalculatedCling = showcaseDrawer.calculateShowcaseRect(showcaseX, showcaseY);
-        boolean recalculateText = recalculatedCling || mAlteredText;
-        mAlteredText = false;
+        boolean recalculateText = recalculatedCling || hasAlteredText;
+        hasAlteredText = false;
 
         //Draw background color
-        //canvas.drawColor(mBackgroundColor);
+        //canvas.drawColor(backgroundColor);
 
         // Draw the showcase drawable
-        if (!mHasNoTarget) {
-            showcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY, scaleMultiplier, showcaseRadius, mBackgroundColor);
+        if (!hasNoTarget) {
+            showcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY, scaleMultiplier, showcaseRadius, backgroundColor);
             canvas.drawBitmap(bitmapBuffer, 0, 0, basicPaint);
         }
 
@@ -368,7 +364,7 @@ public class ShowcaseView extends RelativeLayout
         public Builder(Activity activity) {
             this.activity = activity;
             this.showcaseView = new ShowcaseView(activity);
-            this.showcaseView.setTarget(NONE);
+            this.showcaseView.setTarget(Target.NONE);
         }
 
         /**
@@ -483,7 +479,7 @@ public class ShowcaseView extends RelativeLayout
      */
     public void setShouldCentreText(boolean shouldCentreText) {
         this.shouldCentreText = shouldCentreText;
-        mAlteredText = true;
+        hasAlteredText = true;
         invalidate();
     }
 
@@ -534,7 +530,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void updateStyle(TypedArray styled, boolean invalidate) {
-        mBackgroundColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
+        backgroundColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
         int showcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor("#33B5E5"));
 
         int titleTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance,
