@@ -75,7 +75,11 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         int viewId = view.getId();
         switch (viewId) {
             case R.id.buttonBlocked:
-                sv.setStyle(R.style.CustomShowcaseTheme);
+                if (sv.isShown()) {
+                    sv.setStyle(R.style.CustomShowcaseTheme);
+                } else {
+                    sv.show();
+                }
                 break;
         }
     }
@@ -85,7 +89,8 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         if (isHoneycombOrAbove()) {
             listView.setAlpha(1f);
         }
-        buttonBlocked.setEnabled(false);
+        buttonBlocked.setText(R.string.button_show);
+        //buttonBlocked.setEnabled(false);
     }
 
     @Override
@@ -95,7 +100,8 @@ public class SampleActivity extends Activity implements View.OnClickListener,
     @Override
     public void onShowcaseViewShow(ShowcaseView showcaseView) {
         dimView(listView);
-        buttonBlocked.setEnabled(true);
+        buttonBlocked.setText(R.string.button_hide);
+        //buttonBlocked.setEnabled(true);
     }
 
     public static boolean isHoneycombOrAbove() {
