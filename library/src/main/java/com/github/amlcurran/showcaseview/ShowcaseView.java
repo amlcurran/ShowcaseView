@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -552,6 +553,10 @@ public class ShowcaseView extends RelativeLayout
     private void updateStyle(TypedArray styled, boolean invalidate) {
         backgroundColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
         int showcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor("#33B5E5"));
+        String buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
+        if (TextUtils.isEmpty(buttonText)) {
+            buttonText = getResources().getString(R.string.ok);
+        }
 
         int titleTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance,
                 R.style.TextAppearance_ShowcaseView_Title);
@@ -562,6 +567,7 @@ public class ShowcaseView extends RelativeLayout
 
         showcaseDrawer.setShowcaseColour(showcaseColor);
         mEndButton.getBackground().setColorFilter(showcaseColor, PorterDuff.Mode.MULTIPLY);
+        mEndButton.setText(buttonText);
         textDrawer.setTitleStyling(titleTextAppearance);
         textDrawer.setDetailStyling(detailTextAppearance);
         hasAlteredText = true;

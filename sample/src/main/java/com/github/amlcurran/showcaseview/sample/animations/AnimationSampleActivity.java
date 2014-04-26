@@ -35,6 +35,7 @@ public class AnimationSampleActivity extends Activity implements View.OnClickLis
                 .setTarget(new ViewTarget(findViewById(R.id.textView)))
                 .setOnClickListener(this)
                 .build();
+        showcaseView.setButtonText(getString(R.string.next));
     }
 
 
@@ -61,6 +62,7 @@ public class AnimationSampleActivity extends Activity implements View.OnClickLis
                 showcaseView.setTarget(Target.NONE);
                 showcaseView.setContentTitle("Check it out");
                 showcaseView.setContentText("You don't always need a target to showcase");
+                showcaseView.setButtonText(getString(R.string.close));
                 setAlpha(0.4f, textView1, textView2, textView3);
                 break;
 
