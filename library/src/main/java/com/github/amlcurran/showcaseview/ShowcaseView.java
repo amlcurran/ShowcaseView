@@ -562,6 +562,7 @@ public class ShowcaseView extends RelativeLayout
         showcaseDrawer.setShowcaseColour(showcaseColor);
         textDrawer.setTitleStyling(titleTextAppearance);
         textDrawer.setDetailStyling(detailTextAppearance);
+        hasAlteredText = true;
 
         if (invalidate) {
             invalidate();

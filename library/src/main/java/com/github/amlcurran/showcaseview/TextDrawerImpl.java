@@ -176,11 +176,13 @@ class TextDrawerImpl implements TextDrawer {
     @Override
     public void setTitleStyling(int styleId) {
         mTitleSpan = new TextAppearanceSpan(this.context, styleId);
+        setContentTitle(mTitle);
     }
 
     @Override
     public void setDetailStyling(int styleId) {
         mDetailSpan = new TextAppearanceSpan(this.context, styleId);
+        setContentText(mDetails);
     }
 
     @Override
