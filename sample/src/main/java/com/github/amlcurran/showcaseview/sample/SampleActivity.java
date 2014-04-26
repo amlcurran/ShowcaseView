@@ -75,7 +75,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         int viewId = view.getId();
         switch (viewId) {
             case R.id.buttonBlocked:
-                sv.hide();
+                sv.setStyle(R.style.CustomShowcaseTheme);
                 break;
         }
     }
