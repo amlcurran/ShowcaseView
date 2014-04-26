@@ -48,8 +48,8 @@ The library is based on the "Cling" view found in the Launcher on Ice-Cream Sand
 
 Please check out [the website](http://espiandev.github.com/ShowcaseView) for more information.
 
-![Example image](./example.png)
-![Example image](./example2.png)
+<img src='./example@2x.png' width='270' height='480' />
+<img src='./example2@2x.png' width='270' height='480' />
 
 Set-up
 ----
