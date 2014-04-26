@@ -31,7 +31,7 @@ public class AnimationSampleActivity extends Activity implements View.OnClickLis
         textView2 = (TextView) findViewById(R.id.textView2);
         textView3 = (TextView) findViewById(R.id.textView3);
 
-        showcaseView = new ShowcaseView.Builder(this, true)
+        showcaseView = new ShowcaseView.Builder(this)
                 .setTarget(new ViewTarget(findViewById(R.id.textView)))
                 .setOnClickListener(this)
                 .build();

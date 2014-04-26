@@ -52,7 +52,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         lps.setMargins(margin, margin, margin, margin);
 
         ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
-        sv = new ShowcaseView.Builder(this)
+        sv = new ShowcaseView.Builder(this, true)
                 .setTarget(target)
                 .setContentTitle(R.string.showcase_main_title)
                 .setContentText(R.string.showcase_main_message)

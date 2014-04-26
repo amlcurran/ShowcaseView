@@ -9,7 +9,7 @@
     </style>
 
     <style name="CustomShowcaseTheme2" parent="ShowcaseView.Light">
-        <item name="sv_backgroundColor">#3325467A</item>
+        <item name="sv_backgroundColor">#663d4353</item>
         <item name="sv_showcaseColor">#25467A</item>
         <item name="sv_buttonText">Close</item>
         <item name="sv_titleTextAppearance">@style/CustomTitle</item>
