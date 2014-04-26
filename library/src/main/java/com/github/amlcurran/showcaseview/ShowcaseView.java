@@ -37,6 +37,7 @@ public class ShowcaseView extends RelativeLayout
 
     private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
     private static final Interpolator INTERPOLATOR = new AccelerateDecelerateInterpolator();
+    private static final int HOLO_BLUE = Color.parseColor("#33B5E5");
 
     private final Paint basicPaint;
     private final Button mEndButton;
@@ -552,11 +553,12 @@ public class ShowcaseView extends RelativeLayout
 
     private void updateStyle(TypedArray styled, boolean invalidate) {
         backgroundColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
-        int showcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, Color.parseColor("#33B5E5"));
+        int showcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, HOLO_BLUE);
         String buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
         if (TextUtils.isEmpty(buttonText)) {
             buttonText = getResources().getString(R.string.ok);
         }
+        boolean tintButton = styled.getBoolean(R.styleable.ShowcaseView_sv_tintButtonColor, true);
 
         int titleTextAppearance = styled.getResourceId(R.styleable.ShowcaseView_sv_titleTextAppearance,
                 R.style.TextAppearance_ShowcaseView_Title);
@@ -566,7 +568,7 @@ public class ShowcaseView extends RelativeLayout
         styled.recycle();
 
         showcaseDrawer.setShowcaseColour(showcaseColor);
-        mEndButton.getBackground().setColorFilter(showcaseColor, PorterDuff.Mode.MULTIPLY);
+        tintButton(showcaseColor, tintButton);
         mEndButton.setText(buttonText);
         textDrawer.setTitleStyling(titleTextAppearance);
         textDrawer.setDetailStyling(detailTextAppearance);
@@ -574,6 +576,14 @@ public class ShowcaseView extends RelativeLayout
 
         if (invalidate) {
             invalidate();
+        }
+    }
+
+    private void tintButton(int showcaseColor, boolean tintButton) {
+        if (tintButton) {
+            mEndButton.getBackground().setColorFilter(showcaseColor, PorterDuff.Mode.MULTIPLY);
+        } else {
+            mEndButton.getBackground().setColorFilter(HOLO_BLUE, PorterDuff.Mode.MULTIPLY);
         }
     }
 
