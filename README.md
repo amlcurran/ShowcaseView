@@ -1,10 +1,16 @@
-The New ShowcaseView (v5.0)
+The new ShowcaseView (v5.0)
 ====
 
 This library has become more popular than I ever intended - but at the same time more unwieldy.
 This branch (which will become the next version) is intended to be more stable,
 more friendly and better tested. I *will* remove features relative to the previous versions. It
 is hoped than I'll add them back (or of course, you can).
+
+What's new
+---
+* Gradle and Maven compatibility! For now only snapshots are available, which can be accessed and added to Gradle builds by adding `compile 'com.github.amlcurran.showcaseview:library:5.0.0-SNAPSHOT'` to your dependencies. You will require the snapshot repository to be defined in your repositories.
+* Buidler pattern. It was much too difficult to create and set up a ShowcaseView, so there is now a Builder pattern available. This makes it dead easy to create a ShowcaseView.
+* New KitKat style showcase. Currently, this is only available by creating a Builder using the `new Builder(activity, true)` constructor.
 
 What's missing
 ---
@@ -50,7 +56,7 @@ Set-up
 
 The library is now only compatible with Gradle out of the box. To use this library in your project, either:
 
-* ~~Add the dependency from Maven like so: `compile 'com.github.amlcurran:showcaseview:+'`~~ *the library isn't currently available on Maven, but should be shortly*
+* Add the dependency from Maven like so: `compile 'com.github.amlcurran.showcaseview:library:+5.0.0-SNAPSHOT'`. See above for more information
 * Copy the library project into your Gradle project. In your settings.gradle, add the project (using the `include (':libary')` notation). Sync Gradle and then go ahead! 
 
 Usage
