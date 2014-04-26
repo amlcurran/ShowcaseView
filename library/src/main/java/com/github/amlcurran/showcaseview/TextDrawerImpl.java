@@ -57,9 +57,11 @@ class TextDrawerImpl implements TextDrawer {
                             (int) textPosition[2], Layout.Alignment.ALIGN_NORMAL,
                             1.0f, 1.0f, true);
                 }
-                canvas.translate(textPosition[0], textPosition[1]);
-                mDynamicTitleLayout.draw(canvas);
-                canvas.restore();
+                if (mDynamicTitleLayout != null) {
+                    canvas.translate(textPosition[0], textPosition[1]);
+                    mDynamicTitleLayout.draw(canvas);
+                    canvas.restore();
+                }
             }
 
             if (!TextUtils.isEmpty(mDetails)) {
@@ -72,9 +74,11 @@ class TextDrawerImpl implements TextDrawer {
                 }
                 float offsetForTitle = mDynamicTitleLayout != null ? mDynamicTitleLayout.getHeight() :
                         0;
-                canvas.translate(textPosition[0], textPosition[1] + offsetForTitle);
-                mDynamicDetailLayout.draw(canvas);
-                canvas.restore();
+                if (mDynamicDetailLayout != null) {
+                    canvas.translate(textPosition[0], textPosition[1] + offsetForTitle);
+                    mDynamicDetailLayout.draw(canvas);
+                    canvas.restore();
+                }
 
             }
         }
