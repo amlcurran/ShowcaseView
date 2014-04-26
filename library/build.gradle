@@ -4,8 +4,8 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
-        classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.9.+'
+        classpath 'com.android.tools.build:gradle:0.9.0'
+        classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.9.4'
     }
 }
 
@@ -17,7 +17,7 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.android.support:support-v4:19.+'
+    compile 'com.android.support:support-v4:19.1.0'
     androidTestCompile 'junit:junit:4.11'
     androidTestCompile 'org.mockito:mockito-all:1.9.5'
     androidTestCompile 'org.robolectric:robolectric:2.2'

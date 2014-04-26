@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:0.9.0'
     }
 }
 
@@ -20,8 +20,8 @@ apply plugin: 'android'
 dependencies {
 	compile project(':library')
     //compile 'com.github.amlcurran.showcaseview:library:5.0.0-SNAPSHOT'
-	compile 'com.android.support:support-v4:19.+'
-	compile 'com.nineoldandroids:library:2.4.0+'
+	compile 'com.android.support:support-v4:19.1.0'
+	compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
 }
 
