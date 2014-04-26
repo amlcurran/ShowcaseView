@@ -15,12 +15,12 @@ import android.util.Log;
  */
 class StandardClingDrawer implements ClingDrawer {
 
-    private Paint mEraser;
+    protected Paint mEraser;
     private Drawable mShowcaseDrawable;
     private Rect mShowcaseRect;
 
     public StandardClingDrawer(Resources resources) {
-        PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.CLEAR);
+        PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
         mEraser = new Paint();
         mEraser.setColor(0xFFFFFF);
         mEraser.setAlpha(0);

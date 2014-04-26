@@ -69,11 +69,11 @@ public class ShowcaseView extends RelativeLayout
     private long shotId;
     private ShotType selectedShotType = ShotType.NO_LIMIT;
 
-    protected ShowcaseView(Context context) {
-        this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
+    protected ShowcaseView(Context context, boolean newStyle) {
+        this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
     }
 
-    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
+    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle, boolean newStyle) {
         super(context, attrs, defStyle);
         getViewTreeObserver().addOnPreDrawListener(this);
         getViewTreeObserver().addOnGlobalLayoutListener(this);
@@ -88,7 +88,11 @@ public class ShowcaseView extends RelativeLayout
         fadeOutMillis = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
-        showcaseDrawer = new StandardClingDrawer(getResources());
+        if (newStyle) {
+            showcaseDrawer = new NewClingDrawer(getResources());
+        } else {
+            showcaseDrawer = new StandardClingDrawer(getResources());
+        }
         textDrawer = new TextDrawerImpl(getResources(), showcaseDrawer, getContext());
 
         updateStyle(styled, false);
@@ -373,8 +377,12 @@ public class ShowcaseView extends RelativeLayout
         private final Activity activity;
 
         public Builder(Activity activity) {
+            this(activity, false);
+        }
+
+        public Builder(Activity activity, boolean useNewStyle) {
             this.activity = activity;
-            this.showcaseView = new ShowcaseView(activity);
+            this.showcaseView = new ShowcaseView(activity, useNewStyle);
             this.showcaseView.setTarget(Target.NONE);
         }
 
