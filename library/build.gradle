@@ -24,11 +24,14 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.0.3"
+    compileSdkVersion Integer.parseInt(COMPILE_SDK)
+    buildToolsVersion BUILD_TOOLS_VERSION
 
     defaultConfig {
-        versionCode Integer.parseInt(project.VERSION_CODE)
+        versionName VERSION_NAME
+        versionCode Integer.parseInt(VERSION_CODE)
+        targetSdkVersion Integer.parseInt(TARGET_SDK)
+        minSdkVersion Integer.parseInt(MIN_SDK)
     }
 }
 
