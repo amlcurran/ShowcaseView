@@ -95,12 +95,12 @@ afterEvaluate { project ->
     task apklib(type: Zip) {
         appendix = extension = 'apklib'
 
-        from 'AndroidManifest.xml'
+        from 'src/main/AndroidManifest.xml'
         into('res') {
-            from 'res'
+            from 'src/main/res'
         }
         into('src') {
-            from 'src'
+            from 'src/main/java'
         }
     }
 
