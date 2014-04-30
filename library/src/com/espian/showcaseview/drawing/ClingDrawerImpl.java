@@ -41,7 +41,7 @@ public class ClingDrawerImpl implements ClingDrawer {
         canvas.setMatrix(mm);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-        	canvas.drawCircle(x, y, radius, mEraser);
+            canvas.drawCircle(x, y, radius, mEraser);
         }
 
         mShowcaseDrawable.setBounds(mShowcaseRect);
