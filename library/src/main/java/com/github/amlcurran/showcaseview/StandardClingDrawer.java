@@ -15,9 +15,9 @@ import android.util.Log;
  */
 class StandardClingDrawer implements ClingDrawer {
 
-    protected Paint mEraser;
-    private Drawable mShowcaseDrawable;
-    private Rect mShowcaseRect;
+    protected final Paint mEraser;
+    protected final Drawable mShowcaseDrawable;
+    protected final Rect mShowcaseRect = new Rect();
 
     public StandardClingDrawer(Resources resources) {
         PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
@@ -59,10 +59,6 @@ class StandardClingDrawer implements ClingDrawer {
      * @return true if voidedArea has changed, false otherwise.
      */
     public boolean calculateShowcaseRect(float x, float y) {
-
-        if (mShowcaseRect == null) {
-            mShowcaseRect = new Rect();
-        }
 
         int cx = (int) x, cy = (int) y;
         int dw = getShowcaseWidth();

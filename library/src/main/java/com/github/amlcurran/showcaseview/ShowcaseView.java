@@ -1,7 +1,6 @@
 package com.github.amlcurran.showcaseview;
 
 import android.animation.Animator;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -293,7 +292,6 @@ public class ShowcaseView extends RelativeLayout
     }
 
     @Override
-    @TargetApi(9)
     public void onClick(View view) {
         // If the type is set to one-shot, store that it has shot
         if (selectedShotType == ShotType.SINGLE_SHOT) {
@@ -369,6 +367,14 @@ public class ShowcaseView extends RelativeLayout
     @Override
     public void onGlobalLayout() {
         updateBitmap();
+    }
+
+    public void hideButton() {
+        mEndButton.setVisibility(GONE);
+    }
+
+    public void showButton() {
+        mEndButton.setVisibility(VISIBLE);
     }
 
     /**
