@@ -78,6 +78,7 @@ public class ShowcaseView extends RelativeLayout
 
     protected ShowcaseView(Context context, AttributeSet attrs, int defStyle, boolean newStyle) {
         super(context, attrs, defStyle);
+        this.setFitsSystemWindows(true);
         getViewTreeObserver().addOnPreDrawListener(this);
         getViewTreeObserver().addOnGlobalLayoutListener(this);
 
