@@ -64,7 +64,7 @@ class StandardClingDrawer implements ClingDrawer {
         int dw = getShowcaseWidth();
         int dh = getShowcaseHeight();
 
-        if (mShowcaseRect.left == cx - dw / 2) {
+        if (mShowcaseRect.left == cx - dw / 2 && mShowcaseRect.top == cy - dh / 2) {
             return false;
         }
 
