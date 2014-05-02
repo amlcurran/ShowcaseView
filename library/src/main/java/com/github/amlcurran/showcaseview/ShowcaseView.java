@@ -25,8 +25,8 @@ import android.widget.RelativeLayout;
 
 import com.github.amlcurran.showcaseview.targets.Target;
 
-import static com.github.amlcurran.showcaseview.AnimationUtils.AnimationEndListener;
-import static com.github.amlcurran.showcaseview.AnimationUtils.AnimationStartListener;
+import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationEndListener;
+import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationStartListener;
 
 /**
  * A view which allows you to showcase areas of your app with an explanation.
@@ -42,7 +42,7 @@ public class ShowcaseView extends RelativeLayout
     private final Button mEndButton;
     private final TextDrawer textDrawer;
     private final ClingDrawer showcaseDrawer;
-    private final ApiUtils apiUtils;
+    private final AnimationFactory animationFactory;
 
     // Showcase metrics
     private int showcaseX = -1;
@@ -78,7 +78,10 @@ public class ShowcaseView extends RelativeLayout
 
     protected ShowcaseView(Context context, AttributeSet attrs, int defStyle, boolean newStyle) {
         super(context, attrs, defStyle);
-        apiUtils = new ApiUtils();
+
+        ApiUtils apiUtils = new ApiUtils();
+        animationFactory = new AnimatorAnimationFactory();
+
         apiUtils.setFitsSystemWindowsCompat(this);
         getViewTreeObserver().addOnPreDrawListener(this);
         getViewTreeObserver().addOnGlobalLayoutListener(this);
@@ -309,13 +312,13 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void fadeOutShowcase() {
-        AnimationUtils.createFadeOutAnimation(this, fadeOutMillis, new AnimationEndListener() {
+        animationFactory.fadeOutView(this, fadeOutMillis, new AnimationEndListener() {
             @Override
             public void onAnimationEnd() {
                 setVisibility(View.GONE);
                 mEventListener.onShowcaseViewDidHide(ShowcaseView.this);
             }
-        }).start();
+        });
     }
 
     public void show() {
@@ -324,14 +327,14 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void fadeInShowcase() {
-        AnimationUtils.createFadeInAnimation(this, fadeInMillis,
+        animationFactory.fadeInView(this, fadeInMillis,
                 new AnimationStartListener() {
                     @Override
                     public void onAnimationStart() {
                         setVisibility(View.VISIBLE);
                     }
                 }
-        ).start();
+        );
     }
 
     @Override
