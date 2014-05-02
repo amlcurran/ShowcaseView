@@ -4,29 +4,35 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.+'
+        classpath 'com.android.tools.build:gradle:0.9.0'
+        classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.9.4'
     }
 }
 
 apply plugin: 'android-library'
+apply plugin: 'android-test'
+apply plugin: 'maven'
 
 dependencies {
     repositories {
         mavenCentral()
     }
-	compile 'com.android.support:support-v4:19.0.+'
-	compile 'com.nineoldandroids:library:2.4.0+'
+    compile 'com.android.support:support-v4:19.1.0'
+    androidTestCompile 'junit:junit:4.11'
+    androidTestCompile 'org.mockito:mockito-all:1.9.5'
+    androidTestCompile 'org.robolectric:robolectric:2.2'
 }
 
 android {
-	compileSdkVersion 19
-	buildToolsVersion "19.0.0"
-	
-	sourceSets {
-		main {
-			manifest.srcFile 'AndroidManifest.xml'
-			java.srcDirs = ['src']
-			res.srcDirs = ['res']
-		}
-	}
+    compileSdkVersion Integer.parseInt(COMPILE_SDK)
+    buildToolsVersion BUILD_TOOLS_VERSION
+
+    defaultConfig {
+        versionName VERSION_NAME
+        versionCode Integer.parseInt(VERSION_CODE)
+        targetSdkVersion Integer.parseInt(TARGET_SDK)
+        minSdkVersion Integer.parseInt(MIN_SDK)
+    }
 }
+
+apply from: 'gradle-mvn-push.gradle'

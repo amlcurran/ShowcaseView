@@ -1,6 +1,49 @@
-**IMPORTANT NOTICE**
+The new ShowcaseView (v5.0)
+====
 
-*I am no longer actively working on the master branch. This is due to a much larger rewrite being performed on the [new-scv branch](https://github.com/amlcurran/ShowcaseView/tree/new-scv). Please see that branch for the aims of that rewrite - some point soon that branch will become this master and this will become a legacy branch.*
+This library has become more popular than I ever intended - but at the same time more unwieldy.
+This version is intended to be more stable,
+more friendly and better tested.
+
+There **are** features missing compared to v4. If you'd like to keep using them, then use the **legacy** branch in this repository. 
+
+What's new
+---
+* Gradle and Maven compatibility! For now only snapshots are available, which can be accessed and added to Gradle builds by adding `compile 'com.github.amlcurran.showcaseview:library:5.0.0-SNAPSHOT'` to your dependencies. You will require the snapshot repository to be defined in your repositories.
+* Buidler pattern. It was much too difficult to create and set up a ShowcaseView, so there is now a Builder pattern available. This makes it dead easy to create a ShowcaseView.
+* New KitKat style showcase. Currently, this is only available by creating a Builder using the `new Builder(activity, true)` constructor.
+
+What's missing
+---
+
+- ShowcaseViews: the class which queues up ShowcaseViews in a tutorial-type method. I never
+really liked this class (generally, you should use SCV sparingly); I'll add it back in based on
+the Builder class when I can.
+- Ghostly hand: this has gone for now until I can test-drive it back in.
+- Scale multiplier: this has gone for simplicity - if people really loved it I'll add in back in
+
+FAQs
+---
+
+**Where has X feature gone?**
+
+Look one paragraph up!
+
+**Waaaah, but I really liked feature X**
+
+Switch to the legacy branch and use that one then! All legacy features are in there.
+
+**What happened to all the other constructors?**
+
+Gone. You should be using the new Target API.
+
+**What if I want to add feature X?**
+
+At the moment, I'm not taking any feature requests. It's unlikely I'll take many anyway,
+unless I feel they are both useful and well tested. If you have some cosmetic tweak then I don't
+want that added into the library as *another* option. But, if you need to make a tweak to the
+library to add such a tweak to your own, overridden ShowcaseView then that is totally great.
+>>>>>>> new-scv
 
 ShowcaseView library
 ====
@@ -11,41 +54,31 @@ The library is based on the "Cling" view found in the Launcher on Ice-Cream Sand
 
 Please check out [the website](http://espiandev.github.com/ShowcaseView) for more information.
 
-![Example image](./example.png)
-![Example image](./example2.png)
+<img src='./example@2x.png' width='270' height='480' />
+<img src='./example2@2x.png' width='270' height='480' />
 
 Set-up
 ----
 
-Ant:
-Importing the library should work without any issues - but make sure the libraries in /library/libs are imported. To use the sample download [ActionBarSherlock](http://actionbarsherlock.com/usage.html) and add it as a dependency to the library project. Use point 1 on the "Including in your project" instructions at the link.
+The library is now only compatible with Gradle out of the box. To use this library in your project, either:
 
-Android Studio:
-Import using the build.gradle file in the top-most folder, making sure to use the Gradle wrapper. You _may_ be able to import the library by itself but this isn't officially supported. If you'd like to add the library to your project, copy the library folder into your Gradle project folder and follow the instructions on the [Android tools](http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Multi-project-setup) website.
-
-**WARNING:** Sometimes Eclipse/IDEA will automatically import the non-NineOldAndroid versions of the animation classes, which will cause crashes on versions of Android below 3.0. Check that your imports start with `com.nineoldandroids.animation` and not `android.animation`.
-
-The full dependency list for ShowcaseView is as follows:
-- library requires android-support-v4 and nineoldandroids
-- library tests require mockito and robolectric
-- sample app requires ActionBarSherlock
+* Add the dependency from Maven like so: `compile 'com.github.amlcurran.showcaseview:library:+5.0.0-SNAPSHOT'`. See above for more information
+* Copy the library project into your Gradle project. In your settings.gradle, add the project (using the `include (':libary')` notation). Sync Gradle and then go ahead! 
 
 Usage
 ----
 
-To use ShowcaseView, use one of the `insertShowcaseView(..)` calls. These take:
-
-- A [`Target`](https://github.com/Espiandev/ShowcaseView/blob/target/library/src/com/espian/showcaseview/targets/Target.java) which represents what should be showcased. See the [wiki](https://github.com/Espiandev/ShowcaseView/wiki/Target-API) for more details.
-- An `Activity`
-- *Optional* title and detail strings (or resource ids) which show on the ShowcaseView
-- *Optional* a [`ConfigOptions`]() which can alter the behaviour of ShowcaseView. See the wiki for more details
+To use ShowcaseView, use the Builder pattern.
 
 As an example:
 
 ~~~
-View showcasedView = findViewById(R.id.view_to_showcase);
-ViewTarget target = new ViewTarget(showcasedView);
-ShowcaseView.insertShowcaseView(target, this, R.string.showcase_title, R.string.showcase_details);
+new ShowcaseView.Builder(this)
+    .setTarget(new ActionViewTarget(this, ActionViewTarget.Type.HOME))
+    .setContentTitle("ShowcaseView")
+    .setContentText("This is highlighting the Home button")
+    .hideOnTouchOutside()
+    .build();
 ~~~
 
 Copyright and Licensing
