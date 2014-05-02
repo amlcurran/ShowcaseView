@@ -2,9 +2,10 @@ The new ShowcaseView (v5.0)
 ====
 
 This library has become more popular than I ever intended - but at the same time more unwieldy.
-This branch (which will become the next version) is intended to be more stable,
-more friendly and better tested. I *will* remove features relative to the previous versions. It
-is hoped than I'll add them back (or of course, you can).
+This version is intended to be more stable,
+more friendly and better tested.
+
+There **are** features missing compared to v4. If you'd like to keep using them, then use the **legacy** branch in this repository. 
 
 What's new
 ---
@@ -27,6 +28,10 @@ FAQs
 **Where has X feature gone?**
 
 Look one paragraph up!
+
+**Waaaah, but I really liked feature X**
+
+Switch to the legacy branch and use that one then! All legacy features are in there.
 
 **What happened to all the other constructors?**
 
