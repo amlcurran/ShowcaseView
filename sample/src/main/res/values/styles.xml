@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <resources>
 
+    <style name="CompatDarkActionBarTheme" parent="android:Theme.Holo.Light" />
+
     <style name="CustomShowcaseTheme" parent="ShowcaseView.Light">
         <item name="sv_backgroundColor">#3300A621</item>
         <item name="sv_showcaseColor">#00801A</item>

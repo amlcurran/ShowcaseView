@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
 <resources>
 
+    <style name="CompatDarkActionBarTheme" parent="android:Theme.Holo.Light.DarkActionBar" />
+
 </resources>

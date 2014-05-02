@@ -42,6 +42,7 @@ public class ShowcaseView extends RelativeLayout
     private final Button mEndButton;
     private final TextDrawer textDrawer;
     private final ClingDrawer showcaseDrawer;
+    private final ApiUtils apiUtils;
 
     // Showcase metrics
     private int showcaseX = -1;
@@ -77,7 +78,8 @@ public class ShowcaseView extends RelativeLayout
 
     protected ShowcaseView(Context context, AttributeSet attrs, int defStyle, boolean newStyle) {
         super(context, attrs, defStyle);
-        this.setFitsSystemWindows(true);
+        apiUtils = new ApiUtils();
+        apiUtils.setFitsSystemWindowsCompat(this);
         getViewTreeObserver().addOnPreDrawListener(this);
         getViewTreeObserver().addOnGlobalLayoutListener(this);
 
