@@ -8,7 +8,7 @@ import android.util.Log;
  */
 class ShowcaseAreaCalculator {
 
-    protected final Rect mShowcaseRect = new Rect();
+    private final Rect mShowcaseRect = new Rect();
 
     /**
      * Creates a {@link android.graphics.Rect} which represents the area the showcase covers. Used
