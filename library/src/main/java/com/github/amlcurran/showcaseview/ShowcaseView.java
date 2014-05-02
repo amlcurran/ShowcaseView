@@ -2,12 +2,10 @@ package com.github.amlcurran.showcaseview;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.text.TextUtils;
@@ -17,8 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
@@ -33,16 +29,14 @@ import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationStartL
 public class ShowcaseView extends RelativeLayout
         implements View.OnClickListener, View.OnTouchListener, ViewTreeObserver.OnPreDrawListener, ViewTreeObserver.OnGlobalLayoutListener {
 
-    private static final String PREFS_SHOWCASE_INTERNAL = "showcase_internal";
-    private static final Interpolator INTERPOLATOR = new AccelerateDecelerateInterpolator();
     private static final int HOLO_BLUE = Color.parseColor("#33B5E5");
 
-    private final Paint basicPaint;
     private final Button mEndButton;
     private final TextDrawer textDrawer;
     private final ShowcaseDrawer showcaseDrawer;
     private final ShowcaseAreaCalculator showcaseAreaCalculator;
     private final AnimationFactory animationFactory;
+    private final ShotStateStore shotStateStore;
 
     // Showcase metrics
     private int showcaseX = -1;
@@ -64,10 +58,6 @@ public class ShowcaseView extends RelativeLayout
     private long fadeInMillis;
     private long fadeOutMillis;
 
-    // Shot items
-    private long shotId;
-    private ShotType selectedShotType = ShotType.NO_LIMIT;
-
     protected ShowcaseView(Context context, boolean newStyle) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
     }
@@ -78,6 +68,7 @@ public class ShowcaseView extends RelativeLayout
         ApiUtils apiUtils = new ApiUtils();
         animationFactory = new AnimatorAnimationFactory();
         showcaseAreaCalculator = new ShowcaseAreaCalculator();
+        shotStateStore = new ShotStateStore(context);
 
         apiUtils.setFitsSystemWindowsCompat(this);
         getViewTreeObserver().addOnPreDrawListener(this);
@@ -103,16 +94,9 @@ public class ShowcaseView extends RelativeLayout
         updateStyle(styled, false);
 
         init();
-        basicPaint = new Paint();
     }
 
     private void init() {
-
-        if (selectedShotType == ShotType.SINGLE_SHOT && hasShot()) {
-            // The showcase has already been shot once, so we don't need to do anything
-            setVisibility(View.GONE);
-            return;
-        }
 
         setOnTouchListener(this);
 
@@ -133,29 +117,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private boolean hasShot() {
-        return isSingleShot() && getContext()
-                .getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
-                .getBoolean("hasShot" + shotId, false);
-    }
-
-    private boolean isSingleShot() {
-        return selectedShotType == ShotType.SINGLE_SHOT;
-    }
-
-    void setShowcaseView(final View view) {
-        if (hasShot() || view == null) {
-            return;
-        }
-
-        view.post(new Runnable() {
-            @Override
-            public void run() {
-                //init();
-                Point viewPoint = Calculator.getShowcasePointFromView(view);
-                setShowcasePosition(viewPoint);
-                invalidate();
-            }
-        });
+        return shotStateStore.hasShot();
     }
 
     void setShowcasePosition(Point point) {
@@ -163,7 +125,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     void setShowcasePosition(int x, int y) {
-        if (hasShot()) {
+        if (shotStateStore.hasShot()) {
             return;
         }
         showcaseX = x;
@@ -181,7 +143,7 @@ public class ShowcaseView extends RelativeLayout
             @Override
             public void run() {
 
-                if (!hasShot()) {
+                if (!shotStateStore.hasShot()) {
 
                     updateBitmap();
                     Point targetPoint = target.getPoint();
@@ -239,7 +201,7 @@ public class ShowcaseView extends RelativeLayout
      * @param listener Listener to listen to on click events
      */
     public void overrideButtonClick(OnClickListener listener) {
-        if (hasShot()) {
+        if (shotStateStore.hasShot()) {
             return;
         }
         if (mEndButton != null) {
@@ -275,7 +237,7 @@ public class ShowcaseView extends RelativeLayout
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        if (showcaseX < 0 || showcaseY < 0 || hasShot()) {
+        if (showcaseX < 0 || showcaseY < 0 || shotStateStore.hasShot()) {
             super.dispatchDraw(canvas);
             return;
         }
@@ -286,7 +248,7 @@ public class ShowcaseView extends RelativeLayout
         // Draw the showcase drawable
         if (!hasNoTarget) {
             showcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY, scaleMultiplier);
-            canvas.drawBitmap(bitmapBuffer, 0, 0, basicPaint);
+            showcaseDrawer.drawToCanvas(canvas, bitmapBuffer);
         }
 
         // Draw the text on the screen, recalculating its position if necessary
@@ -299,10 +261,7 @@ public class ShowcaseView extends RelativeLayout
     @Override
     public void onClick(View view) {
         // If the type is set to one-shot, store that it has shot
-        if (selectedShotType == ShotType.SINGLE_SHOT) {
-            SharedPreferences internal = getContext().getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE);
-            internal.edit().putBoolean("hasShot" + shotId, true).apply();
-        }
+        shotStateStore.storeShot();
         hide();
     }
 
@@ -380,7 +339,7 @@ public class ShowcaseView extends RelativeLayout
 
     @Override
     public void onGlobalLayout() {
-        if (!hasShot()) {
+        if (!shotStateStore.hasShot()) {
             updateBitmap();
         }
     }
@@ -534,8 +493,7 @@ public class ShowcaseView extends RelativeLayout
      * @see com.github.amlcurran.showcaseview.ShowcaseView.Builder#setSingleShot(long)
      */
     private void setSingleShot(long shotId) {
-        this.shotId = shotId;
-        this.selectedShotType = ShotType.SINGLE_SHOT;
+        shotStateStore.setSingleShot(shotId);
     }
 
     /**
@@ -579,7 +537,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void updateStyle(TypedArray styled, boolean invalidate) {
-        int backgroundColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
+        int backgroundColor = styled.getColor(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
         int showcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, HOLO_BLUE);
         String buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
         if (TextUtils.isEmpty(buttonText)) {
@@ -613,10 +571,6 @@ public class ShowcaseView extends RelativeLayout
         } else {
             mEndButton.getBackground().setColorFilter(HOLO_BLUE, PorterDuff.Mode.MULTIPLY);
         }
-    }
-
-    private enum ShotType {
-        NO_LIMIT, SINGLE_SHOT
     }
 
 }

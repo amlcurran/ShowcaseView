@@ -15,6 +15,7 @@ class StandardShowcaseDrawer implements ShowcaseDrawer {
 
     protected final Paint eraserPaint;
     protected final Drawable showcaseDrawable;
+    private final Paint basicPaint;
     private final float showcaseRadius;
     protected int backgroundColour;
 
@@ -25,6 +26,7 @@ class StandardShowcaseDrawer implements ShowcaseDrawer {
         eraserPaint.setAlpha(0);
         eraserPaint.setXfermode(xfermode);
         eraserPaint.setAntiAlias(true);
+        basicPaint = new Paint();
         showcaseRadius = resources.getDimension(R.dimen.showcase_radius);
         showcaseDrawable = resources.getDrawable(R.drawable.cling_bleached);
     }
@@ -71,6 +73,11 @@ class StandardShowcaseDrawer implements ShowcaseDrawer {
     @Override
     public void erase(Bitmap bitmapBuffer) {
         bitmapBuffer.eraseColor(backgroundColour);
+    }
+
+    @Override
+    public void drawToCanvas(Canvas canvas, Bitmap bitmapBuffer) {
+        canvas.drawBitmap(bitmapBuffer, 0, 0, basicPaint);
     }
 
 }
