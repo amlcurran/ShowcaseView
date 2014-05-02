@@ -350,6 +350,7 @@ public class ShowcaseView extends RelativeLayout
 
     private static void insertShowcaseView(ShowcaseView showcaseView, Activity activity) {
         ((ViewGroup) activity.getWindow().getDecorView()).addView(showcaseView);
+        showcaseView.show();
     }
 
     public void setContentTitle(CharSequence title) {
