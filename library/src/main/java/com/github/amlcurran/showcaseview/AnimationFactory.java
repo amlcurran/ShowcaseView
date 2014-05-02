@@ -3,7 +3,7 @@ package com.github.amlcurran.showcaseview;
 import android.graphics.Point;
 import android.view.View;
 
-public interface AnimationFactory {
+interface AnimationFactory {
     void fadeInView(View target, long duration, AnimationStartListener listener);
 
     void fadeOutView(View target, long duration, AnimationEndListener listener);
