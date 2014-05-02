@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 /**
  * Created by curraa01 on 13/10/2013.
  */
-interface ClingDrawer {
+interface ShowcaseDrawer {
 
     void setShowcaseColour(int color);
 

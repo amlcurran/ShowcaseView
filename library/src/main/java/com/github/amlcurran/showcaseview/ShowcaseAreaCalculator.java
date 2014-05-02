@@ -16,11 +16,11 @@ class ShowcaseAreaCalculator {
      *
      * @return true if voidedArea has changed, false otherwise.
      */
-    public boolean calculateShowcaseRect(float x, float y, ClingDrawer clingDrawer) {
+    public boolean calculateShowcaseRect(float x, float y, ShowcaseDrawer showcaseDrawer) {
 
         int cx = (int) x, cy = (int) y;
-        int dw = clingDrawer.getShowcaseWidth();
-        int dh = clingDrawer.getShowcaseHeight();
+        int dw = showcaseDrawer.getShowcaseWidth();
+        int dh = showcaseDrawer.getShowcaseHeight();
 
         if (mShowcaseRect.left == cx - dw / 2 && mShowcaseRect.top == cy - dh / 2) {
             return false;

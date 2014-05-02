@@ -11,14 +11,14 @@ import android.graphics.drawable.Drawable;
 /**
  * Created by curraa01 on 13/10/2013.
  */
-class StandardClingDrawer implements ClingDrawer {
+class StandardShowcaseDrawer implements ShowcaseDrawer {
 
     protected final Paint eraserPaint;
     protected final Drawable showcaseDrawable;
     private final float showcaseRadius;
     protected int backgroundColour;
 
-    public StandardClingDrawer(Resources resources) {
+    public StandardShowcaseDrawer(Resources resources) {
         PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
         eraserPaint = new Paint();
         eraserPaint.setColor(0xFFFFFF);

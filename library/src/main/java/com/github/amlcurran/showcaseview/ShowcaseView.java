@@ -40,7 +40,7 @@ public class ShowcaseView extends RelativeLayout
     private final Paint basicPaint;
     private final Button mEndButton;
     private final TextDrawer textDrawer;
-    private final ClingDrawer showcaseDrawer;
+    private final ShowcaseDrawer showcaseDrawer;
     private final ShowcaseAreaCalculator showcaseAreaCalculator;
     private final AnimationFactory animationFactory;
 
@@ -95,9 +95,9 @@ public class ShowcaseView extends RelativeLayout
 
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
         if (newStyle) {
-            showcaseDrawer = new NewClingDrawer(getResources());
+            showcaseDrawer = new NewShowcaseDrawer(getResources());
         } else {
-            showcaseDrawer = new StandardClingDrawer(getResources());
+            showcaseDrawer = new StandardShowcaseDrawer(getResources());
         }
         textDrawer = new TextDrawer(getResources(), showcaseAreaCalculator, getContext());
 

@@ -7,13 +7,13 @@ import android.graphics.Canvas;
 /**
  * Created by curraa01 on 13/10/2013.
  */
-class NewClingDrawer extends StandardClingDrawer {
+class NewShowcaseDrawer extends StandardShowcaseDrawer {
 
     private static final int ALPHA_60_PERCENT = 153;
     private final float outerRadius;
     private final float innerRadius;
 
-    public NewClingDrawer(Resources resources) {
+    public NewShowcaseDrawer(Resources resources) {
         super(resources);
         outerRadius = resources.getDimension(R.dimen.showcase_radius_outer);
         innerRadius = resources.getDimension(R.dimen.showcase_radius_inner);
