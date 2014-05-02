@@ -1,6 +1,6 @@
 **IMPORTANT NOTICE**
 
-*I am no longer actively working on the master branch. This is due to a much larger rewrite being performed on the [new-scv branch](https://github.com/amlcurran/ShowcaseView/tree/new-scv). Please see that branch for the aims of that rewrite - some point soon that branch will become this master and this will become a legacy branch.*
+*I am no longer actively working on this legacy branch. This is due to a much larger rewrite on master. Please use this branch if you want features missing from v5 only.*
 
 ShowcaseView library
 ====
