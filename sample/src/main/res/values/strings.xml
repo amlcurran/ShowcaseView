@@ -3,7 +3,6 @@
     <string name="app_name">Showcase Sample</string>
     <string name="button_hide">Change style</string>
     <string name="button_show">Show</string>
-    <string name="button_blocked">Blocked button</string>
     <string name="title_action_items">Action Items</string>
     <string name="title_action_bar">Action Views</string>
     <string name="title_multiple">Multiple Showcases</string>
