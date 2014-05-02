@@ -40,7 +40,6 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
-        dimView(listView);
 
         buttonBlocked = (Button) findViewById(R.id.buttonBlocked);
         buttonBlocked.setOnClickListener(this);
