@@ -41,6 +41,7 @@ public class ShowcaseView extends RelativeLayout
     private final Button mEndButton;
     private final TextDrawer textDrawer;
     private final ClingDrawer showcaseDrawer;
+    private final ShowcaseAreaCalculator showcaseAreaCalculator;
     private final AnimationFactory animationFactory;
 
     // Showcase metrics
@@ -80,6 +81,7 @@ public class ShowcaseView extends RelativeLayout
 
         ApiUtils apiUtils = new ApiUtils();
         animationFactory = new AnimatorAnimationFactory();
+        showcaseAreaCalculator = new ShowcaseAreaCalculator();
 
         apiUtils.setFitsSystemWindowsCompat(this);
         getViewTreeObserver().addOnPreDrawListener(this);
@@ -100,7 +102,7 @@ public class ShowcaseView extends RelativeLayout
         } else {
             showcaseDrawer = new StandardClingDrawer(getResources());
         }
-        textDrawer = new TextDrawerImpl(getResources(), showcaseDrawer, getContext());
+        textDrawer = new TextDrawer(getResources(), showcaseAreaCalculator, getContext());
 
         updateStyle(styled, false);
 
@@ -261,7 +263,7 @@ public class ShowcaseView extends RelativeLayout
 
     @Override
     public boolean onPreDraw() {
-        boolean recalculatedCling = showcaseDrawer.calculateShowcaseRect(showcaseX, showcaseY);
+        boolean recalculatedCling = showcaseAreaCalculator.calculateShowcaseRect(showcaseX, showcaseY, showcaseDrawer);
         boolean recalculateText = recalculatedCling || hasAlteredText;
         if (recalculateText) {
             textDrawer.calculateTextPosition(getMeasuredWidth(), getMeasuredHeight(), this, shouldCentreText);

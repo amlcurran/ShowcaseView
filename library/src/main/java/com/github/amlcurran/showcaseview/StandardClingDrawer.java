@@ -6,9 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 /**
  * Created by curraa01 on 13/10/2013.
@@ -17,7 +15,6 @@ class StandardClingDrawer implements ClingDrawer {
 
     protected final Paint mEraser;
     protected final Drawable mShowcaseDrawable;
-    protected final Rect mShowcaseRect = new Rect();
 
     public StandardClingDrawer(Resources resources) {
         PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
@@ -39,6 +36,13 @@ class StandardClingDrawer implements ClingDrawer {
     public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier, float radius, int backgroundColor) {
         Canvas bufferCanvas = new Canvas(buffer);
         bufferCanvas.drawCircle(x, y, radius, mEraser);
+        int halfW = getShowcaseWidth() / 2;
+        int halfH = getShowcaseHeight() / 2;
+        int left = (int) (x - halfW);
+        int top = (int) (y - halfH);
+        mShowcaseDrawable.setBounds(left, top,
+                left + getShowcaseWidth(),
+                top + getShowcaseHeight());
         mShowcaseDrawable.draw(bufferCanvas);
     }
 
@@ -50,40 +54,6 @@ class StandardClingDrawer implements ClingDrawer {
     @Override
     public int getShowcaseHeight() {
         return mShowcaseDrawable.getIntrinsicHeight();
-    }
-
-    /**
-     * Creates a {@link android.graphics.Rect} which represents the area the showcase covers. Used
-     * to calculate where best to place the text
-     *
-     * @return true if voidedArea has changed, false otherwise.
-     */
-    public boolean calculateShowcaseRect(float x, float y) {
-
-        int cx = (int) x, cy = (int) y;
-        int dw = getShowcaseWidth();
-        int dh = getShowcaseHeight();
-
-        if (mShowcaseRect.left == cx - dw / 2 && mShowcaseRect.top == cy - dh / 2) {
-            return false;
-        }
-
-        Log.d("ShowcaseView", "Recalculated");
-
-        mShowcaseRect.left = cx - dw / 2;
-        mShowcaseRect.top = cy - dh / 2;
-        mShowcaseRect.right = cx + dw / 2;
-        mShowcaseRect.bottom = cy + dh / 2;
-
-        mShowcaseDrawable.setBounds(mShowcaseRect);
-
-        return true;
-
-    }
-
-    @Override
-    public Rect getShowcaseRect() {
-        return mShowcaseRect;
     }
 
 }
