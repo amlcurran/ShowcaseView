@@ -29,7 +29,7 @@ FAQs
 
 Look one paragraph up!
 
-**Waaaah, but I really liked feature X**
+**Waaaah, but I really liked feature X!!!**
 
 Switch to the legacy branch and use that one then! All legacy features are in there.
 
@@ -43,7 +43,6 @@ At the moment, I'm not taking any feature requests. It's unlikely I'll take many
 unless I feel they are both useful and well tested. If you have some cosmetic tweak then I don't
 want that added into the library as *another* option. But, if you need to make a tweak to the
 library to add such a tweak to your own, overridden ShowcaseView then that is totally great.
->>>>>>> new-scv
 
 ShowcaseView library
 ====
