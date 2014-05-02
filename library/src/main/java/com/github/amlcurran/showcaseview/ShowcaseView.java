@@ -56,7 +56,6 @@ public class ShowcaseView extends RelativeLayout
     private OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
 
     private boolean hasAlteredText = false;
-    private boolean isRedundant = false;
     private boolean hasNoTarget = false;
     private boolean shouldCentreText;
     private Bitmap bitmapBuffer;
@@ -112,7 +111,6 @@ public class ShowcaseView extends RelativeLayout
         if (selectedShotType == ShotType.SINGLE_SHOT && hasShot()) {
             // The showcase has already been shot once, so we don't need to do anything
             setVisibility(View.GONE);
-            isRedundant = true;
             return;
         }
 
@@ -135,17 +133,19 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private boolean hasShot() {
-        return getContext()
+        return isSingleShot() && getContext()
                 .getSharedPreferences(PREFS_SHOWCASE_INTERNAL, Context.MODE_PRIVATE)
                 .getBoolean("hasShot" + shotId, false);
     }
 
+    private boolean isSingleShot() {
+        return selectedShotType == ShotType.SINGLE_SHOT;
+    }
+
     void setShowcaseView(final View view) {
-        if (isRedundant || view == null) {
-            isRedundant = true;
+        if (hasShot() || view == null) {
             return;
         }
-        isRedundant = false;
 
         view.post(new Runnable() {
             @Override
@@ -163,7 +163,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     void setShowcasePosition(int x, int y) {
-        if (isRedundant) {
+        if (hasShot()) {
             return;
         }
         showcaseX = x;
@@ -180,18 +180,23 @@ public class ShowcaseView extends RelativeLayout
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                updateBitmap();
-                Point targetPoint = target.getPoint();
-                if (targetPoint != null) {
-                    hasNoTarget = false;
-                    if (animate) {
-                        animationFactory.animateTargetToPoint(ShowcaseView.this, targetPoint);
+
+                if (!hasShot()) {
+
+                    updateBitmap();
+                    Point targetPoint = target.getPoint();
+                    if (targetPoint != null) {
+                        hasNoTarget = false;
+                        if (animate) {
+                            animationFactory.animateTargetToPoint(ShowcaseView.this, targetPoint);
+                        } else {
+                            setShowcasePosition(targetPoint);
+                        }
                     } else {
-                        setShowcasePosition(targetPoint);
+                        hasNoTarget = true;
+                        invalidate();
                     }
-                } else {
-                    hasNoTarget = true;
-                    invalidate();
+
                 }
             }
         }, 100);
@@ -234,7 +239,7 @@ public class ShowcaseView extends RelativeLayout
      * @param listener Listener to listen to on click events
      */
     public void overrideButtonClick(OnClickListener listener) {
-        if (isRedundant) {
+        if (hasShot()) {
             return;
         }
         if (mEndButton != null) {
@@ -270,7 +275,7 @@ public class ShowcaseView extends RelativeLayout
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        if (showcaseX < 0 || showcaseY < 0 || isRedundant) {
+        if (showcaseX < 0 || showcaseY < 0 || hasShot()) {
             super.dispatchDraw(canvas);
             return;
         }
@@ -350,7 +355,15 @@ public class ShowcaseView extends RelativeLayout
 
     private static void insertShowcaseView(ShowcaseView showcaseView, Activity activity) {
         ((ViewGroup) activity.getWindow().getDecorView()).addView(showcaseView);
-        showcaseView.show();
+        if (!showcaseView.hasShot()) {
+            showcaseView.show();
+        } else {
+            showcaseView.hideImmediate();
+        }
+    }
+
+    private void hideImmediate() {
+        setVisibility(GONE);
     }
 
     public void setContentTitle(CharSequence title) {
@@ -367,7 +380,9 @@ public class ShowcaseView extends RelativeLayout
 
     @Override
     public void onGlobalLayout() {
-        updateBitmap();
+        if (!hasShot()) {
+            updateBitmap();
+        }
     }
 
     public void hideButton() {
@@ -399,6 +414,7 @@ public class ShowcaseView extends RelativeLayout
 
         /**
          * Create the {@link com.github.amlcurran.showcaseview.ShowcaseView} and show it.
+         *
          * @return the created ShowcaseView
          */
         public ShowcaseView build() {
@@ -438,6 +454,7 @@ public class ShowcaseView extends RelativeLayout
 
         /**
          * Set the target of the showcase.
+         *
          * @param target a {@link com.github.amlcurran.showcaseview.targets.Target} representing
          *               the item to showcase (e.g., a button, or action item).
          */
@@ -456,7 +473,7 @@ public class ShowcaseView extends RelativeLayout
 
         /**
          * Set a listener which will override the button clicks.
-         *
+         * <p/>
          * Note that you will have to manually hide the ShowcaseView
          */
         public Builder setOnClickListener(OnClickListener onClickListener) {
@@ -518,12 +535,14 @@ public class ShowcaseView extends RelativeLayout
      */
     private void setSingleShot(long shotId) {
         this.shotId = shotId;
+        this.selectedShotType = ShotType.SINGLE_SHOT;
     }
 
     /**
      * Change the position of the ShowcaseView's button from the default bottom-right position.
+     *
      * @param layoutParams a {@link android.widget.RelativeLayout.LayoutParams} representing
-     *          the new position of the button
+     *                     the new position of the button
      */
     public void setButtonPosition(RelativeLayout.LayoutParams layoutParams) {
         mEndButton.setLayoutParams(layoutParams);

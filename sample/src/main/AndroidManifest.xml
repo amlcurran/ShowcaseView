@@ -26,6 +26,9 @@
         <!--<activity-->
         <!--android:name=".legacy.MultipleShowcaseSampleActivity"/>-->
         <activity android:name=".animations.AnimationSampleActivity" />
+
+        <activity android:name=".SingleShotActivity" />
+
         <!--<activity android:name=".MemoryManagementTesting" />-->
     </application>
 </manifest>
