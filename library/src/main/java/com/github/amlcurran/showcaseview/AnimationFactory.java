@@ -1,9 +1,14 @@
 package com.github.amlcurran.showcaseview;
 
-public interface AnimationFactory {
-    void fadeInView(Object target, long duration, AnimationStartListener listener);
+import android.graphics.Point;
+import android.view.View;
 
-    void fadeOutView(Object target, long duration, AnimationEndListener listener);
+public interface AnimationFactory {
+    void fadeInView(View target, long duration, AnimationStartListener listener);
+
+    void fadeOutView(View target, long duration, AnimationEndListener listener);
+
+    void animateTargetToPoint(ShowcaseView showcaseView, Point point);
 
     public interface AnimationStartListener {
         void onAnimationStart();

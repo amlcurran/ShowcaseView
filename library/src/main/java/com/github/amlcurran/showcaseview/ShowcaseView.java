@@ -1,6 +1,5 @@
 package com.github.amlcurran.showcaseview;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -188,10 +187,7 @@ public class ShowcaseView extends RelativeLayout
                 if (targetPoint != null) {
                     hasNoTarget = false;
                     if (animate) {
-                        Animator animator = PointAnimator.ofPoints(ShowcaseView.this, targetPoint);
-                        animator.setDuration(fadeInMillis);
-                        animator.setInterpolator(INTERPOLATOR);
-                        animator.start();
+                        animationFactory.animateTargetToPoint(ShowcaseView.this, targetPoint);
                     } else {
                         setShowcasePosition(targetPoint);
                     }
