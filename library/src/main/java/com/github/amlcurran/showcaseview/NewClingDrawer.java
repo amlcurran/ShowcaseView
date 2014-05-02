@@ -21,16 +21,16 @@ class NewClingDrawer extends StandardClingDrawer {
 
     @Override
     public void setShowcaseColour(int color) {
-        mEraser.setColor(color);
+        eraserPaint.setColor(color);
     }
 
     @Override
-    public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier, float radius, int backgroundColor) {
+    public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier) {
         Canvas bufferCanvas = new Canvas(buffer);
-        mEraser.setAlpha(ALPHA_60_PERCENT);
-        bufferCanvas.drawCircle(x, y, outerRadius, mEraser);
-        mEraser.setAlpha(0);
-        bufferCanvas.drawCircle(x, y, innerRadius, mEraser);
+        eraserPaint.setAlpha(ALPHA_60_PERCENT);
+        bufferCanvas.drawCircle(x, y, outerRadius, eraserPaint);
+        eraserPaint.setAlpha(0);
+        bufferCanvas.drawCircle(x, y, innerRadius, eraserPaint);
     }
 
     @Override
@@ -41,5 +41,15 @@ class NewClingDrawer extends StandardClingDrawer {
     @Override
     public int getShowcaseHeight() {
         return (int) (outerRadius * 2);
+    }
+
+    @Override
+    public float getBlockedRadius() {
+        return innerRadius;
+    }
+
+    @Override
+    public void setBackgroundColour(int backgroundColor) {
+        this.backgroundColour = backgroundColor;
     }
 }

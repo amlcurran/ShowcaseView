@@ -48,7 +48,6 @@ public class ShowcaseView extends RelativeLayout
     private int showcaseX = -1;
     private int showcaseY = -1;
     private float scaleMultiplier = 1f;
-    private float showcaseRadius = -1;
 
     // Touch items
     private boolean hasCustomClickListener = false;
@@ -56,8 +55,6 @@ public class ShowcaseView extends RelativeLayout
     private boolean hideOnTouch = false;
     private OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
 
-    // Drawing items
-    private int backgroundColor;
     private boolean hasAlteredText = false;
     private boolean isRedundant = false;
     private boolean hasNoTarget = false;
@@ -119,7 +116,6 @@ public class ShowcaseView extends RelativeLayout
             return;
         }
 
-        showcaseRadius = getResources().getDimension(R.dimen.showcase_radius);
         setOnTouchListener(this);
 
         if (mEndButton.getParent() == null) {
@@ -278,12 +274,13 @@ public class ShowcaseView extends RelativeLayout
             super.dispatchDraw(canvas);
             return;
         }
+
         //Draw background color
-        bitmapBuffer.eraseColor(backgroundColor);
+        showcaseDrawer.erase(bitmapBuffer);
 
         // Draw the showcase drawable
         if (!hasNoTarget) {
-            showcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY, scaleMultiplier, showcaseRadius, backgroundColor);
+            showcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY, scaleMultiplier);
             canvas.drawBitmap(bitmapBuffer, 0, 0, basicPaint);
         }
 
@@ -343,12 +340,12 @@ public class ShowcaseView extends RelativeLayout
         double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
 
         if (MotionEvent.ACTION_UP == motionEvent.getAction() &&
-                hideOnTouch && distanceFromFocus > showcaseRadius) {
+                hideOnTouch && distanceFromFocus > showcaseDrawer.getBlockedRadius()) {
             this.hide();
             return true;
         }
 
-        return blockTouches && distanceFromFocus > showcaseRadius;
+        return blockTouches && distanceFromFocus > showcaseDrawer.getBlockedRadius();
     }
 
     private static void insertShowcaseView(ShowcaseView showcaseView, Activity activity) {
@@ -563,7 +560,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void updateStyle(TypedArray styled, boolean invalidate) {
-        backgroundColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
+        int backgroundColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
         int showcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, HOLO_BLUE);
         String buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
         if (TextUtils.isEmpty(buttonText)) {
@@ -579,6 +576,7 @@ public class ShowcaseView extends RelativeLayout
         styled.recycle();
 
         showcaseDrawer.setShowcaseColour(showcaseColor);
+        showcaseDrawer.setBackgroundColour(backgroundColor);
         tintButton(showcaseColor, tintButton);
         mEndButton.setText(buttonText);
         textDrawer.setTitleStyling(titleTextAppearance);

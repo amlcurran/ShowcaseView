@@ -13,47 +13,64 @@ import android.graphics.drawable.Drawable;
  */
 class StandardClingDrawer implements ClingDrawer {
 
-    protected final Paint mEraser;
-    protected final Drawable mShowcaseDrawable;
+    protected final Paint eraserPaint;
+    protected final Drawable showcaseDrawable;
+    private final float showcaseRadius;
+    protected int backgroundColour;
 
     public StandardClingDrawer(Resources resources) {
         PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
-        mEraser = new Paint();
-        mEraser.setColor(0xFFFFFF);
-        mEraser.setAlpha(0);
-        mEraser.setXfermode(xfermode);
-        mEraser.setAntiAlias(true);
-
-        mShowcaseDrawable = resources.getDrawable(R.drawable.cling_bleached);
+        eraserPaint = new Paint();
+        eraserPaint.setColor(0xFFFFFF);
+        eraserPaint.setAlpha(0);
+        eraserPaint.setXfermode(xfermode);
+        eraserPaint.setAntiAlias(true);
+        showcaseRadius = resources.getDimension(R.dimen.showcase_radius);
+        showcaseDrawable = resources.getDrawable(R.drawable.cling_bleached);
     }
 
     @Override
     public void setShowcaseColour(int color) {
-        mShowcaseDrawable.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+        showcaseDrawable.setColorFilter(color, PorterDuff.Mode.MULTIPLY);
     }
 
     @Override
-    public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier, float radius, int backgroundColor) {
+    public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier) {
         Canvas bufferCanvas = new Canvas(buffer);
-        bufferCanvas.drawCircle(x, y, radius, mEraser);
+        bufferCanvas.drawCircle(x, y, showcaseRadius, eraserPaint);
         int halfW = getShowcaseWidth() / 2;
         int halfH = getShowcaseHeight() / 2;
         int left = (int) (x - halfW);
         int top = (int) (y - halfH);
-        mShowcaseDrawable.setBounds(left, top,
+        showcaseDrawable.setBounds(left, top,
                 left + getShowcaseWidth(),
                 top + getShowcaseHeight());
-        mShowcaseDrawable.draw(bufferCanvas);
+        showcaseDrawable.draw(bufferCanvas);
     }
 
     @Override
     public int getShowcaseWidth() {
-        return mShowcaseDrawable.getIntrinsicWidth();
+        return showcaseDrawable.getIntrinsicWidth();
     }
 
     @Override
     public int getShowcaseHeight() {
-        return mShowcaseDrawable.getIntrinsicHeight();
+        return showcaseDrawable.getIntrinsicHeight();
+    }
+
+    @Override
+    public float getBlockedRadius() {
+        return showcaseRadius;
+    }
+
+    @Override
+    public void setBackgroundColour(int backgroundColor) {
+        this.backgroundColour = backgroundColor;
+    }
+
+    @Override
+    public void erase(Bitmap bitmapBuffer) {
+        bitmapBuffer.eraseColor(backgroundColour);
     }
 
 }
