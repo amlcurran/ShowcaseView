@@ -31,6 +31,12 @@ public class ShowcaseView extends RelativeLayout
 
     private static final int HOLO_BLUE = Color.parseColor("#33B5E5");
 
+    public enum TextPositioningMode {
+        AUTOMATIC,
+        ABOVE_OR_BELOW,
+        LEFT_OR_RIGHT
+    }
+
     private final Button mEndButton;
     private final TextDrawer textDrawer;
     private final ShowcaseDrawer showcaseDrawer;
@@ -52,6 +58,7 @@ public class ShowcaseView extends RelativeLayout
     private boolean hasAlteredText = false;
     private boolean hasNoTarget = false;
     private boolean shouldCentreText;
+    private TextPositioningMode textPositioning = TextPositioningMode.AUTOMATIC;
     private Bitmap bitmapBuffer;
 
     // Animation items
@@ -229,7 +236,8 @@ public class ShowcaseView extends RelativeLayout
         boolean recalculatedCling = showcaseAreaCalculator.calculateShowcaseRect(showcaseX, showcaseY, showcaseDrawer);
         boolean recalculateText = recalculatedCling || hasAlteredText;
         if (recalculateText) {
-            textDrawer.calculateTextPosition(getMeasuredWidth(), getMeasuredHeight(), this, shouldCentreText);
+            textDrawer.calculateTextPosition(getMeasuredWidth(), getMeasuredHeight(), this,
+                    textPositioning, shouldCentreText);
         }
         hasAlteredText = false;
         return true;
@@ -478,6 +486,11 @@ public class ShowcaseView extends RelativeLayout
             showcaseView.setOnShowcaseEventListener(showcaseEventListener);
             return this;
         }
+
+        public Builder setTextPositioning(TextPositioningMode textPositioning) {
+            showcaseView.setTextPositioning(textPositioning);
+            return this;
+        }
     }
 
     /**
@@ -485,6 +498,12 @@ public class ShowcaseView extends RelativeLayout
      */
     public void setShouldCentreText(boolean shouldCentreText) {
         this.shouldCentreText = shouldCentreText;
+        hasAlteredText = true;
+        invalidate();
+    }
+
+    public void setTextPositioning(TextPositioningMode textPositioning) {
+        this.textPositioning = textPositioning;
         hasAlteredText = true;
         invalidate();
     }
