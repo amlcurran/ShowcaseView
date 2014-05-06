@@ -176,7 +176,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public boolean hasShowcaseView() {
-        return (showcaseX != 1000000 && showcaseY != 1000000) || !hasNoTarget;
+        return (showcaseX != 1000000 && showcaseY != 1000000) && !hasNoTarget;
     }
 
     public void setShowcaseX(int x) {
