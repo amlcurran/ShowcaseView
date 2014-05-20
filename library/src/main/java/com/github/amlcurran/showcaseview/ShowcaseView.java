@@ -266,8 +266,16 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void hide() {
+        clearBitmap();
         mEventListener.onShowcaseViewHide(this);
         fadeOutShowcase();
+    }
+
+    private void clearBitmap() {
+        if (bitmapBuffer != null && !bitmapBuffer.isRecycled()) {
+            bitmapBuffer.recycle();
+            bitmapBuffer = null;
+        }
     }
 
     private void fadeOutShowcase() {
