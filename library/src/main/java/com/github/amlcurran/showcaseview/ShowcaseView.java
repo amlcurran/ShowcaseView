@@ -260,13 +260,13 @@ public class ShowcaseView extends RelativeLayout
 
     @Override
     public void onClick(View view) {
-        // If the type is set to one-shot, store that it has shot
-        shotStateStore.storeShot();
         hide();
     }
 
     public void hide() {
         clearBitmap();
+        // If the type is set to one-shot, store that it has shot
+        shotStateStore.storeShot();
         mEventListener.onShowcaseViewHide(this);
         fadeOutShowcase();
     }
@@ -313,7 +313,6 @@ public class ShowcaseView extends RelativeLayout
 
         if (MotionEvent.ACTION_UP == motionEvent.getAction() &&
                 hideOnTouch && distanceFromFocus > showcaseDrawer.getBlockedRadius()) {
-            shotStateStore.storeShot();
             this.hide();
             return true;
         }
