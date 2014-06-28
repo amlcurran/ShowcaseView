@@ -81,6 +81,28 @@ class ActionBarViewWrapper {
         }
         return null;
     }
+    
+    /**
+     * Return the view which represents the MediaRouterButton action item on the ActionBar, or null
+     * if there isn't one
+     */
+    public View getMediaRouterButtonView() {
+        try {
+            Field actionMenuPresenterField =
+                    mAbsActionBarViewClass.getDeclaredField("mActionMenuPresenter");
+            actionMenuPresenterField.setAccessible(true);
+            Object actionMenuPresenter = actionMenuPresenterField.get(mActionBarView);
+            Field mediaRouteButtonField = actionMenuPresenter.getClass()
+                    .getDeclaredField("mScrapActionButtonView");
+            mediaRouteButtonField.setAccessible(true);
+            return (View) mediaRouteButtonField.get(actionMenuPresenter);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public View getActionItem(int actionItemId) {
         try {
