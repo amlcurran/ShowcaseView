@@ -31,6 +31,17 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/anim_third"
         android:id="@+id/textView3"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="120dp"
+        android:singleLine="false"
+        android:layout_alignParentBottom="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/anim_fourth"
+        android:id="@+id/textView4"
         android:layout_alignLeft="@+id/textView"
         android:layout_marginBottom="72dp"
         android:singleLine="false"

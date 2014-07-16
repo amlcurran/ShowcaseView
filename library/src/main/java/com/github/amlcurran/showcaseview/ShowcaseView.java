@@ -149,6 +149,7 @@ public class ShowcaseView extends RelativeLayout
                     Point targetPoint = target.getPoint();
                     if (targetPoint != null) {
                         hasNoTarget = false;
+                        updateEndButtonPosition(targetPoint);
                         if (animate) {
                             animationFactory.animateTargetToPoint(ShowcaseView.this, targetPoint);
                         } else {
@@ -162,6 +163,25 @@ public class ShowcaseView extends RelativeLayout
                 }
             }
         }, 100);
+    }
+
+    private void updateEndButtonPosition(final Point point) {
+        int screenWidth = ApiUtils.getScreenWidth(getContext());
+        int screenHeight = ApiUtils.getScreenWidth(getContext());
+
+        int margin = (int) getResources().getDimension(R.dimen.button_margin);
+        RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.setMargins(margin, margin, margin, margin);
+
+        // showcase is in bottom right corner
+        if (point.x > screenWidth / 2 && point.y > screenHeight / 2) {
+            lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        } else {
+            lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        }
+
+        mEndButton.setLayoutParams(lps);
     }
 
     private void updateBitmap() {

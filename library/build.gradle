@@ -4,14 +4,15 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.0'
+        classpath 'com.android.tools.build:gradle:0.12.+'
         classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.9.4'
     }
 }
 
-apply plugin: 'android-library'
-apply plugin: 'android-test'
+apply plugin: 'com.android.library'
 apply plugin: 'maven'
+// Not compatible with gradle build tools 0.12
+// apply plugin: 'android-test'
 
 dependencies {
     repositories {
@@ -34,4 +35,5 @@ android {
     }
 }
 
-apply from: 'gradle-mvn-push.gradle'
+// Not compatible with gradle build tools 0.12
+// apply from: 'gradle-mvn-push.gradle'
