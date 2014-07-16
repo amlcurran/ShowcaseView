@@ -31,8 +31,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/anim_third"
         android:id="@+id/textView3"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="120dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
         android:singleLine="false"
         android:layout_alignParentBottom="true" />
 

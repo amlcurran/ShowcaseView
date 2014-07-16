@@ -167,17 +167,22 @@ public class ShowcaseView extends RelativeLayout
 
     private void updateEndButtonPosition(final Point point) {
         int screenWidth = ApiUtils.getScreenWidth(getContext());
-        int screenHeight = ApiUtils.getScreenWidth(getContext());
+        int screenHeight = ApiUtils.getScreenHeight(getContext());
 
         int margin = (int) getResources().getDimension(R.dimen.button_margin);
         RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
-        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lps.setMargins(margin, margin, margin, margin);
 
         // showcase is in bottom right corner
         if (point.x > screenWidth / 2 && point.y > screenHeight / 2) {
+            lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        } else if ((point.x > screenWidth * 0.3) && (point.x < screenWidth * 0.7) &&
+                (point.y > screenHeight * 0.7)) {
+            lps.addRule(RelativeLayout.CENTER_VERTICAL);
+            lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         } else {
+            lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         }
 
