@@ -174,12 +174,11 @@ public class ShowcaseView extends RelativeLayout
         lps.setMargins(margin, margin, margin, margin);
 
         // showcase is in bottom right corner
-        if (point.x > screenWidth / 2 && point.y > screenHeight / 2) {
+        if (point.x > screenWidth * 0.5 && point.y > screenHeight * 0.5) {
             lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         // showcase is in bottom, around the center of the screen
-        } else if ((point.x > screenWidth * 0.3) && (point.x < screenWidth * 0.7) &&
-                (point.y > screenHeight * 0.7)) {
+        } else if (point.x > screenWidth * 0.3 && point.y > screenHeight * 0.7) {
             lps.addRule(RelativeLayout.CENTER_VERTICAL);
             lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         // by default, just dock button to bottom right corner

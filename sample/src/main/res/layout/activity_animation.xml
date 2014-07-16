@@ -42,8 +42,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/anim_fourth"
         android:id="@+id/textView4"
-        android:layout_alignLeft="@+id/textView"
         android:layout_marginBottom="72dp"
         android:singleLine="false"
+        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true" />
 </RelativeLayout>
