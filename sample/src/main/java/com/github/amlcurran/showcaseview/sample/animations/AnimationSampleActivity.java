@@ -21,6 +21,7 @@ public class AnimationSampleActivity extends Activity implements View.OnClickLis
     private TextView textView1;
     private TextView textView2;
     private TextView textView3;
+    private TextView textView4;
     private final ApiUtils apiUtils = new ApiUtils();
 
     @Override
@@ -31,6 +32,7 @@ public class AnimationSampleActivity extends Activity implements View.OnClickLis
         textView1 = (TextView) findViewById(R.id.textView);
         textView2 = (TextView) findViewById(R.id.textView2);
         textView3 = (TextView) findViewById(R.id.textView3);
+        textView4 = (TextView) findViewById(R.id.textView4);
 
         showcaseView = new ShowcaseView.Builder(this)
                 .setTarget(new ViewTarget(findViewById(R.id.textView)))
@@ -60,16 +62,20 @@ public class AnimationSampleActivity extends Activity implements View.OnClickLis
                 break;
 
             case 2:
+                showcaseView.setShowcase(new ViewTarget(textView4), true);
+                break;
+
+            case 3:
                 showcaseView.setTarget(Target.NONE);
                 showcaseView.setContentTitle("Check it out");
                 showcaseView.setContentText("You don't always need a target to showcase");
                 showcaseView.setButtonText(getString(R.string.close));
-                setAlpha(0.4f, textView1, textView2, textView3);
+                setAlpha(0.4f, textView1, textView2, textView3, textView4);
                 break;
 
-            case 3:
+            case 4:
                 showcaseView.hide();
-                setAlpha(1.0f, textView1, textView2, textView3);
+                setAlpha(1.0f, textView1, textView2, textView3, textView4);
                 break;
         }
         counter++;

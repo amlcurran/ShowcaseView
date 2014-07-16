@@ -149,6 +149,7 @@ public class ShowcaseView extends RelativeLayout
                     Point targetPoint = target.getPoint();
                     if (targetPoint != null) {
                         hasNoTarget = false;
+                        updateEndButtonPosition(targetPoint);
                         if (animate) {
                             animationFactory.animateTargetToPoint(ShowcaseView.this, targetPoint);
                         } else {
@@ -162,6 +163,31 @@ public class ShowcaseView extends RelativeLayout
                 }
             }
         }, 100);
+    }
+
+    private void updateEndButtonPosition(final Point point) {
+        int screenWidth = ApiUtils.getScreenWidth(getContext());
+        int screenHeight = ApiUtils.getScreenHeight(getContext());
+
+        int margin = (int) getResources().getDimension(R.dimen.button_margin);
+        RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
+        lps.setMargins(margin, margin, margin, margin);
+
+        // showcase is in bottom right corner
+        if (point.x > screenWidth * 0.5 && point.y > screenHeight * 0.5) {
+            lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        // showcase is in bottom, around the center of the screen
+        } else if (point.x > screenWidth * 0.3 && point.y > screenHeight * 0.7) {
+            lps.addRule(RelativeLayout.CENTER_VERTICAL);
+            lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        // by default, just dock button to bottom right corner
+        } else {
+            lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        }
+
+        mEndButton.setLayoutParams(lps);
     }
 
     private void updateBitmap() {
