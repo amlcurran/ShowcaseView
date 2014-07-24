@@ -107,6 +107,7 @@ afterEvaluate { project ->
     }
 
     task androidJavadocs(type: Javadoc) {
+        title = "ShowcaseView ${VERSION_NAME}"
         ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
         source = android.sourceSets.main.java.getSrcDirs()
         classpath = files(ext.androidJar)
