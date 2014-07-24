@@ -24,20 +24,19 @@ Set-up
 
 The library is now only compatible with Gradle out of the box. To use this library in your project, either:
 
-* Add the dependency from Maven like so: `compile 'com.github.amlcurran.showcaseview:library:5.0.0-SNAPSHOT'`. You'll also need to add the Sonatype snapshots repository to your `repositories {}` tag like so:
+* Add the dependency from Maven like so: `compile 'com.github.amlcurran.showcaseview:library:5.0.0'`. You'll also need to add Maven central to your `repositories {}` tag like so:
 ~~~
 repositories {
     mavenCentral()
-    maven {
-        url 'https://oss.sonatype.org/content/repositories/snapshots'
-    }
 }
 ~~~
 * Copy the library project into your Gradle project. In your settings.gradle, add the project (using the `include (':libary')` notation). Sync Gradle and then go ahead! 
 
 Is it worth using?
 ----
-Perhaps. Why not ask [The Guardian](https://play.google.com/store/apps/details?id=com.guardian), [HaxSync](https://play.google.com/store/apps/details?id=org.mots.haxsync), or [AllCast](https://play.google.com/store/apps/details?id=com.koushikdutta.cast), which each use the library?
+Perhaps. Why not ask 
+[Google](https://github.com/googlecast/CastVideos-android),
+[HaxSync](https://play.google.com/store/apps/details?id=org.mots.haxsync), or [AllCast](https://play.google.com/store/apps/details?id=com.koushikdutta.cast), which each use the library?
 
 Usage
 ----

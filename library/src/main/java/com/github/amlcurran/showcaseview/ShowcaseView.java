@@ -166,7 +166,10 @@ public class ShowcaseView extends RelativeLayout
 
     private void updateBitmap() {
         if (bitmapBuffer == null || haveBoundsChanged()) {
+            if(bitmapBuffer != null)
+        		bitmapBuffer.recycle();
             bitmapBuffer = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+
         }
     }
 
@@ -176,7 +179,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public boolean hasShowcaseView() {
-        return (showcaseX != 1000000 && showcaseY != 1000000) || !hasNoTarget;
+        return (showcaseX != 1000000 && showcaseY != 1000000) && !hasNoTarget;
     }
 
     public void setShowcaseX(int x) {
