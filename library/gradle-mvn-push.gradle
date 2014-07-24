@@ -107,7 +107,13 @@ afterEvaluate { project ->
     }
 
     task androidJavadocs(type: Javadoc) {
+        ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
         source = android.sourceSets.main.java.getSrcDirs()
+        classpath = files(ext.androidJar)
+        options.links("http://docs.oracle.com/javase/7/docs/api/")
+        options.linksOffline("http://d.android.com/reference/", "/Applications/Android Studio.app/sdk/docs/reference/")
+        exclude '**/BuildConfig.java'
+        exclude '**/R.java'
     }
 
     task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
