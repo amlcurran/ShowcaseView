@@ -283,7 +283,6 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void hide() {
-        clearBitmap();
         // If the type is set to one-shot, store that it has shot
         shotStateStore.storeShot();
         mEventListener.onShowcaseViewHide(this);
@@ -302,6 +301,7 @@ public class ShowcaseView extends RelativeLayout
             @Override
             public void onAnimationEnd() {
                 setVisibility(View.GONE);
+                clearBitmap();
                 mEventListener.onShowcaseViewDidHide(ShowcaseView.this);
             }
         });
