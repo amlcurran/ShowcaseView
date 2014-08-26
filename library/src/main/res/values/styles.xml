@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="ShowcaseButton">
         <item name="android:layout_width">wrap_content</item>
@@ -30,14 +30,14 @@
         <item name="sv_titleTextAppearance">@style/TextAppearance.ShowcaseView.Title</item>
         <item name="sv_detailTextAppearance">@style/TextAppearance.ShowcaseView.Detail.Light</item>
         <item name="sv_backgroundColor">#3333B5E5</item>
-        <item name="sv_buttonText">@string/ok</item>
+        <item name="sv_buttonText">@android:string/ok</item>
     </style>
 
     <style name="ShowcaseView">
         <item name="sv_titleTextAppearance">@style/TextAppearance.ShowcaseView.Title</item>
         <item name="sv_detailTextAppearance">@style/TextAppearance.ShowcaseView.Detail</item>
         <item name="sv_backgroundColor">#3333B5E5</item>
-        <item name="sv_buttonText">@string/ok</item>
+        <item name="sv_buttonText">@android:string/ok</item>
     </style>
 
     <style name="TextAppearance.ShowcaseView.Title" parent="android:style/TextAppearance.Large">

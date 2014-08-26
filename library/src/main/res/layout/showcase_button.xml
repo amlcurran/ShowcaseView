@@ -17,5 +17,5 @@
 
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/ShowcaseButton"
-    android:text="@string/ok"
+    android:text="@android:string/ok"
     android:id="@id/showcase_button" />
