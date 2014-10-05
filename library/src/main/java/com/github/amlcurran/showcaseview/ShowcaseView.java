@@ -43,7 +43,7 @@ import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationStartL
  * A view which allows you to showcase areas of your app with an explanation.
  */
 public class ShowcaseView extends RelativeLayout
-        implements View.OnClickListener, View.OnTouchListener, ViewTreeObserver.OnPreDrawListener, ViewTreeObserver.OnGlobalLayoutListener, ShowcaseViewApi {
+        implements View.OnClickListener, View.OnTouchListener, ViewTreeObserver.OnPreDrawListener, ShowcaseViewApi {
 
     private static final int HOLO_BLUE = Color.parseColor("#33B5E5");
 
@@ -89,7 +89,7 @@ public class ShowcaseView extends RelativeLayout
 
         apiUtils.setFitsSystemWindowsCompat(this);
         getViewTreeObserver().addOnPreDrawListener(this);
-        getViewTreeObserver().addOnGlobalLayoutListener(this);
+        getViewTreeObserver().addOnGlobalLayoutListener(new UpdateOnGlobalLayout());
 
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme()
@@ -377,13 +377,6 @@ public class ShowcaseView extends RelativeLayout
         this.scaleMultiplier = scaleMultiplier;
     }
 
-    @Override
-    public void onGlobalLayout() {
-        if (!shotStateStore.hasShot()) {
-            updateBitmap();
-        }
-    }
-
     public void hideButton() {
         mEndButton.setVisibility(GONE);
     }
@@ -619,6 +612,16 @@ public class ShowcaseView extends RelativeLayout
             mEndButton.getBackground().setColorFilter(showcaseColor, PorterDuff.Mode.MULTIPLY);
         } else {
             mEndButton.getBackground().setColorFilter(HOLO_BLUE, PorterDuff.Mode.MULTIPLY);
+        }
+    }
+
+    private class UpdateOnGlobalLayout implements ViewTreeObserver.OnGlobalLayoutListener {
+
+        @Override
+        public void onGlobalLayout() {
+            if (!shotStateStore.hasShot()) {
+                updateBitmap();
+            }
         }
     }
 
