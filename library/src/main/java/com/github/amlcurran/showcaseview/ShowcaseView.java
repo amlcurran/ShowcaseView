@@ -43,7 +43,7 @@ import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationStartL
  * A view which allows you to showcase areas of your app with an explanation.
  */
 public class ShowcaseView extends RelativeLayout
-        implements View.OnClickListener, View.OnTouchListener, ViewTreeObserver.OnPreDrawListener, ViewTreeObserver.OnGlobalLayoutListener {
+        implements View.OnClickListener, View.OnTouchListener, ViewTreeObserver.OnPreDrawListener, ViewTreeObserver.OnGlobalLayoutListener, ShowcaseViewApi {
 
     private static final int HOLO_BLUE = Color.parseColor("#33B5E5");
 
@@ -73,6 +73,7 @@ public class ShowcaseView extends RelativeLayout
     // Animation items
     private long fadeInMillis;
     private long fadeOutMillis;
+    private boolean isShowing;
 
     protected ShowcaseView(Context context, boolean newStyle) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
@@ -224,7 +225,11 @@ public class ShowcaseView extends RelativeLayout
             return;
         }
         if (mEndButton != null) {
-            mEndButton.setOnClickListener(listener != null ? listener : this);
+            if (listener != null) {
+                mEndButton.setOnClickListener(listener);
+            } else {
+                mEndButton.setOnClickListener(this);
+            }
         }
         hasCustomClickListener = true;
     }
@@ -254,6 +259,7 @@ public class ShowcaseView extends RelativeLayout
         return true;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     protected void dispatchDraw(Canvas canvas) {
         if (showcaseX < 0 || showcaseY < 0 || shotStateStore.hasShot() || bitmapBuffer == null) {
@@ -282,6 +288,7 @@ public class ShowcaseView extends RelativeLayout
         hide();
     }
 
+    @Override
     public void hide() {
         clearBitmap();
         // If the type is set to one-shot, store that it has shot
@@ -302,12 +309,15 @@ public class ShowcaseView extends RelativeLayout
             @Override
             public void onAnimationEnd() {
                 setVisibility(View.GONE);
+                isShowing = false;
                 mEventListener.onShowcaseViewDidHide(ShowcaseView.this);
             }
         });
     }
 
+    @Override
     public void show() {
+        isShowing = true;
         mEventListener.onShowcaseViewShow(this);
         fadeInShowcase();
     }
@@ -349,13 +359,16 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void hideImmediate() {
+        isShowing = false;
         setVisibility(GONE);
     }
 
+    @Override
     public void setContentTitle(CharSequence title) {
         textDrawer.setContentTitle(title);
     }
 
+    @Override
     public void setContentText(CharSequence text) {
         textDrawer.setContentText(text);
     }
@@ -529,6 +542,7 @@ public class ShowcaseView extends RelativeLayout
      * @param layoutParams a {@link android.widget.RelativeLayout.LayoutParams} representing
      *                     the new position of the button
      */
+    @Override
     public void setButtonPosition(RelativeLayout.LayoutParams layoutParams) {
         mEndButton.setLayoutParams(layoutParams);
     }
@@ -544,6 +558,7 @@ public class ShowcaseView extends RelativeLayout
     /**
      * @see com.github.amlcurran.showcaseview.ShowcaseView.Builder#hideOnTouchOutside()
      */
+    @Override
     public void setHideOnTouchOutside(boolean hideOnTouch) {
         this.hideOnTouch = hideOnTouch;
     }
@@ -551,6 +566,7 @@ public class ShowcaseView extends RelativeLayout
     /**
      * @see com.github.amlcurran.showcaseview.ShowcaseView.Builder#doNotBlockTouches()
      */
+    @Override
     public void setBlocksTouches(boolean blockTouches) {
         this.blockTouches = blockTouches;
     }
@@ -558,9 +574,15 @@ public class ShowcaseView extends RelativeLayout
     /**
      * @see com.github.amlcurran.showcaseview.ShowcaseView.Builder#setStyle(int)
      */
+    @Override
     public void setStyle(int theme) {
         TypedArray array = getContext().obtainStyledAttributes(theme, R.styleable.ShowcaseView);
         updateStyle(array, true);
+    }
+
+    @Override
+    public boolean isShowing() {
+        return isShowing;
     }
 
     private void updateStyle(TypedArray styled, boolean invalidate) {
