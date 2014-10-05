@@ -43,7 +43,7 @@ import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationStartL
  * A view which allows you to showcase areas of your app with an explanation.
  */
 public class ShowcaseView extends RelativeLayout
-        implements View.OnClickListener, View.OnTouchListener, ViewTreeObserver.OnPreDrawListener, ShowcaseViewApi {
+        implements View.OnTouchListener, ShowcaseViewApi {
 
     private static final int HOLO_BLUE = Color.parseColor("#33B5E5");
 
@@ -88,7 +88,7 @@ public class ShowcaseView extends RelativeLayout
         shotStateStore = new ShotStateStore(context);
 
         apiUtils.setFitsSystemWindowsCompat(this);
-        getViewTreeObserver().addOnPreDrawListener(this);
+        getViewTreeObserver().addOnPreDrawListener(new CalculateTextOnPreDraw());
         getViewTreeObserver().addOnGlobalLayoutListener(new UpdateOnGlobalLayout());
 
         // Get the attributes for the ShowcaseView
@@ -126,7 +126,7 @@ public class ShowcaseView extends RelativeLayout
             mEndButton.setLayoutParams(lps);
             mEndButton.setText(android.R.string.ok);
             if (!hasCustomClickListener) {
-                mEndButton.setOnClickListener(this);
+                mEndButton.setOnClickListener(hideOnClickListener);
             }
             addView(mEndButton);
         }
@@ -228,7 +228,7 @@ public class ShowcaseView extends RelativeLayout
             if (listener != null) {
                 mEndButton.setOnClickListener(listener);
             } else {
-                mEndButton.setOnClickListener(this);
+                mEndButton.setOnClickListener(hideOnClickListener);
             }
         }
         hasCustomClickListener = true;
@@ -248,15 +248,13 @@ public class ShowcaseView extends RelativeLayout
         }
     }
 
-    @Override
-    public boolean onPreDraw() {
+    private void recalculateText() {
         boolean recalculatedCling = showcaseAreaCalculator.calculateShowcaseRect(showcaseX, showcaseY, showcaseDrawer);
         boolean recalculateText = recalculatedCling || hasAlteredText;
         if (recalculateText) {
             textDrawer.calculateTextPosition(getMeasuredWidth(), getMeasuredHeight(), this, shouldCentreText);
         }
         hasAlteredText = false;
-        return true;
     }
 
     @SuppressWarnings("NullableProblems")
@@ -281,11 +279,6 @@ public class ShowcaseView extends RelativeLayout
 
         super.dispatchDraw(canvas);
 
-    }
-
-    @Override
-    public void onClick(View view) {
-        hide();
     }
 
     @Override
@@ -624,5 +617,21 @@ public class ShowcaseView extends RelativeLayout
             }
         }
     }
+
+    private class CalculateTextOnPreDraw implements ViewTreeObserver.OnPreDrawListener {
+
+        @Override
+        public boolean onPreDraw() {
+            recalculateText();
+            return true;
+        }
+    }
+
+    private OnClickListener hideOnClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            hide();
+        }
+    };
 
 }
