@@ -21,6 +21,8 @@ import android.view.View;
 import android.view.ViewParent;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class which wraps round the many implementations of ActionBarView and allows finding of Action
@@ -105,16 +107,44 @@ class ActionBarViewWrapper {
     public View getMediaRouterButtonView() {
         try {
             Field actionMenuPresenterField =
-                    mAbsActionBarViewClass.getDeclaredField("mActionMenuPresenter");
+                    mActionBarViewClass.getDeclaredField("mOptionsMenu");
             actionMenuPresenterField.setAccessible(true);
-            Object actionMenuPresenter = actionMenuPresenterField.get(mActionBarView);
-            Field mediaRouteButtonField = actionMenuPresenter.getClass()
-                    .getDeclaredField("mScrapActionButtonView");
-            mediaRouteButtonField.setAccessible(true);
-            return (View) mediaRouteButtonField.get(actionMenuPresenter);
+            Object optionsMenu = actionMenuPresenterField.get(mActionBarView);
+
+            Field actionItemsField = optionsMenu.getClass().getDeclaredField("mActionItems");
+            actionItemsField.setAccessible(true);
+
+            List actionItems = (ArrayList) actionItemsField.get(optionsMenu);
+            if (null != actionItems) {
+                for(Object obj : actionItems) {
+                    System.out.println(obj);
+                    Object view = getMediaRouteButton(obj);
+                    if (null != view) {
+                        return (View) view;
+                    }
+                }
+            }
+
+            return null;
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    private Object getMediaRouteButton(Object obj) {
+        try {
+            Field f = obj.getClass().getDeclaredField("mActionView");
+            f.setAccessible(true);
+            Object view = f.get(obj);
+            if("android.support.v7.app.MediaRouteButton".equals(view.getClass().getName())) {
+                return view;
+            }
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;
