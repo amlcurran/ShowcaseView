@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.text.DynamicLayout;
 import android.text.Layout;
 import android.text.SpannableString;
@@ -47,7 +48,7 @@ class TextDrawer {
     private TextAppearanceSpan mDetailSpan;
     private boolean hasRecalculated;
 
-    public TextDrawer(Resources resources, ShowcaseAreaCalculator calculator, Context context) {
+    public TextDrawer(Resources resources, ShowcaseAreaCalculator calculator, Context context, Typeface typeface) {
         padding = resources.getDimension(R.dimen.text_padding);
         actionBarOffset = resources.getDimension(R.dimen.action_bar_offset);
 
@@ -59,6 +60,11 @@ class TextDrawer {
 
         textPaint = new TextPaint();
         textPaint.setAntiAlias(true);
+
+        if(typeface != null) {
+            titlePaint.setTypeface(typeface);
+            textPaint.setTypeface(typeface);
+        }
     }
 
     public void draw(Canvas canvas) {

@@ -24,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -75,10 +76,14 @@ public class ShowcaseView extends RelativeLayout
     private long fadeOutMillis;
 
     protected ShowcaseView(Context context, boolean newStyle) {
-        this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
+        this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle, null);
     }
 
-    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle, boolean newStyle) {
+    protected ShowcaseView(Context context, boolean newStyle, Typeface typeface) {
+        this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle, typeface);
+    }
+
+    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle, boolean newStyle, Typeface typeface) {
         super(context, attrs, defStyle);
 
         ApiUtils apiUtils = new ApiUtils();
@@ -105,7 +110,7 @@ public class ShowcaseView extends RelativeLayout
         } else {
             showcaseDrawer = new StandardShowcaseDrawer(getResources());
         }
-        textDrawer = new TextDrawer(getResources(), showcaseAreaCalculator, getContext());
+        textDrawer = new TextDrawer(getResources(), showcaseAreaCalculator, getContext(), typeface);
 
         updateStyle(styled, false);
 
@@ -389,12 +394,12 @@ public class ShowcaseView extends RelativeLayout
         private final Activity activity;
 
         public Builder(Activity activity) {
-            this(activity, false);
+            this(activity, false, null);
         }
 
-        public Builder(Activity activity, boolean useNewStyle) {
+        public Builder(Activity activity, boolean useNewStyle, Typeface typeface) {
             this.activity = activity;
-            this.showcaseView = new ShowcaseView(activity, useNewStyle);
+            this.showcaseView = new ShowcaseView(activity, useNewStyle, typeface);
             this.showcaseView.setTarget(Target.NONE);
         }
 
