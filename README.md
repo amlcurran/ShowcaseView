@@ -10,6 +10,9 @@ The library is based on the "Cling" view found in the Launcher on Ice-Cream Sand
 
 Project set-up
 ====
+
+**ShowcaseView currently supports API LEVEL 11+**
+
 If you're using a Gradle-based project, then you can add SCV as a dependency directly:
 
 ~~~
