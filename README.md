@@ -1,45 +1,37 @@
-The new ShowcaseView (v5.0)
+ShowcaseView
 ====
 
-This library has become more popular than I ever intended - but at the same time more unwieldy.
-This version is intended to be more stable,
-more friendly and better tested.
-
-There **are** features missing compared to v4. If you'd like to keep using them, then use the **legacy** branch in this repository. Please see the bottom of this page for more information.
-
-ShowcaseView library
-====
-  
-The ShowcaseView library is designed to highlight and showcase specific parts of apps to the user with a distinctive and attractive overlay. This library is great for pointing out points of interest for users, gestures, or obscure but useful items.
-
-The library is based on the "Cling" view found in the Launcher on Ice-Cream Sandwich and Jelly Bean, but extended to be easier to use.
-
-Please check out [the website](http://amlcurran.github.io/ShowcaseView/) for more information.
+The ShowcaseView (SCV) library is designed to highlight and showcase specific parts of apps to the user with a distinctive and attractive overlay. This library is great for pointing out points of interest for users, gestures, or obscure but useful items.
 
 <img src='./example@2x.png' width='270' height='480' />
 <img src='./example2@2x.png' width='270' height='480' />
 
-Set-up
-----
+The library is based on the "Cling" view found in the Launcher on Ice-Cream Sandwich and Jelly Bean.
 
-The library is now only compatible with Gradle out of the box. To use this library in your project, either:
+Project set-up
+====
+If you're using a Gradle-based project, then you can add SCV as a dependency directly:
 
-* Add the dependency from Maven like so: `compile 'com.github.amlcurran.showcaseview:library:5.0.0'`. You'll also need to add Maven central to your `repositories {}` tag like so:
 ~~~
-repositories {
-    mavenCentral()
-}
+compile 'com.github.amlcurran.showcaseview:library:5.0.0'
 ~~~
-* Copy the library project into your Gradle project. In your settings.gradle, add the project (using the `include (':libary')` notation). Sync Gradle and then go ahead! 
 
-Is it worth using?
-----
-Perhaps. Why not ask 
-[Google](https://github.com/googlecast/CastVideos-android),
-[HaxSync](https://play.google.com/store/apps/details?id=org.mots.haxsync), or [AllCast](https://play.google.com/store/apps/details?id=com.koushikdutta.cast), which each use the library?
+If you're using Maven (but not Gradle), you can add the APKlib as a dependency:
+
+~~~
+<dependency>
+  <groupId>com.github.amlcurran.showcaseview</groupId>
+  <artifactId>library</artifactId>
+  <version>5.0.0</version>
+  <type>apklib</type>
+</dependency>
+~~~
+
+If you're using a standard project without either Maven or Gradle, you'll have to download the project, and the add the library manually to your project.
+
 
 Usage
-----
+====
 
 To use ShowcaseView, use the Builder pattern.
 
@@ -52,13 +44,23 @@ new ShowcaseView.Builder(this)
     .setContentText("This is highlighting the Home button")
     .hideOnTouchOutside()
     .build();
-~~~ 
+~~~
 
-What's new in v5
----
-* Gradle and Maven compatibility! For now only snapshots are available, which can be accessed and added to Gradle builds by adding `compile 'com.github.amlcurran.showcaseview:library:5.0.0-SNAPSHOT'` to your dependencies. You will require the snapshot repository to be defined in your repositories.
-* Buidler pattern. It was much too difficult to create and set up a ShowcaseView, so there is now a Builder pattern available. This makes it dead easy to create a ShowcaseView.
-* New KitKat style showcase. Currently, this is only available by creating a Builder using the `new Builder(activity, true)` constructor.
+You can use styles to customise how a ShowcaseView looks. I'll write more documentation soon, but for now, check out the sample project's [styles](https://github.com/amlcurran/ShowcaseView/blob/master/sample/src/main/res/values/styles.xml).
+
+Sample Project
+----
+There's a sample project available which you can find in the project, or as an app on the [Google Play Store](https://play.google.com/store/apps/details?id=com.espian.showcaseview.sample).
+
+What's the legacy branch?
+----
+The [legacy branch](https://github.com/amlcurran/ShowcaseView/tree/legacy) is still available for people to use. This has more features than the master branch, but it more unwieldy to use and less stable. I don't support it at all - you'll have to build and compile it yourself. It isn't available on Maven Central either.
+
+Is it worth using?
+----
+Perhaps. Why not ask
+[Google](https://github.com/googlecast/CastVideos-android),
+[HaxSync](https://play.google.com/store/apps/details?id=org.mots.haxsync), or [AllCast](https://play.google.com/store/apps/details?id=com.koushikdutta.cast), which each use the library?
 
 What's missing in v5
 ---
@@ -95,6 +97,6 @@ library to add such a tweak to your own, overridden ShowcaseView then that is to
 Copyright and Licensing
 ----
 
-Copyright Alex Curran ([+Alex](https://plus.google.com/110510888639261520925/posts)) © 2012. All rights reserved.
+Copyright Alex Curran ([@amlcurran](https://twitter.com/amlcurran)) © 2012-2014. All rights reserved.
 
 This library is distributed under an Apache 2.0 License.
