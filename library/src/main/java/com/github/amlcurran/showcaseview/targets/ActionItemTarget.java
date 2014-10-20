@@ -18,6 +18,7 @@ package com.github.amlcurran.showcaseview.targets;
 
 import android.app.Activity;
 import android.graphics.Point;
+import android.view.View;
 import android.view.ViewParent;
 
 /**
@@ -41,7 +42,13 @@ public class ActionItemTarget implements Target {
     @Override
     public Point getPoint() {
         setUp();
-        return new ViewTarget(mActionBarWrapper.getActionItem(mItemId)).getPoint();
+        // If action item does not exist assume it's in the overflow.
+        // If this could be wrong we may need to check for overflow,
+        // and return NONE if it also doesn't exist.
+        View actionItem = mActionBarWrapper.getActionItem(mItemId);
+        if (actionItem == null)
+            return new ViewTarget(mActionBarWrapper.getOverflowView()).getPoint();
+        return new ViewTarget(actionItem).getPoint();
     }
 
     protected void setUp() {
