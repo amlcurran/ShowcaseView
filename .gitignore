@@ -13,6 +13,7 @@ bin/
 gen/
 lib/
 target/
+out/
 sample/gen-external-apklibs
 
 # Local configuration file (sdk path, etc)
@@ -39,3 +40,5 @@ settings.xml
 # Gradle
 .gradle
 build
+
+library/coverage-error.log
