@@ -75,6 +75,14 @@ public class ShowcaseView extends RelativeLayout
     private long fadeOutMillis;
     private boolean isShowing;
 
+    //Whether to manually shift text
+    public boolean hasManualTextPosShift;
+    public boolean hasManualBoxPosShift;
+    
+    //Where to manually shuffly showcase item positions
+	private int textXPosShift;
+	private int textYPosShift;
+
     protected ShowcaseView(Context context, boolean newStyle) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
     }
@@ -253,6 +261,9 @@ public class ShowcaseView extends RelativeLayout
         boolean recalculateText = recalculatedCling || hasAlteredText;
         if (recalculateText) {
             textDrawer.calculateTextPosition(getMeasuredWidth(), getMeasuredHeight(), this, shouldCentreText);
+            if (hasManualTextPosShift) {
+                textDrawer.setTextPostionShift(textXPosShift, textYPosShift);
+            }
         }
         hasAlteredText = false;
     }
@@ -504,6 +515,20 @@ public class ShowcaseView extends RelativeLayout
             showcaseView.setOnShowcaseEventListener(showcaseEventListener);
             return this;
         }
+        
+        /**
+         * Set the amount to shift the Showcaseview from its default position (in dp).
+         * Default is 0 dp.
+         * 
+         * @param textXPosShift dp to shift the ShowcaseView to the right
+         * @param textYPosShift dp to shift the ShowcaseView downward
+         */
+		public Builder textPostionShift(int textXPosShift, int textYPosShift) {
+			showcaseView.textXPosShift = textXPosShift;
+			showcaseView.textYPosShift = textYPosShift;
+			showcaseView.hasManualTextPosShift = true;
+		    return this;
+		}
     }
 
     /**
