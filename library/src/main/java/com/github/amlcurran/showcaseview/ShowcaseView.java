@@ -34,6 +34,7 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.github.amlcurran.showcaseview.ShowcaseView.Builder;
 import com.github.amlcurran.showcaseview.targets.Target;
 
 import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationEndListener;
@@ -527,6 +528,17 @@ public class ShowcaseView extends RelativeLayout
 			showcaseView.textXPosShift = textXPosShift;
 			showcaseView.textYPosShift = textYPosShift;
 			showcaseView.hasManualTextPosShift = true;
+		    return this;
+		}
+
+		/**
+		 * Scales the inner & outer circles surrounding the element being showcased.
+		 * 
+		 * @param scaleMultiplier default radii of circles around showcased item are multiplied by
+		 * 						  this to produce the actual radii the circles will be drawn with.
+		 */
+		public Builder scaleCircle(float scaleMultiplier) {
+			showcaseView.scaleMultiplier = scaleMultiplier;	
 		    return this;
 		}
     }
