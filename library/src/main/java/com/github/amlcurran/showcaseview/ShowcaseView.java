@@ -81,8 +81,8 @@ public class ShowcaseView extends RelativeLayout
     public boolean hasManualBoxPosShift;
     
     //Where to manually shuffly showcase item positions
-	private int textXPosShift;
-	private int textYPosShift;
+    private int textXPosShift;
+    private int textYPosShift;
 
     protected ShowcaseView(Context context, boolean newStyle) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
@@ -524,23 +524,23 @@ public class ShowcaseView extends RelativeLayout
          * @param textXPosShift dp to shift the ShowcaseView to the right
          * @param textYPosShift dp to shift the ShowcaseView downward
          */
-		public Builder textPostionShift(int textXPosShift, int textYPosShift) {
-			showcaseView.textXPosShift = textXPosShift;
-			showcaseView.textYPosShift = textYPosShift;
-			showcaseView.hasManualTextPosShift = true;
-		    return this;
-		}
+	public Builder textPostionShift(int textXPosShift, int textYPosShift) {
+	    showcaseView.textXPosShift = textXPosShift;
+	    showcaseView.textYPosShift = textYPosShift;
+	    showcaseView.hasManualTextPosShift = true;
+	    return this;
+	}
 
-		/**
-		 * Scales the inner & outer circles surrounding the element being showcased.
-		 * 
-		 * @param scaleMultiplier default radii of circles around showcased item are multiplied by
-		 * 						  this to produce the actual radii the circles will be drawn with.
-		 */
-		public Builder scaleCircle(float scaleMultiplier) {
-			showcaseView.scaleMultiplier = scaleMultiplier;	
-		    return this;
-		}
+	/**
+	 * Scales the inner & outer circles surrounding the element being showcased.
+	 * 
+	 * @param scaleMultiplier default radii of circles around showcased item are multiplied by
+	 *                        this to produce the actual radii the circles will be drawn with.
+	 */
+	public Builder scaleCircle(float scaleMultiplier) {
+            showcaseView.scaleMultiplier = scaleMultiplier;	
+	    return this;
+        }
     }
 
     /**
