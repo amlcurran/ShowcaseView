@@ -41,7 +41,7 @@ android {
         versionName VERSION_NAME
         versionCode Integer.parseInt(VERSION_CODE)
         targetSdkVersion Integer.parseInt(TARGET_SDK)
-        minSdkVersion Integer.parseInt(MIN_SDK)
+        minSdkVersion Integer.parseInt(MIN_SDK_LIBRARY)
     }
 }
 
