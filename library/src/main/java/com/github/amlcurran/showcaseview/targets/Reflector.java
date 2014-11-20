@@ -22,8 +22,6 @@ import android.view.ViewParent;
 interface Reflector {
     View getHomeButton();
 
-    void showcaseActionItem(int itemId);
-
     ViewParent getActionBarView();
 
     public enum ActionBarType {

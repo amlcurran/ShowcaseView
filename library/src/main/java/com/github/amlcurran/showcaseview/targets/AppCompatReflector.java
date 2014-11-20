@@ -52,8 +52,4 @@ class AppCompatReflector implements Reflector {
         return homeButton;
     }
 
-    @Override
-    public void showcaseActionItem(int itemId) {
-
-    }
 }
