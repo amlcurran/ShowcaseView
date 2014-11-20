@@ -41,11 +41,11 @@
         <item name="sv_titleTextAppearance">@style/CustomTitle</item>
     </style>
 
-    <style name="SampleTheme" parent="Theme.Sherlock.Light">
+    <style name="SampleTheme" parent="Theme.AppCompat.Light">
         <item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>
     </style>
 
-    <style name="SampleTheme2" parent="Theme.Sherlock.Light.DarkActionBar">
+    <style name="SampleTheme2" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="showcaseViewStyle">@style/CustomShowcaseTheme2</item>
     </style>
 
