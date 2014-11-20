@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <!--
   ~ Copyright 2014 Alex Curran
   ~
@@ -16,16 +15,14 @@
   ~ limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-            android:id="@+id/menu_item1"
-            android:icon="@drawable/ic_edit"
-            android:title="item1"
-            app:showAsAction="ifRoom"/>
-    <item
-            android:id="@+id/menu_item2"
-            android:icon="@drawable/ic_discard"
-            app:showAsAction="ifRoom"
-            android:title="Showcase title"/>
-</menu>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <view
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            class="android.support.v7.widget.Toolbar"
+            android:id="@+id/toolbar"/>
+</LinearLayout>

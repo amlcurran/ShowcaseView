@@ -126,7 +126,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         switch (position) {
 
             case 0:
-                //startActivity(new Intent(this, ActionItemsSampleActivity.class));
+                startActivity(new Intent(this, ToolbarActivity.class));
                 break;
 
             case 1:

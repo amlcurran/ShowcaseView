@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".v14.ActionItemsSampleActivity"
+            android:name=".ToolbarActivity"
             android:theme="@style/SampleTheme" />
         <!--<activity-->
         <!--android:name=".v14.MultipleActionItemsSampleActivity"-->
