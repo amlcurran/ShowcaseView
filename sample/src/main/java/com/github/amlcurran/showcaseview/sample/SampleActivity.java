@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -125,37 +126,45 @@ public class SampleActivity extends Activity implements View.OnClickListener,
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         switch (position) {
 
-            case 0:
+            case HardcodedListAdapter.INDEX_SUPPORT_ACTION_BAR:
+                startActivity(new Intent(this, SupportActionBarActivity.class));
+                break;
+
+            case HardcodedListAdapter.INDEX_TOOLBAR:
                 startActivity(new Intent(this, ToolbarActivity.class));
                 break;
 
-            case 1:
+            case HardcodedListAdapter.INDEX_ANIMATIONS:
                 startActivity(new Intent(this, AnimationSampleActivity.class));
                 break;
 
-            case 2:
+            case HardcodedListAdapter.INDEX_SINGLE_SHOT:
                 startActivity(new Intent(this, SingleShotActivity.class));
                 break;
 
-            // Not currently used
-            case 3:
-                startActivity(new Intent(this, MemoryManagementTesting.class));
         }
     }
 
     private static class HardcodedListAdapter extends ArrayAdapter {
 
-        private static final int[] TITLE_RES_IDS = new int[] {
-                R.string.title_action_items,
-                R.string.title_animations,
-                R.string.title_single_shot//, R.string.title_memory
-        };
+        public static final int INDEX_SUPPORT_ACTION_BAR = 0;
+        public static final int INDEX_TOOLBAR = 1;
+        public static final int INDEX_ANIMATIONS = 2;
+        public static final int INDEX_SINGLE_SHOT = 3;
 
-        private static final int[] SUMMARY_RES_IDS = new int[] {
-                R.string.sum_action_items,
-                R.string.sum_animations,
-                R.string.sum_single_shot//, R.string.sum_memory
-        };
+        private static final SparseIntArray TITLES = new SparseIntArray() {{
+            put(INDEX_SUPPORT_ACTION_BAR, R.string.title_action_items);
+            put(INDEX_TOOLBAR, R.string.title_toolbar);
+            put(INDEX_ANIMATIONS, R.string.title_animations);
+            put(INDEX_SINGLE_SHOT, R.string.title_single_shot);
+        }};
+
+        private static final SparseIntArray SUMMARIES = new SparseIntArray() {{
+            put(INDEX_SUPPORT_ACTION_BAR, R.string.sum_action_items);
+            put(INDEX_TOOLBAR, R.string.sum_toolbar);
+            put(INDEX_ANIMATIONS, R.string.sum_animations);
+            put(INDEX_SINGLE_SHOT, R.string.sum_single_shot);
+        }};
 
         public HardcodedListAdapter(Context context) {
             super(context, R.layout.item_next_thing);
@@ -163,7 +172,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 
         @Override
         public int getCount() {
-            return TITLE_RES_IDS.length;
+            return TITLES.size();
         }
 
         @Override
@@ -171,8 +180,8 @@ public class SampleActivity extends Activity implements View.OnClickListener,
             if (convertView == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_next_thing, parent, false);
             }
-            ((TextView) convertView.findViewById(R.id.textView)).setText(TITLE_RES_IDS[position]);
-            ((TextView) convertView.findViewById(R.id.textView2)).setText(SUMMARY_RES_IDS[position]);
+            ((TextView) convertView.findViewById(R.id.textView)).setText(TITLES.get(position));
+            ((TextView) convertView.findViewById(R.id.textView2)).setText(SUMMARIES.get(position));
             return convertView;
         }
     }

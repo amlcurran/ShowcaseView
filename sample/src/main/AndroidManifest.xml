@@ -35,7 +35,7 @@
         </activity>
         <activity
             android:name=".ToolbarActivity"
-            android:theme="@style/SampleTheme" />
+            android:theme="@style/SampleTheme.NoActionBar" />
         <!--<activity-->
         <!--android:name=".v14.MultipleActionItemsSampleActivity"-->
         <!--android:theme="@style/SampleTheme"/>-->
@@ -44,6 +44,9 @@
         <activity android:name=".animations.AnimationSampleActivity" />
 
         <activity android:name=".SingleShotActivity" />
+
+        <activity android:name=".SupportActionBarActivity"
+                  android:theme="@style/SampleTheme"/>
 
         <!--<activity android:name=".MemoryManagementTesting" />-->
     </application>

@@ -41,7 +41,11 @@
         <item name="sv_titleTextAppearance">@style/CustomTitle</item>
     </style>
 
-    <style name="SampleTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="SampleTheme.NoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>
+    </style>
+
+    <style name="SampleTheme" parent="Theme.AppCompat">
         <item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>
     </style>
 
