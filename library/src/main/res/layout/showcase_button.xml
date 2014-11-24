@@ -16,6 +16,6 @@
   -->
 
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/ShowcaseButton"
+    style="?sv_buttonStyle"
     android:text="@android:string/ok"
     android:id="@id/showcase_button" />
