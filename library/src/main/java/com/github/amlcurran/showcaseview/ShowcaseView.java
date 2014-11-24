@@ -106,6 +106,7 @@ public class ShowcaseView extends RelativeLayout
         fadeOutMillis = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
+        mEndButton.setTypeface(typeface);
         if (newStyle) {
             showcaseDrawer = new NewShowcaseDrawer(getResources());
         } else {
