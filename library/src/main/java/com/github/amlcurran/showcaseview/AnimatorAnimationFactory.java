@@ -35,6 +35,7 @@ class AnimatorAnimationFactory implements AnimationFactory {
         interpolator = new AccelerateDecelerateInterpolator();
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void fadeInView(View target, long duration, final AnimationStartListener listener) {
         ObjectAnimator oa = ObjectAnimator.ofFloat(target, ALPHA, INVISIBLE, VISIBLE);
