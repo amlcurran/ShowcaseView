@@ -46,6 +46,7 @@ class TextDrawer {
     private TextAppearanceSpan mTitleSpan;
     private TextAppearanceSpan mDetailSpan;
     private boolean hasRecalculated;
+    private boolean topBottomOnly;
 
     public TextDrawer(Resources resources, ShowcaseAreaCalculator calculator, Context context) {
         padding = resources.getDimension(R.dimen.text_padding);
@@ -127,19 +128,27 @@ class TextDrawer {
     	Rect showcase = showcaseView.hasShowcaseView() ?
     			calculator.getShowcaseRect() :
     			new Rect();
-    	
+
     	int[] areas = new int[4]; //left, top, right, bottom
     	areas[0] = showcase.left * canvasH;
     	areas[1] = showcase.top * canvasW;
     	areas[2] = (canvasW - showcase.right) * canvasH;
     	areas[3] = (canvasH - showcase.bottom) * canvasW;
-    	
-    	int largest = 0;
-    	for(int i = 1; i < areas.length; i++) {
-    		if(areas[i] > areas[largest])
-    			largest = i;
-    	}
-    	
+
+        int largest = 0;
+        if(topBottomOnly) {
+            if(areas[1] > areas[3]) {
+                largest = 1;
+            } else {
+                largest = 3;
+            }
+        } else {
+            for(int i = 1; i < areas.length; i++) {
+                if(areas[i] > areas[largest])
+                    largest = i;
+            }
+        }
+
     	// Position text in largest area
     	switch(largest) {
     	case 0:
@@ -175,7 +184,7 @@ class TextDrawer {
 	    		mBestTextPosition[2] /= 2;
 	    		mBestTextPosition[0] += canvasW / 4;
 	    		break;
-	    	} 
+	    	}
     	} else {
     		// As text is not centered add actionbar padding if the text is left or right
 	    	switch(largest) {
@@ -213,5 +222,9 @@ class TextDrawer {
 
     public boolean shouldDrawText() {
         return !TextUtils.isEmpty(mTitle) || !TextUtils.isEmpty(mDetails);
+    }
+
+    public void setTopBottomOnly(boolean isTopBottomOnly){
+        this.topBottomOnly  = isTopBottomOnly;
     }
 }

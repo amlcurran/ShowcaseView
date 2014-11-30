@@ -504,6 +504,14 @@ public class ShowcaseView extends RelativeLayout
             showcaseView.setOnShowcaseEventListener(showcaseEventListener);
             return this;
         }
+
+        /**
+         * Set if title and text should be shown only on top or bottom of Circle
+         */
+        public Builder setTopBottomOnly() {
+            showcaseView.setTopBottomOnly(true);
+            return this;
+        }
     }
 
     /**
@@ -539,6 +547,10 @@ public class ShowcaseView extends RelativeLayout
     private void setFadeDurations(long fadeInMillis, long fadeOutMillis) {
         this.fadeInMillis = fadeInMillis;
         this.fadeOutMillis = fadeOutMillis;
+    }
+
+    public void setTopBottomOnly(boolean isTopBottomOnly){
+        textDrawer.setTopBottomOnly(isTopBottomOnly);
     }
 
     /**
