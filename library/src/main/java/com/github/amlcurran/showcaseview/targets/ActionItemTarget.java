@@ -31,12 +31,18 @@ public class ActionItemTarget implements Target {
 
     private final Activity mActivity;
     private final int mItemId;
+    private boolean isOverflow = false;
 
     ActionBarViewWrapper mActionBarWrapper;
 
     public ActionItemTarget(Activity activity, int itemId) {
         mActivity = activity;
         mItemId = itemId;
+    }
+
+    public boolean isOverflow()
+    {
+        return isOverflow;
     }
 
     @Override
@@ -47,7 +53,10 @@ public class ActionItemTarget implements Target {
         // and return NONE if it also doesn't exist.
         View actionItem = mActionBarWrapper.getActionItem(mItemId);
         if (actionItem == null)
+        {
+            isOverflow = true;
             return new ViewTarget(mActionBarWrapper.getOverflowView()).getPoint();
+        }
         return new ViewTarget(actionItem).getPoint();
     }
 
