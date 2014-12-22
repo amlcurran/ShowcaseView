@@ -52,7 +52,13 @@ class StandardShowcaseDrawer implements ShowcaseDrawer {
     @Override
     public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier) {
         Canvas bufferCanvas = new Canvas(buffer);
-        bufferCanvas.drawCircle(x, y, showcaseRadius, eraserPaint);
+        if(scaleMultiplier == 0.0f)
+            scaleMultiplier = 0.001f;
+        //bufferCanvas.drawCircle(x, y, showcaseRadius, eraserPaint);
+        //[/Original]
+        //[GIOVA]
+            bufferCanvas.drawCircle(x, y, showcaseRadius * scaleMultiplier, eraserPaint);
+        //[/GIOVA]
         int halfW = getShowcaseWidth() / 2;
         int halfH = getShowcaseHeight() / 2;
         int left = (int) (x - halfW);
