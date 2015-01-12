@@ -40,4 +40,8 @@ public interface ShowcaseViewApi {
     void setStyle(int theme);
 
     boolean isShowing();
+
+    void setInnerCircleRadius(float innerRadius);
+
+    void setOuterCircleRadius(float outerRadius);
 }
