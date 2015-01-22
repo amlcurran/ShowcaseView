@@ -36,7 +36,6 @@ import com.github.amlcurran.showcaseview.ApiUtils;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.sample.animations.AnimationSampleActivity;
-import com.github.amlcurran.showcaseview.sample.v14.ActionItemsSampleActivity;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 public class SampleActivity extends Activity implements View.OnClickListener,
@@ -127,7 +126,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         switch (position) {
 
             case 0:
-                startActivity(new Intent(this, ActionItemsSampleActivity.class));
+                //startActivity(new Intent(this, ActionItemsSampleActivity.class));
                 break;
 
             case 1:

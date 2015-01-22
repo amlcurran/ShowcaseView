@@ -20,7 +20,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.13.0'
+        classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
 
@@ -41,7 +41,7 @@ android {
         versionName VERSION_NAME
         versionCode Integer.parseInt(VERSION_CODE)
         targetSdkVersion Integer.parseInt(TARGET_SDK)
-        minSdkVersion Integer.parseInt(MIN_SDK)
+        minSdkVersion Integer.parseInt(MIN_SDK_LIBRARY)
     }
 }
 
