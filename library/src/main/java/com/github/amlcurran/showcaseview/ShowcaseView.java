@@ -24,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -38,6 +39,7 @@ import com.github.amlcurran.showcaseview.targets.Target;
 
 import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationEndListener;
 import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationStartListener;
+import static com.github.amlcurran.showcaseview.ApiUtils.getNavigationBarHeight;
 
 /**
  * A view which allows you to showcase areas of your app with an explanation.
@@ -343,6 +345,10 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private static void insertShowcaseView(ShowcaseView showcaseView, Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int height = getNavigationBarHeight(activity);
+            showcaseView.setPadding(0, 0, 0, height);
+        }
         ((ViewGroup) activity.getWindow().getDecorView()).addView(showcaseView);
         if (!showcaseView.hasShot()) {
             showcaseView.show();
