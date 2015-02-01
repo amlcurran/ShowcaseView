@@ -27,11 +27,7 @@ import android.graphics.PorterDuff;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.view.*;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
@@ -39,7 +35,6 @@ import com.github.amlcurran.showcaseview.targets.Target;
 
 import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationEndListener;
 import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationStartListener;
-import static com.github.amlcurran.showcaseview.ApiUtils.getNavigationBarHeight;
 
 /**
  * A view which allows you to showcase areas of your app with an explanation.
@@ -346,8 +341,22 @@ public class ShowcaseView extends RelativeLayout
 
     private static void insertShowcaseView(ShowcaseView showcaseView, Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            int height = getNavigationBarHeight(activity);
-            showcaseView.setPadding(0, 0, 0, height);
+            Display display = ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            int myOrientation = display.getRotation();
+            switch (myOrientation) {
+                case Surface.ROTATION_0:
+                    showcaseView.setPadding(0, 0, 0, ApiUtils.getSoftButtonsBarSizePort(activity));
+                    break;
+                case Surface.ROTATION_90:
+                    showcaseView.setPadding(0, 0, ApiUtils.getSoftButtonsBarSizeLand(activity), 0);
+                    break;
+                case Surface.ROTATION_180:
+                    showcaseView.setPadding(0, 0, ApiUtils.getSoftButtonsBarSizeLand(activity), 0);
+                    break;
+                case Surface.ROTATION_270:
+                    showcaseView.setPadding(0, 0, ApiUtils.getSoftButtonsBarSizeLand(activity), 0);
+                    break;
+            }
         }
         ((ViewGroup) activity.getWindow().getDecorView()).addView(showcaseView);
         if (!showcaseView.hasShot()) {
