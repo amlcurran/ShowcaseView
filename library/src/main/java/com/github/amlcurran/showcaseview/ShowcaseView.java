@@ -31,6 +31,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.ViewTreeObserver.OnPreDrawListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
@@ -64,6 +66,8 @@ public class ShowcaseView extends RelativeLayout
     private boolean blockTouches = true;
     private boolean hideOnTouch = false;
     private OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
+    private OnPreDrawListener mOnPreDrawListener = null;
+    private OnGlobalLayoutListener mOnGlobalLayoutListener = null;
 
     private boolean hasAlteredText = false;
     private boolean hasNoTarget = false;
@@ -88,8 +92,11 @@ public class ShowcaseView extends RelativeLayout
         shotStateStore = new ShotStateStore(context);
 
         apiUtils.setFitsSystemWindowsCompat(this);
-        getViewTreeObserver().addOnPreDrawListener(new CalculateTextOnPreDraw());
-        getViewTreeObserver().addOnGlobalLayoutListener(new UpdateOnGlobalLayout());
+        
+    	mOnPreDrawListener = new CalculateTextOnPreDraw();
+        getViewTreeObserver().addOnPreDrawListener(mOnPreDrawListener);
+        mOnGlobalLayoutListener = new UpdateOnGlobalLayout();
+        getViewTreeObserver().addOnGlobalLayoutListener(mOnGlobalLayoutListener);
 
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme()
@@ -133,7 +140,7 @@ public class ShowcaseView extends RelativeLayout
 
     }
 
-    private boolean hasShot() {
+    public boolean hasShot() {
         return shotStateStore.hasShot();
     }
 
@@ -291,19 +298,30 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void clearBitmap() {
-        if (bitmapBuffer != null && !bitmapBuffer.isRecycled()) {
-            bitmapBuffer.recycle();
+    	if (bitmapBuffer != null) {
+            if (!bitmapBuffer.isRecycled()) {
+                bitmapBuffer.recycle();
+            }
             bitmapBuffer = null;
-        }
+    	}
     }
 
     private void fadeOutShowcase() {
         animationFactory.fadeOutView(this, fadeOutMillis, new AnimationEndListener() {
-            @Override
+            @SuppressWarnings("deprecation")
+			@Override
             public void onAnimationEnd() {
                 setVisibility(View.GONE);
                 isShowing = false;
                 mEventListener.onShowcaseViewDidHide(ShowcaseView.this);
+                
+            	getViewTreeObserver().removeOnPreDrawListener(mOnPreDrawListener);
+            	mOnPreDrawListener = null;
+            	getViewTreeObserver().removeGlobalOnLayoutListener(mOnGlobalLayoutListener);
+            	mOnGlobalLayoutListener = null;
+            	
+            	Activity activity = (Activity) getContext();
+            	((ViewGroup) activity.getWindow().getDecorView()).removeView(ShowcaseView.this);
             }
         });
     }
