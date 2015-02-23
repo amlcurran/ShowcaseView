@@ -485,7 +485,7 @@ public class ShowcaseView extends RelativeLayout
 
         /**
          * Set a listener which will override the button clicks.
-         * <p></p>
+         *
          * Note that you will have to manually hide the ShowcaseView
          *
          * @param onClickListener The callback that will run
@@ -499,7 +499,7 @@ public class ShowcaseView extends RelativeLayout
         /**
          * Don't make the ShowcaseView block touches on itself. This doesn't
          * block touches in the showcased area.
-         * <p></p>
+         * 
          * By default, the ShowcaseView does block touches
          *
          * @return This Builder object to allow for chaining of calls to set methods
