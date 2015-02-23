@@ -66,6 +66,10 @@ public class ActionViewTarget implements Target {
                 break;
 
         }
+        // For some reason the overflow can be null.
+        if (internal == null)
+            return null;
+
         return internal.getPoint();
     }
 
