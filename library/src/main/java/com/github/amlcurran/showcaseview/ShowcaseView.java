@@ -66,7 +66,9 @@ public class ShowcaseView extends RelativeLayout
     private OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
 
     private boolean hasAlteredText = false;
-    private boolean hasNoTarget = false;
+    private boolean hasTarget = false;
+    private Target mTarget = null;
+    private boolean mAnimate = false;
     private boolean shouldCentreText;
     private Bitmap bitmapBuffer;
 
@@ -156,37 +158,41 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void setShowcase(final Target target, final boolean animate) {
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        mTarget = target;
+        mAnimate = animate;
+        //If layout hasn't occurred, don't try to setup the target as it
+        //will be setup after the first layout anyway (GlobalLayoutListener)
+        if (getMeasuredHeight() == 0 && getMeasuredWidth() == 0)
+            return;
+        setupTarget(target, animate);
+    }
 
-                if (!shotStateStore.hasShot()) {
-
-                    updateBitmap();
-                    Point targetPoint = target.getPoint();
-                    if (targetPoint != null) {
-                        hasNoTarget = false;
-                        if (animate) {
-                            animationFactory.animateTargetToPoint(ShowcaseView.this, targetPoint);
-                        } else {
-                            setShowcasePosition(targetPoint);
-                        }
-                    } else {
-                        hasNoTarget = true;
-                        invalidate();
-                    }
-
+    private void setupTarget(final Target target, final boolean animate) {
+        if (!shotStateStore.hasShot()) {
+            updateBitmap();
+            Point targetPoint = target.getPoint();
+            if (targetPoint != null) {
+                hasTarget = true;
+                if (animate) {
+                    animationFactory.animateTargetToPoint(ShowcaseView.this, targetPoint);
+                } else {
+                    setShowcasePosition(targetPoint);
                 }
+            } else {
+                hasTarget = false;
+                invalidate();
             }
-        }, 100);
+        }
     }
 
     private void updateBitmap() {
         if (bitmapBuffer == null || haveBoundsChanged()) {
-            if(bitmapBuffer != null)
-        		bitmapBuffer.recycle();
-            bitmapBuffer = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-
+            if (bitmapBuffer != null)
+                bitmapBuffer.recycle();
+            if (getMeasuredWidth() != 0 && getMeasuredHeight() != 0) {
+                bitmapBuffer = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(),
+                        Bitmap.Config.ARGB_8888);
+            }
         }
     }
 
@@ -196,7 +202,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public boolean hasShowcaseView() {
-        return (showcaseX != 1000000 && showcaseY != 1000000) && !hasNoTarget;
+        return (showcaseX != 1000000 && showcaseY != 1000000) && hasTarget;
     }
 
     public void setShowcaseX(int x) {
@@ -269,7 +275,7 @@ public class ShowcaseView extends RelativeLayout
         showcaseDrawer.erase(bitmapBuffer);
 
         // Draw the showcase drawable
-        if (!hasNoTarget) {
+        if (hasTarget) {
             showcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY, scaleMultiplier);
             showcaseDrawer.drawToCanvas(canvas, bitmapBuffer);
         }
@@ -613,6 +619,10 @@ public class ShowcaseView extends RelativeLayout
         @Override
         public void onGlobalLayout() {
             if (!shotStateStore.hasShot()) {
+                //Check if target needs to be setup
+                if (!hasTarget && mTarget != null) {
+                    setupTarget(mTarget, mAnimate);
+                }
                 updateBitmap();
             }
         }
