@@ -14,6 +14,13 @@
   ~ limitations under the License.
   -->
 
+<!-- Why the hell the project is not using style to setup the radiu?
+    the style is the only (xml/canonical) way to set configuration of a 
+    widget with multiple version! Since there is zero efforts to make
+    available a simples set method to change radius, so it's more flexible
+    extract overhere the radius values? no? well i'm sorry
+-->
+
 <resources>
 
     <declare-styleable name="ShowcaseView">
@@ -27,6 +34,11 @@
         <attr name="sv_titleTextAppearance" format="reference" />
         <attr name="sv_showcaseColor" format="color|reference" />
         <attr name="sv_tintButtonColor" format="boolean|reference" />
+        
+        <attr name="sv_radius" format="dimension" />
+        <attr name="sv_radius_inner" format="dimension" />
+        <attr name="sv_radius_outter" format="dimension" />
+        
     </declare-styleable>
     <declare-styleable name="CustomTheme">
         <attr name="showcaseViewStyle" format="reference" />
