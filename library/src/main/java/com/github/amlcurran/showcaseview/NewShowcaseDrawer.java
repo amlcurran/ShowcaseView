@@ -30,8 +30,8 @@ class NewShowcaseDrawer extends StandardShowcaseDrawer {
     // Probably i'm dumb as fuck, but i dont really know why we need this final
     //private final float outerRadius;
     //private final float innerRadius;
-    private float outerRadius;
-    private float innerRadius;
+    public float outerRadius;
+    public float innerRadius;
 
     public NewShowcaseDrawer(Resources resources) {
         super(resources);
@@ -42,9 +42,19 @@ class NewShowcaseDrawer extends StandardShowcaseDrawer {
     public void setInnerRadius(float innerRadius){
         this.innerRadius = innerRadius;
     }
-    
+
+    public float getInnerRadius() {
+
+        return innerRadius;
+    }
+
     public void setOuterRadius(float outerRadius){
         this.outerRadius = outerRadius;
+    }
+
+    public float getOuterRadius() {
+
+        return outerRadius;
     }
 
     @Override
@@ -71,24 +81,42 @@ class NewShowcaseDrawer extends StandardShowcaseDrawer {
         this.outerRadius = outerRadius; // make sure getBlockedRadius show well
         Canvas bufferCanvas = new Canvas(buffer);
         eraserPaint.setAlpha(ALPHA_60_PERCENT);
-        bufferCanvas.drawCircle(x, y, outerRadius, eraserPaint);
+        //bufferCanvas.drawCircle(x, y, outerRadius, eraserPaint);
+        bufferCanvas.drawCircle(x, y, this.getOuterRadius(), eraserPaint);
         eraserPaint.setAlpha(0);
-        bufferCanvas.drawCircle(x, y, innerRadius, eraserPaint);
+        //bufferCanvas.drawCircle(x, y, innerRadius, eraserPaint);
+        bufferCanvas.drawCircle(x, y, this.getInnerRadius(), eraserPaint);
     }
 
+
+    /*
     @Override
     public int getShowcaseWidth() {
         return (int) (outerRadius * 2);
+    }*/
+    @Override
+    public int getShowcaseWidth() {
+        return (int) (this.getOuterRadius() * 2);
     }
+
+    /*@Override
+    public int getShowcaseHeight() {
+        return (int) (outerRadius * 2);
+    }*/
 
     @Override
     public int getShowcaseHeight() {
-        return (int) (outerRadius * 2);
+        return (int) (this.outerRadius * 2);
     }
+
+    /*@Override
+    public float getBlockedRadius() {
+        return innerRadius;
+    }*/
 
     @Override
     public float getBlockedRadius() {
-        return innerRadius;
+        return this.getInnerRadius();
     }
 
     @Override

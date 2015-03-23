@@ -68,15 +68,18 @@ public class AnimationSampleActivity extends Activity implements View.OnClickLis
     public void onClick(View v) {
         switch (counter) {
             case 0:
+                showcaseView.setAllRadius(60,70,80);
                 showcaseView.setShowcase(new ViewTarget(textView2), true);
                 break;
 
             case 1:
+                showcaseView.setAllRadius(10,20,30);
                 showcaseView.setShowcase(new ViewTarget(textView3), true);
                 break;
 
             case 2:
                 showcaseView.setTarget(Target.NONE);
+                showcaseView.setAllRadius(40,50,60);
                 showcaseView.setContentTitle("Check it out");
                 showcaseView.setContentText("You don't always need a target to showcase");
                 showcaseView.setButtonText(getString(R.string.close));

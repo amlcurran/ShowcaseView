@@ -29,8 +29,38 @@ class StandardShowcaseDrawer implements ShowcaseDrawer {
     protected final Paint eraserPaint;
     protected final Drawable showcaseDrawable;
     private final Paint basicPaint;
-    private final float showcaseRadius;
+    // Why final dude! why .-. and why private? this is not a playground for kids, we are adults here?
+    private float showcaseRadius;
     protected int backgroundColour;
+
+    // - now we gonna need this to "jump over" the proof-kid fence -.-
+    public float getShowcaseRadius() {
+
+        return showcaseRadius;
+    }
+
+    @Override public void setInnerRadius(float innerRadius) {
+
+    }
+
+    @Override public float getInnerRadius() {
+
+        return 0;
+    }
+
+    @Override public void setOuterRadius(float outerRadius) {
+
+    }
+
+    @Override public float getOuterRadius() {
+
+        return 0;
+    }
+
+    public void setShowcaseRadius(float showcaseRadius) {
+
+        this.showcaseRadius = showcaseRadius;
+    }
 
     public StandardShowcaseDrawer(Resources resources) {
         PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
@@ -52,7 +82,8 @@ class StandardShowcaseDrawer implements ShowcaseDrawer {
     @Override
     public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier) {
         Canvas bufferCanvas = new Canvas(buffer);
-        bufferCanvas.drawCircle(x, y, showcaseRadius, eraserPaint);
+        //bufferCanvas.drawCircle(x, y, showcaseRadius, eraserPaint);
+        bufferCanvas.drawCircle(x, y, this.getShowcaseRadius(), eraserPaint);
         int halfW = getShowcaseWidth() / 2;
         int halfH = getShowcaseHeight() / 2;
         int left = (int) (x - halfW);
