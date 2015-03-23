@@ -62,6 +62,11 @@ class StandardShowcaseDrawer implements ShowcaseDrawer {
                 top + getShowcaseHeight());
         showcaseDrawable.draw(bufferCanvas);
     }
+    
+    @Override
+    public void drawShowcase(Bitmap buffer, float x, float y, float innerRadius, float outerRadius, float scaleMultiplier ) {
+        // pass
+    } 
 
     @Override
     public int getShowcaseWidth() {
