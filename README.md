@@ -1,5 +1,15 @@
-ShowcaseView
+ShowcaseView is deprecated
 ====
+Currently, ShowcaseView is not under active development; issues cannot be opened and PRs will not be accepted.
+
+I've decided to make this decision because I want to rewrite the project from scratch with a far better API. A lot of things Google keep introducing in Android break ShowcaseView and it is too difficult to make these changes with the project in it's current form.
+
+The project is still available on Maven, see below for the instructions. Please see the new-scv branch for development of the new API.
+
+
+
+ShowcaseView
+---
 
 The ShowcaseView (SCV) library is designed to highlight and showcase specific parts of apps to the user with a distinctive and attractive overlay. This library is great for pointing out points of interest for users, gestures, or obscure but useful items.
 
