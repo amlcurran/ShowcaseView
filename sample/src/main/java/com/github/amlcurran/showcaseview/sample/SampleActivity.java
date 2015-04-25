@@ -16,38 +16,24 @@
 
 package com.github.amlcurran.showcaseview.sample;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.github.amlcurran.showcaseview.ApiUtils;
-import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.sample.animations.AnimationSampleActivity;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
-public class SampleActivity extends Activity implements View.OnClickListener,
-        OnShowcaseEventListener, AdapterView.OnItemClickListener {
+public class SampleActivity extends Activity {
 
-    private static final float ALPHA_DIM_VALUE = 0.1f;
-
-    ShowcaseView sv;
     Button buttonBlocked;
     ListView listView;
-
-    private final ApiUtils apiUtils = new ApiUtils();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,10 +43,8 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         HardcodedListAdapter adapter = new HardcodedListAdapter(this);
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(this);
 
         buttonBlocked = (Button) findViewById(R.id.buttonBlocked);
-        buttonBlocked.setOnClickListener(this);
 
         RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -69,78 +53,6 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         lps.setMargins(margin, margin, margin, margin);
 
         ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
-        sv = new ShowcaseView.Builder(this, true)
-                .setTarget(target)
-                .setContentTitle(R.string.showcase_main_title)
-                .setContentText(R.string.showcase_main_message)
-                .setStyle(R.style.CustomShowcaseTheme2)
-                .setShowcaseEventListener(this)
-                .build();
-        sv.setButtonPosition(lps);
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void dimView(View view) {
-        if (apiUtils.isCompatWithHoneycomb()) {
-            view.setAlpha(ALPHA_DIM_VALUE);
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-
-        int viewId = view.getId();
-        switch (viewId) {
-            case R.id.buttonBlocked:
-                if (sv.isShown()) {
-                    sv.setStyle(R.style.CustomShowcaseTheme);
-                } else {
-                    sv.show();
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-        if (apiUtils.isCompatWithHoneycomb()) {
-            listView.setAlpha(1f);
-        }
-        buttonBlocked.setText(R.string.button_show);
-        //buttonBlocked.setEnabled(false);
-    }
-
-    @Override
-    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-    }
-
-    @Override
-    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-        dimView(listView);
-        buttonBlocked.setText(R.string.button_hide);
-        //buttonBlocked.setEnabled(true);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        switch (position) {
-
-            case 0:
-                //startActivity(new Intent(this, ActionItemsSampleActivity.class));
-                break;
-
-            case 1:
-                startActivity(new Intent(this, AnimationSampleActivity.class));
-                break;
-
-            case 2:
-                startActivity(new Intent(this, SingleShotActivity.class));
-                break;
-
-            // Not currently used
-            case 3:
-                startActivity(new Intent(this, MemoryManagementTesting.class));
-        }
     }
 
     private static class HardcodedListAdapter extends ArrayAdapter {
