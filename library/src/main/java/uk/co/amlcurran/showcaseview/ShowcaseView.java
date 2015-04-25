@@ -1,20 +1,18 @@
 package uk.co.amlcurran.showcaseview;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.widget.FrameLayout;
 
-public class ShowcaseView extends FrameLayout {
+import static uk.co.amlcurran.showcaseview.Utils.assertIsFrameLayout;
 
-    private static final String TAG = ShowcaseView.class.getSimpleName();
+public class ShowcaseView extends FrameLayout {
 
     public static ShowcaseView insertIntoActivity(Activity activity) {
         ShowcaseView showcaseView = new ShowcaseView(activity, null);
@@ -22,12 +20,6 @@ public class ShowcaseView extends FrameLayout {
         assertIsFrameLayout(contentView);
         ((ViewGroup) contentView).addView(showcaseView);
         return showcaseView;
-    }
-
-    private static void assertIsFrameLayout(View view) {
-        if (!(view instanceof FrameLayout)) {
-            Log.w(TAG, "Expected a FrameLayout as a parent, unexpected things may occur");
-        }
     }
 
     public ShowcaseView(Context context, AttributeSet attrs) {
@@ -51,31 +43,12 @@ public class ShowcaseView extends FrameLayout {
 
     public void remove() {
         ViewPropertyAnimator alpha = animate().alpha(0);
-        alpha.setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                removeWithoutAnimation();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
+        alpha.setListener(new RemoveShowcaseOnEnd(this));
         alpha.start();
     }
 
     public void removeWithoutAnimation() {
         ((ViewGroup) getParent()).removeView(this);
     }
+
 }
