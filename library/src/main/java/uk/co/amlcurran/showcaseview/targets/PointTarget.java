@@ -14,19 +14,27 @@
  * limitations under the License.
  */
 
-package com.github.amlcurran.showcaseview.targets;
+package uk.co.amlcurran.showcaseview.targets;
 
-import android.view.View;
-import android.view.ViewParent;
+import android.graphics.Point;
 
-interface Reflector {
-    View getHomeButton();
+/**
+ * Showcase a specific x/y co-ordinate on the screen.
+ */
+public class PointTarget implements Target {
 
-    void showcaseActionItem(int itemId);
+    private final Point mPoint;
 
-    ViewParent getActionBarView();
+    public PointTarget(Point point) {
+        mPoint = point;
+    }
 
-    public enum ActionBarType {
-        STANDARD, APP_COMPAT, ACTIONBAR_SHERLOCK
+    public PointTarget(int xValue, int yValue) {
+        mPoint = new Point(xValue, yValue);
+    }
+
+    @Override
+    public Point getPoint() {
+        return mPoint;
     }
 }

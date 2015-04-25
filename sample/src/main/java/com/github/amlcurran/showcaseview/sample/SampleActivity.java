@@ -27,6 +27,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import uk.co.amlcurran.showcaseview.ShowcaseView;
+
 public class SampleActivity extends Activity {
 
     Button buttonBlocked;
@@ -42,6 +44,15 @@ public class SampleActivity extends Activity {
         listView.setAdapter(adapter);
 
         buttonBlocked = (Button) findViewById(R.id.buttonBlocked);
+
+        final ShowcaseView showcaseView = ShowcaseView.insertIntoActivity(this);
+        showcaseView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showcaseView.remove();
+            }
+        });
+
     }
 
     private static class HardcodedListAdapter extends ArrayAdapter {

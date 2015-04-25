@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.amlcurran.showcaseview.targets;
+package uk.co.amlcurran.showcaseview.targets;
 
 import android.util.Log;
 import android.view.View;

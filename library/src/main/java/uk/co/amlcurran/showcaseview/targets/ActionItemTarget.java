@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.amlcurran.showcaseview.targets;
+package uk.co.amlcurran.showcaseview.targets;
 
 import android.app.Activity;
 import android.graphics.Point;
@@ -22,9 +22,9 @@ import android.view.ViewParent;
 
 /**
  * Represents an Action item to showcase (e.g., one of the buttons on an ActionBar).
- * To showcase specific action views such as the home button, use {@link com.github.amlcurran.showcaseview.targets.ActionItemTarget}
+ * To showcase specific action views such as the home button, use {@link uk.co.amlcurran.showcaseview.targets.ActionItemTarget}
  *
- * @see com.github.amlcurran.showcaseview.targets.ActionItemTarget
+ * @see uk.co.amlcurran.showcaseview.targets.ActionItemTarget
  */
 public class ActionItemTarget implements Target {
 
