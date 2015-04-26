@@ -24,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -76,10 +77,14 @@ public class ShowcaseView extends RelativeLayout
     private boolean isShowing;
 
     protected ShowcaseView(Context context, boolean newStyle) {
-        this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
+        this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle, null);
     }
 
-    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle, boolean newStyle) {
+    protected ShowcaseView(Context context, boolean newStyle, Typeface typeface) {
+        this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle, typeface);
+    }
+
+    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle, boolean newStyle, Typeface typeface) {
         super(context, attrs, defStyle);
 
         ApiUtils apiUtils = new ApiUtils();
@@ -101,12 +106,13 @@ public class ShowcaseView extends RelativeLayout
         fadeOutMillis = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
+        mEndButton.setTypeface(typeface);
         if (newStyle) {
             showcaseDrawer = new NewShowcaseDrawer(getResources());
         } else {
             showcaseDrawer = new StandardShowcaseDrawer(getResources());
         }
-        textDrawer = new TextDrawer(getResources(), showcaseAreaCalculator, getContext());
+        textDrawer = new TextDrawer(getResources(), showcaseAreaCalculator, getContext(), typeface);
 
         updateStyle(styled, false);
 
@@ -388,12 +394,12 @@ public class ShowcaseView extends RelativeLayout
         private final Activity activity;
 
         public Builder(Activity activity) {
-            this(activity, false);
+            this(activity, false, null);
         }
 
-        public Builder(Activity activity, boolean useNewStyle) {
+        public Builder(Activity activity, boolean useNewStyle, Typeface typeface) {
             this.activity = activity;
-            this.showcaseView = new ShowcaseView(activity, useNewStyle);
+            this.showcaseView = new ShowcaseView(activity, useNewStyle, typeface);
             this.showcaseView.setTarget(Target.NONE);
         }
 
@@ -409,6 +415,10 @@ public class ShowcaseView extends RelativeLayout
 
         /**
          * Set the title text shown on the ShowcaseView.
+         *
+         * @param resId The resource ID of the title.
+         *
+         * @return This Builder object to allow for chaining of calls to set methods
          */
         public Builder setContentTitle(int resId) {
             return setContentTitle(activity.getString(resId));
@@ -416,6 +426,9 @@ public class ShowcaseView extends RelativeLayout
 
         /**
          * Set the title text shown on the ShowcaseView.
+         * @param title the title text shown on the ShowcaseView.
+         *
+         * @return This Builder object to allow for chaining of calls to set methods
          */
         public Builder setContentTitle(CharSequence title) {
             showcaseView.setContentTitle(title);
@@ -424,6 +437,10 @@ public class ShowcaseView extends RelativeLayout
 
         /**
          * Set the descriptive text shown on the ShowcaseView.
+         *
+         * @param resId The resource ID of the descriptive text shown on the ShowcaseView.
+         *
+         * @return This Builder object to allow for chaining of calls to set methods
          */
         public Builder setContentText(int resId) {
             return setContentText(activity.getString(resId));
@@ -431,6 +448,10 @@ public class ShowcaseView extends RelativeLayout
 
         /**
          * Set the descriptive text shown on the ShowcaseView.
+         *
+         * @param text the descriptive text shown on the ShowcaseView.
+         *
+         * @return This Builder object to allow for chaining of calls to set methods
          */
         public Builder setContentText(CharSequence text) {
             showcaseView.setContentText(text);
@@ -442,6 +463,8 @@ public class ShowcaseView extends RelativeLayout
          *
          * @param target a {@link com.github.amlcurran.showcaseview.targets.Target} representing
          *               the item to showcase (e.g., a button, or action item).
+         *
+         * @return This Builder object to allow for chaining of calls to set methods
          */
         public Builder setTarget(Target target) {
             showcaseView.setTarget(target);
@@ -450,6 +473,10 @@ public class ShowcaseView extends RelativeLayout
 
         /**
          * Set the style of the ShowcaseView. See the sample app for example styles.
+         *
+         * @param theme The style resource describing the theme.
+         *
+         * @return This Builder object to allow for chaining of calls to set methods
          */
         public Builder setStyle(int theme) {
             showcaseView.setStyle(theme);
@@ -458,8 +485,11 @@ public class ShowcaseView extends RelativeLayout
 
         /**
          * Set a listener which will override the button clicks.
-         * <p/>
+         *
          * Note that you will have to manually hide the ShowcaseView
+         *
+         * @param onClickListener The callback that will run
+         * @return This Builder object to allow for chaining of calls to set methods
          */
         public Builder setOnClickListener(OnClickListener onClickListener) {
             showcaseView.overrideButtonClick(onClickListener);
@@ -469,8 +499,10 @@ public class ShowcaseView extends RelativeLayout
         /**
          * Don't make the ShowcaseView block touches on itself. This doesn't
          * block touches in the showcased area.
-         * <p/>
+         * 
          * By default, the ShowcaseView does block touches
+         *
+         * @return This Builder object to allow for chaining of calls to set methods
          */
         public Builder doNotBlockTouches() {
             showcaseView.setBlocksTouches(false);
@@ -480,8 +512,10 @@ public class ShowcaseView extends RelativeLayout
         /**
          * Make this ShowcaseView hide when the user touches outside the showcased area.
          * This enables {@link #doNotBlockTouches()} as well.
-         * <p/>
+         *
          * By default, the ShowcaseView doesn't hide on touch.
+         *
+         * @return This Builder object to allow for chaining of calls to set methods
          */
         public Builder hideOnTouchOutside() {
             showcaseView.setBlocksTouches(true);
@@ -494,6 +528,8 @@ public class ShowcaseView extends RelativeLayout
          *
          * @param shotId a unique identifier (<em>across the app</em>) to store
          *               whether this ShowcaseView has been shown.
+         *
+         * @return This Builder object to allow for chaining of calls to set methods
          */
         public Builder singleShot(long shotId) {
             showcaseView.setSingleShot(shotId);
@@ -508,6 +544,7 @@ public class ShowcaseView extends RelativeLayout
 
     /**
      * Set whether the text should be centred in the screen, or left-aligned (which is the default).
+     * @param shouldCentreText indicates whether text should be centred in the screen
      */
     public void setShouldCentreText(boolean shouldCentreText) {
         this.shouldCentreText = shouldCentreText;
@@ -559,6 +596,8 @@ public class ShowcaseView extends RelativeLayout
 
     /**
      * @see com.github.amlcurran.showcaseview.ShowcaseView.Builder#setStyle(int)
+     *
+     * @param theme The style resource describing the theme.
      */
     @Override
     public void setStyle(int theme) {
@@ -589,7 +628,7 @@ public class ShowcaseView extends RelativeLayout
 
         showcaseDrawer.setShowcaseColour(showcaseColor);
         showcaseDrawer.setBackgroundColour(backgroundColor);
-        tintButton(showcaseColor, tintButton);
+        //tintButton(showcaseColor, tintButton);
         mEndButton.setText(buttonText);
         textDrawer.setTitleStyling(titleTextAppearance);
         textDrawer.setDetailStyling(detailTextAppearance);
