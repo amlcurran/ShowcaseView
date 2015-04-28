@@ -34,6 +34,7 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.github.amlcurran.showcaseview.ShowcaseView.Builder;
 import com.github.amlcurran.showcaseview.targets.Target;
 
 import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationEndListener;
@@ -74,6 +75,14 @@ public class ShowcaseView extends RelativeLayout
     private long fadeInMillis;
     private long fadeOutMillis;
     private boolean isShowing;
+
+    //Whether to manually shift text
+    public boolean hasManualTextPosShift;
+    public boolean hasManualBoxPosShift;
+    
+    //Where to manually shuffly showcase item positions
+    private int textXPosShift;
+    private int textYPosShift;
 
     protected ShowcaseView(Context context, boolean newStyle) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
@@ -253,6 +262,9 @@ public class ShowcaseView extends RelativeLayout
         boolean recalculateText = recalculatedCling || hasAlteredText;
         if (recalculateText) {
             textDrawer.calculateTextPosition(getMeasuredWidth(), getMeasuredHeight(), this, shouldCentreText);
+            if (hasManualTextPosShift) {
+                textDrawer.setTextPostionShift(textXPosShift, textYPosShift);
+            }
         }
         hasAlteredText = false;
     }
@@ -503,6 +515,31 @@ public class ShowcaseView extends RelativeLayout
         public Builder setShowcaseEventListener(OnShowcaseEventListener showcaseEventListener) {
             showcaseView.setOnShowcaseEventListener(showcaseEventListener);
             return this;
+        }
+        
+        /**
+         * Set the amount to shift the Showcaseview from its default position (in dp).
+         * Default is 0 dp.
+         * 
+         * @param textXPosShift dp to shift the ShowcaseView to the right
+         * @param textYPosShift dp to shift the ShowcaseView downward
+         */
+	public Builder textPostionShift(int textXPosShift, int textYPosShift) {
+	    showcaseView.textXPosShift = textXPosShift;
+	    showcaseView.textYPosShift = textYPosShift;
+	    showcaseView.hasManualTextPosShift = true;
+	    return this;
+	}
+
+	/**
+	 * Scales the inner & outer circles surrounding the element being showcased.
+	 * 
+	 * @param scaleMultiplier default radii of circles around showcased item are multiplied by
+	 *                        this to produce the actual radii the circles will be drawn with.
+	 */
+	public Builder scaleCircle(float scaleMultiplier) {
+            showcaseView.scaleMultiplier = scaleMultiplier;	
+	    return this;
         }
     }
 

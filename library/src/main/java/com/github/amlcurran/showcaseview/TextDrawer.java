@@ -214,4 +214,10 @@ class TextDrawer {
     public boolean shouldDrawText() {
         return !TextUtils.isEmpty(mTitle) || !TextUtils.isEmpty(mDetails);
     }
+    
+    public void setTextPostionShift(int xPositionShift, int yPositionShift) {
+        mBestTextPosition[0] = mBestTextPosition[0] + xPositionShift;
+        mBestTextPosition[1] = mBestTextPosition[1] + yPositionShift;
+    }
+
 }
