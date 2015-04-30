@@ -215,6 +215,11 @@ public class ShowcaseView extends RelativeLayout
         return showcaseY;
     }
 
+    public int getButtonId()
+    {
+        return mEndButton.getId();
+    }
+
     /**
      * Override the standard button click event
      *
@@ -358,15 +363,17 @@ public class ShowcaseView extends RelativeLayout
 
     @Override
     public void setContentTitle(CharSequence title) {
+        hasAlteredText = true;
         textDrawer.setContentTitle(title);
     }
 
     @Override
     public void setContentText(CharSequence text) {
+        hasAlteredText = true;
         textDrawer.setContentText(text);
     }
 
-    private void setScaleMultiplier(float scaleMultiplier) {
+    public void setScaleMultiplier(float scaleMultiplier) {
         this.scaleMultiplier = scaleMultiplier;
     }
 

@@ -19,6 +19,7 @@ package com.github.amlcurran.showcaseview;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -52,6 +53,11 @@ class StandardShowcaseDrawer implements ShowcaseDrawer {
     @Override
     public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier) {
         Canvas bufferCanvas = new Canvas(buffer);
+
+        Matrix mm = new Matrix();
+        mm.postScale(scaleMultiplier, scaleMultiplier, x, y);
+        bufferCanvas.setMatrix(mm);
+
         bufferCanvas.drawCircle(x, y, showcaseRadius, eraserPaint);
         int halfW = getShowcaseWidth() / 2;
         int halfH = getShowcaseHeight() / 2;
