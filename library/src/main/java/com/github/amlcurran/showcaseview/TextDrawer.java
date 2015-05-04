@@ -122,7 +122,8 @@ class TextDrawer {
      * @param canvasH height of the screen
      * @param shouldCentreText
      */
-    public void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView, boolean shouldCentreText) {
+    public void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView,
+            ShowcaseView.TextPositioningMode textPositioning, boolean shouldCentreText) {
 
     	Rect showcase = showcaseView.hasShowcaseView() ?
     			calculator.getShowcaseRect() :
@@ -135,10 +136,20 @@ class TextDrawer {
     	areas[3] = (canvasH - showcase.bottom) * canvasW;
     	
     	int largest = 0;
-    	for(int i = 1; i < areas.length; i++) {
-    		if(areas[i] > areas[largest])
-    			largest = i;
-    	}
+        switch (textPositioning) {
+            case AUTOMATIC:
+                for (int i = 1; i < areas.length; i++) {
+                    if (areas[i] > areas[largest])
+                        largest = i;
+                }
+                break;
+            case ABOVE_OR_BELOW:
+                largest = areas[1] > areas[3] ? 1 : 3;
+                break;
+            case LEFT_OR_RIGHT:
+                largest = areas[0] > areas[2] ? 0 : 2;
+                break;
+        }
     	
     	// Position text in largest area
     	switch(largest) {
