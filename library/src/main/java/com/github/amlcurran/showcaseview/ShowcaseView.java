@@ -18,6 +18,7 @@ package com.github.amlcurran.showcaseview;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -54,6 +55,7 @@ public class ShowcaseView extends RelativeLayout
     private final AnimationFactory animationFactory;
     private final ShotStateStore shotStateStore;
 
+
     // Showcase metrics
     private int showcaseX = -1;
     private int showcaseY = -1;
@@ -67,6 +69,9 @@ public class ShowcaseView extends RelativeLayout
 
     private boolean hasAlteredText = false;
     private boolean hasNoTarget = false;
+
+    private boolean navigationBarVisible = false;
+
     private boolean shouldCentreText;
     private Bitmap bitmapBuffer;
 
@@ -119,18 +124,40 @@ public class ShowcaseView extends RelativeLayout
 
         if (mEndButton.getParent() == null) {
             int margin = (int) getResources().getDimension(R.dimen.button_margin);
-            RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
-            lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            RelativeLayout.LayoutParams lps = getInitialEndButtonLayoutParams();
             lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            lps.setMargins(margin, margin, margin, margin);
+
             mEndButton.setLayoutParams(lps);
             mEndButton.setText(android.R.string.ok);
+
+
             if (!hasCustomClickListener) {
                 mEndButton.setOnClickListener(hideOnClickListener);
             }
             addView(mEndButton);
         }
 
+    }
+
+    private int getNavBarHeight() {
+        if (navigationBarVisible) {
+            Resources resources = getContext().getResources();
+            int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+            if (resourceId > 0) {
+                return resources.getDimensionPixelSize(resourceId);
+            }
+        }
+        return 0;
+    }
+
+
+    private RelativeLayout.LayoutParams getInitialEndButtonLayoutParams() {
+        int margin = (int) getResources().getDimension(R.dimen.button_margin);
+        RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
+
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.setMargins(margin,margin,margin,margin+getNavBarHeight());
+        return lps;
     }
 
     private boolean hasShot() {
@@ -147,8 +174,18 @@ public class ShowcaseView extends RelativeLayout
         }
         showcaseX = x;
         showcaseY = y;
+        int h = getHeight();
+
+
+        if (showcaseX > (float)getWidth()-mEndButton.getWidth()) {
+            RelativeLayout.LayoutParams lps = getInitialEndButtonLayoutParams();
+            lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            mEndButton.setLayoutParams(lps);
+        }
+
         //init();
         invalidate();
+
     }
 
     public void setTarget(final Target target) {
@@ -438,6 +475,17 @@ public class ShowcaseView extends RelativeLayout
         }
 
         /**
+         * If the navigation bar is visible set @visible to true,
+         * otherwise the button will be placed behind the bar.
+         * @param visible
+         * @return
+         */
+        public Builder setNavigationBarVisible(boolean visible) {
+          showcaseView.navigationBarVisible = visible;
+          return this;
+        }
+
+        /**
          * Set the target of the showcase.
          *
          * @param target a {@link com.github.amlcurran.showcaseview.targets.Target} representing
@@ -458,7 +506,7 @@ public class ShowcaseView extends RelativeLayout
 
         /**
          * Set a listener which will override the button clicks.
-         * <p/>
+         *
          * Note that you will have to manually hide the ShowcaseView
          */
         public Builder setOnClickListener(OnClickListener onClickListener) {
@@ -469,7 +517,7 @@ public class ShowcaseView extends RelativeLayout
         /**
          * Don't make the ShowcaseView block touches on itself. This doesn't
          * block touches in the showcased area.
-         * <p/>
+         *
          * By default, the ShowcaseView does block touches
          */
         public Builder doNotBlockTouches() {
@@ -480,7 +528,7 @@ public class ShowcaseView extends RelativeLayout
         /**
          * Make this ShowcaseView hide when the user touches outside the showcased area.
          * This enables {@link #doNotBlockTouches()} as well.
-         * <p/>
+         *
          * By default, the ShowcaseView doesn't hide on touch.
          */
         public Builder hideOnTouchOutside() {
