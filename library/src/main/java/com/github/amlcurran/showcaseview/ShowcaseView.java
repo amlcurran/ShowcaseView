@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.github.amlcurran.showcaseview.targets.Target;
@@ -342,8 +343,8 @@ public class ShowcaseView extends RelativeLayout
         return blockTouches && distanceFromFocus > showcaseDrawer.getBlockedRadius();
     }
 
-    private static void insertShowcaseView(ShowcaseView showcaseView, Activity activity) {
-        ((ViewGroup) activity.getWindow().getDecorView()).addView(showcaseView);
+    private static void insertShowcaseView(ShowcaseView showcaseView, ViewGroup parent, int parentIndex) {
+        parent.addView(showcaseView, parentIndex);
         if (!showcaseView.hasShot()) {
             showcaseView.show();
         } else {
@@ -387,6 +388,9 @@ public class ShowcaseView extends RelativeLayout
         final ShowcaseView showcaseView;
         private final Activity activity;
 
+        private ViewGroup mParent;
+        private int mParentIndex;
+
         public Builder(Activity activity) {
             this(activity, false);
         }
@@ -403,7 +407,16 @@ public class ShowcaseView extends RelativeLayout
          * @return the created ShowcaseView
          */
         public ShowcaseView build() {
-            insertShowcaseView(showcaseView, activity);
+            ViewGroup parent;
+            int index;
+            if (mParent == null) {
+                parent = ((ViewGroup) activity.getWindow().getDecorView());
+                index = mParentIndex;
+            } else {
+                parent = mParent;
+                index = -1;
+            }
+            insertShowcaseView(showcaseView, parent, index);
             return showcaseView;
         }
 
@@ -502,6 +515,12 @@ public class ShowcaseView extends RelativeLayout
 
         public Builder setShowcaseEventListener(OnShowcaseEventListener showcaseEventListener) {
             showcaseView.setOnShowcaseEventListener(showcaseEventListener);
+            return this;
+        }
+
+        public Builder setParent(ViewGroup parent, int index) {
+            mParent = parent;
+            mParentIndex = index;
             return this;
         }
     }
