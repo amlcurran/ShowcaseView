@@ -24,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -504,6 +505,17 @@ public class ShowcaseView extends RelativeLayout
             showcaseView.setOnShowcaseEventListener(showcaseEventListener);
             return this;
         }
+
+        public Builder setContentTextPaint(TextPaint paint) {
+            showcaseView.setContentTextPaint(paint);
+            return this;
+        }
+    }
+
+    private void setContentTextPaint(TextPaint paint) {
+        this.textDrawer.setContentPaint(paint);
+        hasAlteredText = true;
+        invalidate();
     }
 
     /**
