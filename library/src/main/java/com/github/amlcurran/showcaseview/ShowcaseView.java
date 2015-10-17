@@ -552,6 +552,11 @@ public class ShowcaseView extends RelativeLayout
             showcaseView.setShowcaseDrawer(showcaseDrawer);
             return this;
         }
+
+        public Builder withMaterialShowcase() {
+            showcaseView.setShowcaseDrawer(new MaterialShowcaseDrawer(activity.getResources()));
+            return this;
+        }
     }
 
     private void setShowcaseDrawer(ShowcaseDrawer showcaseDrawer) {
