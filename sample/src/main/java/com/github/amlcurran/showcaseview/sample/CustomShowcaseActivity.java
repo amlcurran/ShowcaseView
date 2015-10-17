@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
 import android.os.Bundle;
 
 import com.github.amlcurran.showcaseview.ShowcaseDrawer;
@@ -30,14 +31,16 @@ public class CustomShowcaseActivity extends Activity {
 
     private static class CustomShowcaseView implements ShowcaseDrawer {
 
-        private static final int ALPHA_60_PERCENT = 153;
-        private final float radius;
+        private final float width;
+        private final float height;
         private final Paint eraserPaint;
         private final Paint basicPaint;
         private final int eraseColour;
+        private final RectF renderRect;
 
         public CustomShowcaseView(Resources resources) {
-            radius = resources.getDimension(R.dimen.custom_showcase_size);
+            width = resources.getDimension(R.dimen.custom_showcase_width);
+            height = resources.getDimension(R.dimen.custom_showcase_height);
             PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
             eraserPaint = new Paint();
             eraserPaint.setColor(0xFFFFFF);
@@ -46,6 +49,7 @@ public class CustomShowcaseActivity extends Activity {
             eraserPaint.setAntiAlias(true);
             eraseColour = resources.getColor(R.color.custom_showcase_bg);
             basicPaint = new Paint();
+            renderRect = new RectF();
         }
 
         @Override
@@ -56,23 +60,26 @@ public class CustomShowcaseActivity extends Activity {
         @Override
         public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier) {
             Canvas bufferCanvas = new Canvas(buffer);
-            eraserPaint.setAlpha(ALPHA_60_PERCENT);
-            bufferCanvas.drawCircle(x, y, radius, eraserPaint);
+            renderRect.left = x - width / 2f;
+            renderRect.right = x + width / 2f;
+            renderRect.top = y - height / 2f;
+            renderRect.bottom = y + height / 2f;
+            bufferCanvas.drawRect(renderRect, eraserPaint);
         }
 
         @Override
         public int getShowcaseWidth() {
-            return (int) (radius * 2);
+            return (int) width;
         }
 
         @Override
         public int getShowcaseHeight() {
-            return (int) (radius * 2);
+            return (int) height;
         }
 
         @Override
         public float getBlockedRadius() {
-            return radius;
+            return width;
         }
 
         @Override
