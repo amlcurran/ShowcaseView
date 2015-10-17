@@ -40,5 +40,7 @@
 
         <activity android:name=".CustomTextActivity" />
 
+        <activity android:name=".CustomShowcaseActivity" />
+
     </application>
 </manifest>

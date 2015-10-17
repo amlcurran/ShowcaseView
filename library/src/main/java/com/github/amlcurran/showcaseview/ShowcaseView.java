@@ -50,7 +50,7 @@ public class ShowcaseView extends RelativeLayout
 
     private final Button mEndButton;
     private final TextDrawer textDrawer;
-    private final ShowcaseDrawer showcaseDrawer;
+    private ShowcaseDrawer showcaseDrawer;
     private final ShowcaseAreaCalculator showcaseAreaCalculator;
     private final AnimationFactory animationFactory;
     private final ShotStateStore shotStateStore;
@@ -75,6 +75,8 @@ public class ShowcaseView extends RelativeLayout
     private long fadeInMillis;
     private long fadeOutMillis;
     private boolean isShowing;
+    private int backgroundColor;
+    private int showcaseColor;
 
     protected ShowcaseView(Context context, boolean newStyle) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
@@ -392,6 +394,12 @@ public class ShowcaseView extends RelativeLayout
             this(activity, false);
         }
 
+        /**
+         * @param useNewStyle should use "new style" showcase (see {@link #withNewStyleShowcase()}
+         * @deprecated use {@link #withHoloShowcase()}, {@link #withNewStyleShowcase()}, or
+         *  {@link #setShowcaseDrawer(ShowcaseDrawer)}
+         */
+        @Deprecated
         public Builder(Activity activity, boolean useNewStyle) {
             this.activity = activity;
             this.showcaseView = new ShowcaseView(activity, useNewStyle);
@@ -406,6 +414,38 @@ public class ShowcaseView extends RelativeLayout
         public ShowcaseView build() {
             insertShowcaseView(showcaseView, activity);
             return showcaseView;
+        }
+
+        /**
+         * Draw a holo-style showcase. This is the default.<br/>
+         * <img alt="Holo showcase example" src="../../../../../../../../example2.png" />
+         */
+        public Builder withHoloShowcase() {
+            return setShowcaseDrawer(new StandardShowcaseDrawer(activity.getResources()));
+        }
+
+        /**
+         * Draw a new-style showcase.<br/>
+         * <img alt="Holo showcase example" src="../../../../../../../../example.png" />
+         */
+        public Builder withNewStyleShowcase() {
+            return setShowcaseDrawer(new NewShowcaseDrawer(activity.getResources()));
+        }
+
+        /**
+         * Draw a material style showcase.
+         * <img alt="Material showcase" src="../../../../../../../../material.png" />
+         */
+        public Builder withMaterialShowcase() {
+            return setShowcaseDrawer(new MaterialShowcaseDrawer(activity.getResources()));
+        }
+
+        /**
+         * Set a custom showcase drawer which will be responsible for measuring and drawing the showcase
+         */
+        public Builder setShowcaseDrawer(ShowcaseDrawer showcaseDrawer) {
+            showcaseView.setShowcaseDrawer(showcaseDrawer);
+            return this;
         }
 
         /**
@@ -506,15 +546,31 @@ public class ShowcaseView extends RelativeLayout
             return this;
         }
 
+        /**
+         * Sets the paint that will draw the text as specified by {@link #setContentText(CharSequence)}
+         * or {@link #setContentText(int)}
+         */
         public Builder setContentTextPaint(TextPaint textPaint) {
             showcaseView.setContentTextPaint(textPaint);
             return this;
         }
 
+        /**
+         * Sets the paint that will draw the text as specified by {@link #setContentTitle(CharSequence)}
+         * or {@link #setContentTitle(int)}
+         */
         public Builder setContentTitlePaint(TextPaint textPaint) {
             showcaseView.setContentTitlePaint(textPaint);
             return this;
         }
+    }
+
+    private void setShowcaseDrawer(ShowcaseDrawer showcaseDrawer) {
+        this.showcaseDrawer = showcaseDrawer;
+        this.showcaseDrawer.setBackgroundColour(backgroundColor);
+        this.showcaseDrawer.setShowcaseColour(showcaseColor);
+        hasAlteredText = true;
+        invalidate();
     }
 
     private void setContentTitlePaint(TextPaint textPaint) {
@@ -595,8 +651,8 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void updateStyle(TypedArray styled, boolean invalidate) {
-        int backgroundColor = styled.getColor(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
-        int showcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, HOLO_BLUE);
+        backgroundColor = styled.getColor(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
+        showcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, HOLO_BLUE);
         String buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
         if (TextUtils.isEmpty(buttonText)) {
             buttonText = getResources().getString(android.R.string.ok);

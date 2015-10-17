@@ -69,7 +69,8 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         lps.setMargins(margin, margin, margin, margin);
 
         ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
-        sv = new ShowcaseView.Builder(this, true)
+        sv = new ShowcaseView.Builder(this)
+                .withMaterialShowcase()
                 .setTarget(target)
                 .setContentTitle(R.string.showcase_main_title)
                 .setContentText(R.string.showcase_main_message)
@@ -124,22 +125,21 @@ public class SampleActivity extends Activity implements View.OnClickListener,
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         switch (position) {
-
             case 0:
                 //startActivity(new Intent(this, ActionItemsSampleActivity.class));
                 break;
-
             case 1:
                 startActivity(new Intent(this, AnimationSampleActivity.class));
                 break;
-
             case 2:
                 startActivity(new Intent(this, SingleShotActivity.class));
                 break;
-
-            // Not currently used
             case 3:
                 startActivity(new Intent(this, CustomTextActivity.class));
+                break;
+            case 4:
+                startActivity(new Intent(this, CustomShowcaseActivity.class));
+                break;
         }
     }
 
@@ -149,14 +149,16 @@ public class SampleActivity extends Activity implements View.OnClickListener,
                 R.string.title_action_items,
                 R.string.title_animations,
                 R.string.title_single_shot,
-                R.string.custom_text //, R.string.title_memory
+                R.string.custom_text,
+                 R.string.custom_showcase_title//, R.string.title_memory
         };
 
         private static final int[] SUMMARY_RES_IDS = new int[] {
                 R.string.sum_action_items,
                 R.string.sum_animations,
                 R.string.sum_single_shot,
-                R.string.custom_text_summary//, R.string.sum_memory
+                R.string.custom_text_summary,
+                R.string.custom_showcase_summary//, R.string.sum_memory
         };
 
         public HardcodedListAdapter(Context context) {
