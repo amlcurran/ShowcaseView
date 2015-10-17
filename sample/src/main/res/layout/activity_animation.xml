@@ -16,7 +16,7 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -51,4 +51,4 @@
         android:layout_marginBottom="72dp"
         android:singleLine="false"
         android:layout_alignParentBottom="true" />
-</RelativeLayout>
+</LinearLayout>

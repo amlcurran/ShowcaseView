@@ -139,7 +139,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
 
             // Not currently used
             case 3:
-                startActivity(new Intent(this, MemoryManagementTesting.class));
+                startActivity(new Intent(this, CustomTextActivity.class));
         }
     }
 
@@ -148,13 +148,15 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         private static final int[] TITLE_RES_IDS = new int[] {
                 R.string.title_action_items,
                 R.string.title_animations,
-                R.string.title_single_shot//, R.string.title_memory
+                R.string.title_single_shot,
+                R.string.custom_text //, R.string.title_memory
         };
 
         private static final int[] SUMMARY_RES_IDS = new int[] {
                 R.string.sum_action_items,
                 R.string.sum_animations,
-                R.string.sum_single_shot//, R.string.sum_memory
+                R.string.sum_single_shot,
+                R.string.custom_text_summary//, R.string.sum_memory
         };
 
         public HardcodedListAdapter(Context context) {

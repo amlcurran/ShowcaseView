@@ -61,4 +61,8 @@
     <string name="title_single_shot">Single shot</string>
     <string name="sum_single_shot">Demonstrate how to make a ShowcaseView show only once</string>
     <string name="R.string.desc_single_shot">Press the OK button and you\'ll only ever see this ShowcaseView once. To see it again, clear the app\'s cache.</string>
+    <string name="custom_text">Custom text</string>
+    <string name="custom_text_summary">See how to create custom text drawing</string>
+    <string name="custom_text_painting_title">Custom text painting</string>
+    <string name="custom_text_painting_text">Here\'s an example of custom text painting</string>
 </resources>

@@ -214,4 +214,12 @@ class TextDrawer {
     public boolean shouldDrawText() {
         return !TextUtils.isEmpty(mTitle) || !TextUtils.isEmpty(mDetails);
     }
+
+    public void setContentPaint(TextPaint contentPaint) {
+        textPaint.set(contentPaint);
+    }
+
+    public void setTitlePaint(TextPaint textPaint) {
+        titlePaint.set(textPaint);
+    }
 }
