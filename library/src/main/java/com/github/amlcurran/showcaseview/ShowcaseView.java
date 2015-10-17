@@ -421,8 +421,7 @@ public class ShowcaseView extends RelativeLayout
          * <img alt="Holo showcase example" src="../../../../../../../../example2.png" />
          */
         public Builder withHoloShowcase() {
-            showcaseView.setShowcaseDrawer(new StandardShowcaseDrawer(activity.getResources()));
-            return this;
+            return setShowcaseDrawer(new StandardShowcaseDrawer(activity.getResources()));
         }
 
         /**
@@ -430,7 +429,22 @@ public class ShowcaseView extends RelativeLayout
          * <img alt="Holo showcase example" src="../../../../../../../../example.png" />
          */
         public Builder withNewStyleShowcase() {
-            showcaseView.setShowcaseDrawer(new NewShowcaseDrawer(activity.getResources()));
+            return setShowcaseDrawer(new NewShowcaseDrawer(activity.getResources()));
+        }
+
+        /**
+         * Draw a material style showcase.
+         * <img alt="Material showcase" src="../../../../../../../../material.png" />
+         */
+        public Builder withMaterialShowcase() {
+            return setShowcaseDrawer(new MaterialShowcaseDrawer(activity.getResources()));
+        }
+
+        /**
+         * Set a custom showcase drawer which will be responsible for measuring and drawing the showcase
+         */
+        public Builder setShowcaseDrawer(ShowcaseDrawer showcaseDrawer) {
+            showcaseView.setShowcaseDrawer(showcaseDrawer);
             return this;
         }
 
@@ -547,16 +561,6 @@ public class ShowcaseView extends RelativeLayout
          */
         public Builder setContentTitlePaint(TextPaint textPaint) {
             showcaseView.setContentTitlePaint(textPaint);
-            return this;
-        }
-
-        public Builder setShowcaseDrawer(ShowcaseDrawer showcaseDrawer) {
-            showcaseView.setShowcaseDrawer(showcaseDrawer);
-            return this;
-        }
-
-        public Builder withMaterialShowcase() {
-            showcaseView.setShowcaseDrawer(new MaterialShowcaseDrawer(activity.getResources()));
             return this;
         }
     }
