@@ -218,4 +218,8 @@ class TextDrawer {
     public void setContentPaint(TextPaint contentPaint) {
         textPaint.set(contentPaint);
     }
+
+    public void setTitlePaint(TextPaint textPaint) {
+        titlePaint.set(textPaint);
+    }
 }

@@ -506,10 +506,21 @@ public class ShowcaseView extends RelativeLayout
             return this;
         }
 
-        public Builder setContentTextPaint(TextPaint paint) {
-            showcaseView.setContentTextPaint(paint);
+        public Builder setContentTextPaint(TextPaint textPaint) {
+            showcaseView.setContentTextPaint(textPaint);
             return this;
         }
+
+        public Builder setContentTitlePaint(TextPaint textPaint) {
+            showcaseView.setContentTitlePaint(textPaint);
+            return this;
+        }
+    }
+
+    private void setContentTitlePaint(TextPaint textPaint) {
+        this.textDrawer.setTitlePaint(textPaint);
+        hasAlteredText = true;
+        invalidate();
     }
 
     private void setContentTextPaint(TextPaint paint) {

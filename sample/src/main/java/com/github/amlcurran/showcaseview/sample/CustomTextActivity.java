@@ -21,11 +21,17 @@ public class CustomTextActivity extends Activity {
         paint.setStrikeThruText(true);
         paint.setTypeface(Typeface.createFromAsset(getAssets(), "RobotoSlab-Regular.ttf"));
 
+        TextPaint title = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        title.setTextSize(getResources().getDimension(R.dimen.abc_text_size_headline_material));
+        title.setUnderlineText(true);
+        title.setTypeface(Typeface.createFromAsset(getAssets(), "RobotoSlab-Regular.ttf"));
+
         new ShowcaseView.Builder(this)
                 .setTarget(new ViewTarget(R.id.imageView, this))
                 .setContentTitle(R.string.custom_text_painting_title)
                 .setContentText(R.string.custom_text_painting_text)
                 .setContentTextPaint(paint)
+                .setContentTitlePaint(title)
                 .build();
     }
 }
