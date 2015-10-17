@@ -136,8 +136,10 @@ public class SampleActivity extends Activity implements View.OnClickListener,
                 break;
             case 3:
                 startActivity(new Intent(this, CustomTextActivity.class));
+                break;
             case 4:
                 startActivity(new Intent(this, CustomShowcaseActivity.class));
+                break;
         }
     }
 
