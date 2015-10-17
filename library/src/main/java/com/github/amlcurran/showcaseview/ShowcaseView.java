@@ -75,6 +75,8 @@ public class ShowcaseView extends RelativeLayout
     private long fadeInMillis;
     private long fadeOutMillis;
     private boolean isShowing;
+    private int backgroundColor;
+    private int showcaseColor;
 
     protected ShowcaseView(Context context, boolean newStyle) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
@@ -561,6 +563,8 @@ public class ShowcaseView extends RelativeLayout
 
     private void setShowcaseDrawer(ShowcaseDrawer showcaseDrawer) {
         this.showcaseDrawer = showcaseDrawer;
+        this.showcaseDrawer.setBackgroundColour(backgroundColor);
+        this.showcaseDrawer.setShowcaseColour(showcaseColor);
         hasAlteredText = true;
         invalidate();
     }
@@ -643,8 +647,8 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void updateStyle(TypedArray styled, boolean invalidate) {
-        int backgroundColor = styled.getColor(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
-        int showcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, HOLO_BLUE);
+        backgroundColor = styled.getColor(R.styleable.ShowcaseView_sv_backgroundColor, Color.argb(128, 80, 80, 80));
+        showcaseColor = styled.getColor(R.styleable.ShowcaseView_sv_showcaseColor, HOLO_BLUE);
         String buttonText = styled.getString(R.styleable.ShowcaseView_sv_buttonText);
         if (TextUtils.isEmpty(buttonText)) {
             buttonText = getResources().getString(android.R.string.ok);
