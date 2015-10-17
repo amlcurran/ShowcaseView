@@ -50,7 +50,7 @@ public class ShowcaseView extends RelativeLayout
 
     private final Button mEndButton;
     private final TextDrawer textDrawer;
-    private final ShowcaseDrawer showcaseDrawer;
+    private ShowcaseDrawer showcaseDrawer;
     private final ShowcaseAreaCalculator showcaseAreaCalculator;
     private final AnimationFactory animationFactory;
     private final ShotStateStore shotStateStore;
@@ -523,6 +523,17 @@ public class ShowcaseView extends RelativeLayout
             showcaseView.setContentTitlePaint(textPaint);
             return this;
         }
+
+        public Builder setShowcaseDrawer(ShowcaseDrawer showcaseDrawer) {
+            showcaseView.setShowcaseDrawer(showcaseDrawer);
+            return this;
+        }
+    }
+
+    private void setShowcaseDrawer(ShowcaseDrawer showcaseDrawer) {
+        this.showcaseDrawer = showcaseDrawer;
+        hasAlteredText = true;
+        invalidate();
     }
 
     private void setContentTitlePaint(TextPaint textPaint) {

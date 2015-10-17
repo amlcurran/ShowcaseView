@@ -65,4 +65,6 @@
     <string name="custom_text_summary">See how to create custom text drawing</string>
     <string name="custom_text_painting_title">Custom text painting</string>
     <string name="custom_text_painting_text">Here\'s an example of custom text painting</string>
+    <string name="custom_showcase_title">Custom showcase</string>
+    <string name="custom_showcase_summary">Implementing your own drawing for a showcase</string>
 </resources>
