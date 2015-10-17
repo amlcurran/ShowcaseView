@@ -10,6 +10,5 @@
             android:id="@+id/imageView"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_launcher"
-            android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"/>
 </RelativeLayout>

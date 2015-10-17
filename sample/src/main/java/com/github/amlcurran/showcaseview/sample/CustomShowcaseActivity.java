@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -32,21 +31,20 @@ public class CustomShowcaseActivity extends Activity {
     private static class CustomShowcaseView implements ShowcaseDrawer {
 
         private static final int ALPHA_60_PERCENT = 153;
-        private final float outerRadius;
-        private final float innerRadius;
+        private final float radius;
         private final Paint eraserPaint;
         private final Paint basicPaint;
-        private int backgroundColour;
+        private final int eraseColour;
 
         public CustomShowcaseView(Resources resources) {
-            outerRadius = resources.getDimension(com.github.amlcurran.showcaseview.R.dimen.showcase_radius_outer);
-            innerRadius = resources.getDimension(com.github.amlcurran.showcaseview.R.dimen.showcase_radius_inner);
+            radius = resources.getDimension(R.dimen.custom_showcase_size);
             PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
             eraserPaint = new Paint();
             eraserPaint.setColor(0xFFFFFF);
             eraserPaint.setAlpha(0);
             eraserPaint.setXfermode(xfermode);
             eraserPaint.setAntiAlias(true);
+            eraseColour = resources.getColor(R.color.custom_showcase_bg);
             basicPaint = new Paint();
         }
 
@@ -59,34 +57,32 @@ public class CustomShowcaseActivity extends Activity {
         public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier) {
             Canvas bufferCanvas = new Canvas(buffer);
             eraserPaint.setAlpha(ALPHA_60_PERCENT);
-            bufferCanvas.drawCircle(x, y, outerRadius, eraserPaint);
-            eraserPaint.setAlpha(0);
-            bufferCanvas.drawCircle(x, y, innerRadius, eraserPaint);
+            bufferCanvas.drawCircle(x, y, radius, eraserPaint);
         }
 
         @Override
         public int getShowcaseWidth() {
-            return (int) (outerRadius * 2);
+            return (int) (radius * 2);
         }
 
         @Override
         public int getShowcaseHeight() {
-            return (int) (outerRadius * 2);
+            return (int) (radius * 2);
         }
 
         @Override
         public float getBlockedRadius() {
-            return innerRadius;
+            return radius;
         }
 
         @Override
         public void setBackgroundColour(int backgroundColor) {
-            this.backgroundColour = backgroundColor;
+            // No-op, remove this from the API?
         }
 
         @Override
         public void erase(Bitmap bitmapBuffer) {
-            bitmapBuffer.eraseColor(Color.RED);
+            bitmapBuffer.eraseColor(eraseColour);
         }
 
         @Override
