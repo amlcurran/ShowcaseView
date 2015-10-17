@@ -27,6 +27,7 @@ public class CustomTextActivity extends Activity {
         title.setTypeface(Typeface.createFromAsset(getAssets(), "RobotoSlab-Regular.ttf"));
 
         new ShowcaseView.Builder(this)
+                .withNewStyleShowcase()
                 .setTarget(new ViewTarget(R.id.imageView, this))
                 .setContentTitle(R.string.custom_text_painting_title)
                 .setContentText(R.string.custom_text_painting_text)
