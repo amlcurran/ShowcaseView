@@ -392,6 +392,12 @@ public class ShowcaseView extends RelativeLayout
             this(activity, false);
         }
 
+        /**
+         * @param useNewStyle should use "new style" showcase (see {@link #withNewStyleShowcase()}
+         * @deprecated use {@link #withHoloShowcase()}, {@link #withNewStyleShowcase()}, or
+         *  {@link #setShowcaseDrawer(ShowcaseDrawer)}
+         */
+        @Deprecated
         public Builder(Activity activity, boolean useNewStyle) {
             this.activity = activity;
             this.showcaseView = new ShowcaseView(activity, useNewStyle);
@@ -406,6 +412,16 @@ public class ShowcaseView extends RelativeLayout
         public ShowcaseView build() {
             insertShowcaseView(showcaseView, activity);
             return showcaseView;
+        }
+
+        public Builder withHoloShowcase() {
+            showcaseView.setShowcaseDrawer(new StandardShowcaseDrawer(activity.getResources()));
+            return this;
+        }
+
+        public Builder withNewStyleShowcase() {
+            showcaseView.setShowcaseDrawer(new NewShowcaseDrawer(activity.getResources()));
+            return this;
         }
 
         /**
