@@ -414,11 +414,19 @@ public class ShowcaseView extends RelativeLayout
             return showcaseView;
         }
 
+        /**
+         * Draw a holo-style showcase. This is the default.<br/>
+         * <img alt="Holo showcase example" src="../../../../../../../../example2.png" />
+         */
         public Builder withHoloShowcase() {
             showcaseView.setShowcaseDrawer(new StandardShowcaseDrawer(activity.getResources()));
             return this;
         }
 
+        /**
+         * Draw a new-style showcase.<br/>
+         * <img alt="Holo showcase example" src="../../../../../../../../example.png" />
+         */
         public Builder withNewStyleShowcase() {
             showcaseView.setShowcaseDrawer(new NewShowcaseDrawer(activity.getResources()));
             return this;
