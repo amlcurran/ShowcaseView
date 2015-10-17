@@ -506,11 +506,19 @@ public class ShowcaseView extends RelativeLayout
             return this;
         }
 
+        /**
+         * Sets the paint that will draw the text as specified by {@link #setContentText(CharSequence)}
+         * or {@link #setContentText(int)}
+         */
         public Builder setContentTextPaint(TextPaint textPaint) {
             showcaseView.setContentTextPaint(textPaint);
             return this;
         }
 
+        /**
+         * Sets the paint that will draw the text as specified by {@link #setContentTitle(CharSequence)}
+         * or {@link #setContentTitle(int)}
+         */
         public Builder setContentTitlePaint(TextPaint textPaint) {
             showcaseView.setContentTitlePaint(textPaint);
             return this;
