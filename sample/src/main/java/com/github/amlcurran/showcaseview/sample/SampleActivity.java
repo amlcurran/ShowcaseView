@@ -69,6 +69,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         lps.setMargins(margin, margin, margin, margin);
 
         ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
+        Button customButton = (Button) LayoutInflater.from(this).inflate(R.layout.view_custom_button, null);
         sv = new ShowcaseView.Builder(this)
                 .withMaterialShowcase()
                 .setTarget(target)
@@ -76,6 +77,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
                 .setContentText(R.string.showcase_main_message)
                 .setStyle(R.style.CustomShowcaseTheme2)
                 .setShowcaseEventListener(this)
+                .replaceEndButton(customButton)
                 .build();
         sv.setButtonPosition(lps);
     }
