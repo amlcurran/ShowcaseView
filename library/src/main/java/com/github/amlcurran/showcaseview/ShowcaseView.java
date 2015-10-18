@@ -48,7 +48,7 @@ public class ShowcaseView extends RelativeLayout
 
     private static final int HOLO_BLUE = Color.parseColor("#33B5E5");
 
-    private final Button mEndButton;
+    private Button mEndButton;
     private final TextDrawer textDrawer;
     private ShowcaseDrawer showcaseDrawer;
     private final ShowcaseAreaCalculator showcaseAreaCalculator;
@@ -563,6 +563,37 @@ public class ShowcaseView extends RelativeLayout
             showcaseView.setContentTitlePaint(textPaint);
             return this;
         }
+
+        /**
+         * Replace the end button with the one provided. Note that this resets any OnClickListener provided
+         * by {@link #setOnClickListener(OnClickListener)}, so call this method before that one.
+         */
+        public Builder replaceEndButton(Button button) {
+            showcaseView.setEndButton(button);
+            return this;
+        }
+
+        /**
+         * Replace the end button with the one provided. Note that this resets any OnClickListener provided
+         * by {@link #setOnClickListener(OnClickListener)}, so call this method before that one.
+         */
+        public Builder replaceEndButton(int buttonResourceId) {
+            View view = LayoutInflater.from(activity).inflate(buttonResourceId, showcaseView, false);
+            if (!(view instanceof Button)) {
+                throw new IllegalArgumentException("Attempted to replace showcase button with a layout which isn't a button");
+            }
+            return replaceEndButton((Button) view);
+        }
+    }
+
+    private void setEndButton(Button button) {
+        LayoutParams copyParams = (LayoutParams) mEndButton.getLayoutParams();
+        mEndButton.setOnClickListener(null);
+        removeView(mEndButton);
+        mEndButton = button;
+        button.setOnClickListener(hideOnClickListener);
+        button.setLayoutParams(copyParams);
+        addView(button);
     }
 
     private void setShowcaseDrawer(ShowcaseDrawer showcaseDrawer) {
