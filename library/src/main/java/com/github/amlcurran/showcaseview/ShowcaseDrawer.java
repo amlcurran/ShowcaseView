@@ -21,9 +21,23 @@ import android.graphics.Canvas;
 
 public interface ShowcaseDrawer {
 
+    public void setShowcaseRadius(float showcaseRadius);
+
+    public float getShowcaseRadius();
+
+    public void setInnerRadius(float innerRadius);
+
+    public float getInnerRadius();
+
+    public void setOuterRadius(float outerRadius);
+
+    public float getOuterRadius();
+
     void setShowcaseColour(int color);
 
     void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier);
+
+    void drawShowcase(Bitmap buffer, float x, float y, float innerRadius, float outerRadius, float scaleMultiplier);
 
     int getShowcaseWidth();
 

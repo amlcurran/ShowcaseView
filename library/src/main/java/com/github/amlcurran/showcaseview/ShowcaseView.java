@@ -78,10 +78,33 @@ public class ShowcaseView extends RelativeLayout
     private int backgroundColor;
     private int showcaseColor;
 
+    public void setInnerRadius(float innerRadius){
+
+        showcaseDrawer.setInnerRadius(innerRadius);
+    }
+
+    public void setOuterRadius(float outerRadius){
+
+        showcaseDrawer.setOuterRadius(outerRadius);
+    }
+
+    public void setRadius(float showcaseRadius){
+        showcaseDrawer.setShowcaseRadius(showcaseRadius);
+    }
+
+    public void setAllRadius(float radius, float innerRadius, float outerRadius){
+        this.showcaseDrawer.setShowcaseRadius(radius);
+        this.showcaseDrawer.setInnerRadius(innerRadius);
+        this.showcaseDrawer.setOuterRadius(outerRadius);
+    }
+
+    // what 01? The problem is why this extra constructor? man stop using resource! use style for god's sake!
+    // stop believing google knows what is good to android just because he bought the project!
     protected ShowcaseView(Context context, boolean newStyle) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
     }
 
+    // what 02?
     protected ShowcaseView(Context context, AttributeSet attrs, int defStyle, boolean newStyle) {
         super(context, attrs, defStyle);
 
@@ -104,6 +127,7 @@ public class ShowcaseView extends RelativeLayout
         fadeOutMillis = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
+
         if (newStyle) {
             showcaseDrawer = new NewShowcaseDrawer(getResources());
         } else {
@@ -404,6 +428,28 @@ public class ShowcaseView extends RelativeLayout
             this.activity = activity;
             this.showcaseView = new ShowcaseView(activity, useNewStyle);
             this.showcaseView.setTarget(Target.NONE);
+        }
+
+        public Builder setRadius(float radius){
+            this.showcaseView.setRadius(radius);
+            return this;
+        }
+
+        public Builder setInnerRadius(float innerRadius){
+            this.showcaseView.setInnerRadius(innerRadius);
+            return this;
+        }
+
+        public Builder setOuterRadius(float outerRadius){
+            this.showcaseView.setOuterRadius(outerRadius);
+            return this;
+        }
+
+        public Builder setAllRadius(float radius, float innerRadius, float outerRadius){
+            this.showcaseView.setRadius(radius);
+            this.showcaseView.setInnerRadius(innerRadius);
+            this.showcaseView.setOuterRadius(outerRadius);
+            return this;
         }
 
         /**

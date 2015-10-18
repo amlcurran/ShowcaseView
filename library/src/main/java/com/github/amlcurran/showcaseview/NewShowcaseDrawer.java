@@ -26,13 +26,35 @@ import android.graphics.Canvas;
 class NewShowcaseDrawer extends StandardShowcaseDrawer {
 
     private static final int ALPHA_60_PERCENT = 153;
-    private final float outerRadius;
-    private final float innerRadius;
+    
+    // Probably i'm dumb as fuck, but i dont really know why we need this final
+    //private final float outerRadius;
+    //private final float innerRadius;
+    public float outerRadius;
+    public float innerRadius;
 
     public NewShowcaseDrawer(Resources resources) {
         super(resources);
         outerRadius = resources.getDimension(R.dimen.showcase_radius_outer);
         innerRadius = resources.getDimension(R.dimen.showcase_radius_inner);
+    }
+    
+    public void setInnerRadius(float innerRadius){
+        this.innerRadius = innerRadius;
+    }
+
+    public float getInnerRadius() {
+
+        return innerRadius;
+    }
+
+    public void setOuterRadius(float outerRadius){
+        this.outerRadius = outerRadius;
+    }
+
+    public float getOuterRadius() {
+
+        return outerRadius;
     }
 
     @Override
@@ -44,24 +66,57 @@ class NewShowcaseDrawer extends StandardShowcaseDrawer {
     public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier) {
         Canvas bufferCanvas = new Canvas(buffer);
         eraserPaint.setAlpha(ALPHA_60_PERCENT);
-        bufferCanvas.drawCircle(x, y, outerRadius, eraserPaint);
+        bufferCanvas.drawCircle(x, y, this.outerRadius, eraserPaint);
         eraserPaint.setAlpha(0);
-        bufferCanvas.drawCircle(x, y, innerRadius, eraserPaint);
+        bufferCanvas.drawCircle(x, y, this.innerRadius, eraserPaint);
     }
 
+    // If it's really necessary to maintain inner/outer radius as finals so we can get a flexible radius over here
+    // which i judge (without any doc) it's the function that matters
+    // the problem is the getters of BlockedRadius and Showcase width/height! they both acces the inner/outer radius so
+    // it's better to make those fields not finals.
+    @Override
+    public void drawShowcase(Bitmap buffer, float x, float y, float innerRadius, float outerRadius, float scaleMultiplier) {
+        this.innerRadius = innerRadius; // make sure getShowcase method will work well
+        this.outerRadius = outerRadius; // make sure getBlockedRadius show well
+        Canvas bufferCanvas = new Canvas(buffer);
+        eraserPaint.setAlpha(ALPHA_60_PERCENT);
+        //bufferCanvas.drawCircle(x, y, outerRadius, eraserPaint);
+        bufferCanvas.drawCircle(x, y, this.getOuterRadius(), eraserPaint);
+        eraserPaint.setAlpha(0);
+        //bufferCanvas.drawCircle(x, y, innerRadius, eraserPaint);
+        bufferCanvas.drawCircle(x, y, this.getInnerRadius(), eraserPaint);
+    }
+
+
+    /*
     @Override
     public int getShowcaseWidth() {
         return (int) (outerRadius * 2);
+    }*/
+    @Override
+    public int getShowcaseWidth() {
+        return (int) (this.getOuterRadius() * 2);
     }
+
+    /*@Override
+    public int getShowcaseHeight() {
+        return (int) (outerRadius * 2);
+    }*/
 
     @Override
     public int getShowcaseHeight() {
-        return (int) (outerRadius * 2);
+        return (int) (this.outerRadius * 2);
     }
+
+    /*@Override
+    public float getBlockedRadius() {
+        return innerRadius;
+    }*/
 
     @Override
     public float getBlockedRadius() {
-        return innerRadius;
+        return this.getInnerRadius();
     }
 
     @Override
