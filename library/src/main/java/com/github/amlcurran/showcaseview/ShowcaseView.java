@@ -572,6 +572,18 @@ public class ShowcaseView extends RelativeLayout
             showcaseView.setEndButton(button);
             return this;
         }
+
+        /**
+         * Replace the end button with the one provided. Note that this resets any OnClickListener provided
+         * by {@link #setOnClickListener(OnClickListener)}, so call this method before that one.
+         */
+        public Builder replaceEndButton(int buttonResourceId) {
+            View view = LayoutInflater.from(activity).inflate(buttonResourceId, showcaseView, false);
+            if (!(view instanceof Button)) {
+                throw new IllegalArgumentException("Attempted to replace showcase button with a layout which isn't a button");
+            }
+            return replaceEndButton((Button) view);
+        }
     }
 
     private void setEndButton(Button button) {
