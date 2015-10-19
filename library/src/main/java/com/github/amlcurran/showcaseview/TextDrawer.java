@@ -35,10 +35,6 @@ class TextDrawer {
     private static final int INDEX_TEXT_START_X = 0;
     private static final int INDEX_TEXT_START_Y = 1;
     private static final int INDEX_TEXT_WIDTH = 2;
-    private static final int LEFT_OF_SHOWCASE = 0;
-    private static final int RIGHT_OF_SHOWCASE = 2;
-    private static final int ABOVE_SHOWCASE = 1;
-    private static final int BELOW_SHOWCASE = 3;
 
     private final TextPaint titlePaint;
     private final TextPaint textPaint;
@@ -56,6 +52,7 @@ class TextDrawer {
     private TextAppearanceSpan mTitleSpan;
     private TextAppearanceSpan mDetailSpan;
     private boolean hasRecalculated;
+    private int forcedTextPosition = ShowcaseView.UNDEFINED;
 
     public TextDrawer(Resources resources, ShowcaseAreaCalculator calculator, Context context) {
         padding = resources.getDimension(R.dimen.text_padding);
@@ -135,35 +132,39 @@ class TextDrawer {
     			new Rect();
     	
     	int[] areas = new int[4]; //left, top, right, bottom
-    	areas[LEFT_OF_SHOWCASE] = showcase.left * canvasH;
-    	areas[ABOVE_SHOWCASE] = showcase.top * canvasW;
-    	areas[RIGHT_OF_SHOWCASE] = (canvasW - showcase.right) * canvasH;
-    	areas[BELOW_SHOWCASE] = (canvasH - showcase.bottom) * canvasW;
+    	areas[ShowcaseView.LEFT_OF_SHOWCASE] = showcase.left * canvasH;
+    	areas[ShowcaseView.ABOVE_SHOWCASE] = showcase.top * canvasW;
+    	areas[ShowcaseView.RIGHT_OF_SHOWCASE] = (canvasW - showcase.right) * canvasH;
+    	areas[ShowcaseView.BELOW_SHOWCASE] = (canvasH - showcase.bottom) * canvasW;
     	
     	int largest = 0;
     	for(int i = 1; i < areas.length; i++) {
     		if(areas[i] > areas[largest])
     			largest = i;
     	}
-    	
+
+        if (forcedTextPosition != ShowcaseView.UNDEFINED) {
+            largest = forcedTextPosition;
+        }
+
     	// Position text in largest area
     	switch(largest) {
-    	case LEFT_OF_SHOWCASE:
+    	case ShowcaseView.LEFT_OF_SHOWCASE:
     		mBestTextPosition[INDEX_TEXT_START_X] = padding;
     		mBestTextPosition[INDEX_TEXT_START_Y] = padding;
     		mBestTextPosition[INDEX_TEXT_WIDTH] = showcase.left - 2 * padding;
     		break;
-    	case ABOVE_SHOWCASE:
+    	case ShowcaseView.ABOVE_SHOWCASE:
     		mBestTextPosition[INDEX_TEXT_START_X] = padding;
     		mBestTextPosition[INDEX_TEXT_START_Y] = padding + actionBarOffset;
     		mBestTextPosition[INDEX_TEXT_WIDTH] = canvasW - 2 * padding;
     		break;
-    	case RIGHT_OF_SHOWCASE:
+    	case ShowcaseView.RIGHT_OF_SHOWCASE:
     		mBestTextPosition[INDEX_TEXT_START_X] = showcase.right + padding;
     		mBestTextPosition[INDEX_TEXT_START_Y] = padding;
     		mBestTextPosition[INDEX_TEXT_WIDTH] = (canvasW - showcase.right) - 2 * padding;
     		break;
-    	case BELOW_SHOWCASE:
+    	case ShowcaseView.BELOW_SHOWCASE:
     		mBestTextPosition[INDEX_TEXT_START_X] = padding;
     		mBestTextPosition[INDEX_TEXT_START_Y] = showcase.bottom + padding;
     		mBestTextPosition[INDEX_TEXT_WIDTH] = canvasW - 2 * padding;
@@ -172,12 +173,12 @@ class TextDrawer {
     	if(shouldCentreText) {
 	    	// Center text vertically or horizontally
 	    	switch(largest) {
-	    	case LEFT_OF_SHOWCASE:
-	    	case RIGHT_OF_SHOWCASE:
+	    	case ShowcaseView.LEFT_OF_SHOWCASE:
+	    	case ShowcaseView.RIGHT_OF_SHOWCASE:
 	    		mBestTextPosition[INDEX_TEXT_START_Y] += canvasH / 4;
 	    		break;
-	    	case ABOVE_SHOWCASE:
-	    	case BELOW_SHOWCASE:
+	    	case ShowcaseView.ABOVE_SHOWCASE:
+	    	case ShowcaseView.BELOW_SHOWCASE:
 	    		mBestTextPosition[INDEX_TEXT_WIDTH] /= 2;
 	    		mBestTextPosition[INDEX_TEXT_START_X] += canvasW / 4;
 	    		break;
@@ -185,8 +186,8 @@ class TextDrawer {
     	} else {
     		// As text is not centered add actionbar padding if the text is left or right
 	    	switch(largest) {
-	    		case LEFT_OF_SHOWCASE:
-	    		case RIGHT_OF_SHOWCASE:
+	    		case ShowcaseView.LEFT_OF_SHOWCASE:
+	    		case ShowcaseView.RIGHT_OF_SHOWCASE:
 	    			mBestTextPosition[INDEX_TEXT_START_Y] += actionBarOffset;
 	    			break;
 	    	}
@@ -227,5 +228,12 @@ class TextDrawer {
 
     public void setTitleTextAlignment(Layout.Alignment titleTextAlignment) {
         this.titleTextAlignment = titleTextAlignment;
+    }
+
+    public void forceTextPosition(int textPosition) {
+        if (textPosition > ShowcaseView.BELOW_SHOWCASE || textPosition < ShowcaseView.UNDEFINED) {
+            throw new IllegalArgumentException("ShowcaseView text was forced with an invalid position");
+        }
+        forcedTextPosition = textPosition;
     }
 }

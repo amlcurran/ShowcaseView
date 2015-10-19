@@ -38,5 +38,6 @@ public class CustomTextActivity extends Activity {
 
         showcaseView.setDetailTextAlignment(Layout.Alignment.ALIGN_CENTER);
         showcaseView.setTitleTextAlignment(Layout.Alignment.ALIGN_CENTER);
+        showcaseView.forceTextPosition(ShowcaseView.BELOW_SHOWCASE);
     }
 }

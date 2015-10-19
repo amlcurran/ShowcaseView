@@ -48,6 +48,11 @@ public class ShowcaseView extends RelativeLayout
         implements View.OnTouchListener, ShowcaseViewApi {
 
     private static final int HOLO_BLUE = Color.parseColor("#33B5E5");
+    public static final int UNDEFINED = -1;
+    public static final int LEFT_OF_SHOWCASE = 0;
+    public static final int RIGHT_OF_SHOWCASE = 2;
+    public static final int ABOVE_SHOWCASE = 1;
+    public static final int BELOW_SHOWCASE = 3;
 
     private Button mEndButton;
     private final TextDrawer textDrawer;
@@ -671,6 +676,12 @@ public class ShowcaseView extends RelativeLayout
     private void setFadeDurations(long fadeInMillis, long fadeOutMillis) {
         this.fadeInMillis = fadeInMillis;
         this.fadeOutMillis = fadeOutMillis;
+    }
+
+    public void forceTextPosition(int textPosition) {
+        textDrawer.forceTextPosition(textPosition);
+        hasAlteredText = true;
+        invalidate();
     }
 
     /**
