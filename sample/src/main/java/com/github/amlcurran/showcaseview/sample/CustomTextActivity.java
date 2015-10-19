@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Layout;
 import android.text.TextPaint;
 
 import com.github.amlcurran.showcaseview.ShowcaseView;
@@ -26,7 +27,7 @@ public class CustomTextActivity extends Activity {
         title.setUnderlineText(true);
         title.setTypeface(Typeface.createFromAsset(getAssets(), "RobotoSlab-Regular.ttf"));
 
-        new ShowcaseView.Builder(this)
+        ShowcaseView showcaseView = new ShowcaseView.Builder(this)
                 .withNewStyleShowcase()
                 .setTarget(new ViewTarget(R.id.imageView, this))
                 .setContentTitle(R.string.custom_text_painting_title)
@@ -34,5 +35,9 @@ public class CustomTextActivity extends Activity {
                 .setContentTextPaint(paint)
                 .setContentTitlePaint(title)
                 .build();
+
+        showcaseView.setDetailTextAlignment(Layout.Alignment.ALIGN_CENTER);
+        showcaseView.setTitleTextAlignment(Layout.Alignment.ALIGN_CENTER);
+        showcaseView.forceTextPosition(ShowcaseView.BELOW_SHOWCASE);
     }
 }
