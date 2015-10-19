@@ -32,6 +32,10 @@ import android.text.style.TextAppearanceSpan;
  */
 class TextDrawer {
 
+    private static final int INDEX_TEXT_START_X = 0;
+    private static final int INDEX_TEXT_START_Y = 1;
+    private static final int INDEX_TEXT_WIDTH = 2;
+
     private final TextPaint titlePaint;
     private final TextPaint textPaint;
     private final Context context;
@@ -39,6 +43,8 @@ class TextDrawer {
     private final float padding;
     private final float actionBarOffset;
 
+    private Layout.Alignment detailTextAlignment = Layout.Alignment.ALIGN_NORMAL;
+    private Layout.Alignment titleTextAlignment = Layout.Alignment.ALIGN_NORMAL;
     private CharSequence mTitle, mDetails;
     private float[] mBestTextPosition = new float[3];
     private DynamicLayout mDynamicTitleLayout;
@@ -46,6 +52,7 @@ class TextDrawer {
     private TextAppearanceSpan mTitleSpan;
     private TextAppearanceSpan mDetailSpan;
     private boolean hasRecalculated;
+    private int forcedTextPosition = ShowcaseView.UNDEFINED;
 
     public TextDrawer(Resources resources, ShowcaseAreaCalculator calculator, Context context) {
         padding = resources.getDimension(R.dimen.text_padding);
@@ -69,11 +76,10 @@ class TextDrawer {
                 canvas.save();
                 if (hasRecalculated) {
                     mDynamicTitleLayout = new DynamicLayout(mTitle, titlePaint,
-                            (int) textPosition[2], Layout.Alignment.ALIGN_NORMAL,
-                            1.0f, 1.0f, true);
+                                                            (int) mBestTextPosition[INDEX_TEXT_WIDTH], titleTextAlignment, 1.0f, 1.0f, true);
                 }
                 if (mDynamicTitleLayout != null) {
-                    canvas.translate(textPosition[0], textPosition[1]);
+                    canvas.translate(textPosition[INDEX_TEXT_START_X], textPosition[INDEX_TEXT_START_Y]);
                     mDynamicTitleLayout.draw(canvas);
                     canvas.restore();
                 }
@@ -83,14 +89,11 @@ class TextDrawer {
                 canvas.save();
                 if (hasRecalculated) {
                     mDynamicDetailLayout = new DynamicLayout(mDetails, textPaint,
-                            (int) textPosition[2],
-                            Layout.Alignment.ALIGN_NORMAL,
-                            1.2f, 1.0f, true);
+                                                             (int) mBestTextPosition[INDEX_TEXT_WIDTH], detailTextAlignment, 1.2f, 1.0f, true);
                 }
-                float offsetForTitle = mDynamicTitleLayout != null ? mDynamicTitleLayout.getHeight() :
-                        0;
+                float offsetForTitle = mDynamicTitleLayout != null ? mDynamicTitleLayout.getHeight() : 0;
                 if (mDynamicDetailLayout != null) {
-                    canvas.translate(textPosition[0], textPosition[1] + offsetForTitle);
+                    canvas.translate(textPosition[INDEX_TEXT_START_X], textPosition[INDEX_TEXT_START_Y] + offsetForTitle);
                     mDynamicDetailLayout.draw(canvas);
                     canvas.restore();
                 }
@@ -129,59 +132,63 @@ class TextDrawer {
     			new Rect();
     	
     	int[] areas = new int[4]; //left, top, right, bottom
-    	areas[0] = showcase.left * canvasH;
-    	areas[1] = showcase.top * canvasW;
-    	areas[2] = (canvasW - showcase.right) * canvasH;
-    	areas[3] = (canvasH - showcase.bottom) * canvasW;
+    	areas[ShowcaseView.LEFT_OF_SHOWCASE] = showcase.left * canvasH;
+    	areas[ShowcaseView.ABOVE_SHOWCASE] = showcase.top * canvasW;
+    	areas[ShowcaseView.RIGHT_OF_SHOWCASE] = (canvasW - showcase.right) * canvasH;
+    	areas[ShowcaseView.BELOW_SHOWCASE] = (canvasH - showcase.bottom) * canvasW;
     	
     	int largest = 0;
     	for(int i = 1; i < areas.length; i++) {
     		if(areas[i] > areas[largest])
     			largest = i;
     	}
-    	
+
+        if (forcedTextPosition != ShowcaseView.UNDEFINED) {
+            largest = forcedTextPosition;
+        }
+
     	// Position text in largest area
     	switch(largest) {
-    	case 0:
-    		mBestTextPosition[0] = padding;
-    		mBestTextPosition[1] = padding;
-    		mBestTextPosition[2] = showcase.left - 2 * padding;
+    	case ShowcaseView.LEFT_OF_SHOWCASE:
+    		mBestTextPosition[INDEX_TEXT_START_X] = padding;
+    		mBestTextPosition[INDEX_TEXT_START_Y] = padding;
+    		mBestTextPosition[INDEX_TEXT_WIDTH] = showcase.left - 2 * padding;
     		break;
-    	case 1:
-    		mBestTextPosition[0] = padding;
-    		mBestTextPosition[1] = padding + actionBarOffset;
-    		mBestTextPosition[2] = canvasW - 2 * padding;
+    	case ShowcaseView.ABOVE_SHOWCASE:
+    		mBestTextPosition[INDEX_TEXT_START_X] = padding;
+    		mBestTextPosition[INDEX_TEXT_START_Y] = padding + actionBarOffset;
+    		mBestTextPosition[INDEX_TEXT_WIDTH] = canvasW - 2 * padding;
     		break;
-    	case 2:
-    		mBestTextPosition[0] = showcase.right + padding;
-    		mBestTextPosition[1] = padding;
-    		mBestTextPosition[2] = (canvasW - showcase.right) - 2 * padding;
+    	case ShowcaseView.RIGHT_OF_SHOWCASE:
+    		mBestTextPosition[INDEX_TEXT_START_X] = showcase.right + padding;
+    		mBestTextPosition[INDEX_TEXT_START_Y] = padding;
+    		mBestTextPosition[INDEX_TEXT_WIDTH] = (canvasW - showcase.right) - 2 * padding;
     		break;
-    	case 3:
-    		mBestTextPosition[0] = padding;
-    		mBestTextPosition[1] = showcase.bottom + padding;
-    		mBestTextPosition[2] = canvasW - 2 * padding;
+    	case ShowcaseView.BELOW_SHOWCASE:
+    		mBestTextPosition[INDEX_TEXT_START_X] = padding;
+    		mBestTextPosition[INDEX_TEXT_START_Y] = showcase.bottom + padding;
+    		mBestTextPosition[INDEX_TEXT_WIDTH] = canvasW - 2 * padding;
     		break;
     	}
     	if(shouldCentreText) {
 	    	// Center text vertically or horizontally
 	    	switch(largest) {
-	    	case 0:
-	    	case 2:
-	    		mBestTextPosition[1] += canvasH / 4;
+	    	case ShowcaseView.LEFT_OF_SHOWCASE:
+	    	case ShowcaseView.RIGHT_OF_SHOWCASE:
+	    		mBestTextPosition[INDEX_TEXT_START_Y] += canvasH / 4;
 	    		break;
-	    	case 1:
-	    	case 3:
-	    		mBestTextPosition[2] /= 2;
-	    		mBestTextPosition[0] += canvasW / 4;
+	    	case ShowcaseView.ABOVE_SHOWCASE:
+	    	case ShowcaseView.BELOW_SHOWCASE:
+	    		mBestTextPosition[INDEX_TEXT_WIDTH] /= 2;
+	    		mBestTextPosition[INDEX_TEXT_START_X] += canvasW / 4;
 	    		break;
 	    	} 
     	} else {
     		// As text is not centered add actionbar padding if the text is left or right
 	    	switch(largest) {
-	    		case 0:
-	    		case 2:
-	    			mBestTextPosition[1] += actionBarOffset;
+	    		case ShowcaseView.LEFT_OF_SHOWCASE:
+	    		case ShowcaseView.RIGHT_OF_SHOWCASE:
+	    			mBestTextPosition[INDEX_TEXT_START_Y] += actionBarOffset;
 	    			break;
 	    	}
     	}
@@ -199,14 +206,6 @@ class TextDrawer {
         setContentText(mDetails);
     }
 
-    public CharSequence getContentTitle() {
-        return mTitle;
-    }
-
-    public CharSequence getContentText() {
-        return mDetails;
-    }
-
     public float[] getBestTextPosition() {
         return mBestTextPosition;
     }
@@ -221,5 +220,20 @@ class TextDrawer {
 
     public void setTitlePaint(TextPaint textPaint) {
         titlePaint.set(textPaint);
+    }
+
+    public void setDetailTextAlignment(Layout.Alignment textAlignment) {
+        this.detailTextAlignment = textAlignment;
+    }
+
+    public void setTitleTextAlignment(Layout.Alignment titleTextAlignment) {
+        this.titleTextAlignment = titleTextAlignment;
+    }
+
+    public void forceTextPosition(int textPosition) {
+        if (textPosition > ShowcaseView.BELOW_SHOWCASE || textPosition < ShowcaseView.UNDEFINED) {
+            throw new IllegalArgumentException("ShowcaseView text was forced with an invalid position");
+        }
+        forcedTextPosition = textPosition;
     }
 }

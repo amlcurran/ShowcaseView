@@ -24,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.text.Layout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -47,6 +48,11 @@ public class ShowcaseView extends RelativeLayout
         implements View.OnTouchListener, ShowcaseViewApi {
 
     private static final int HOLO_BLUE = Color.parseColor("#33B5E5");
+    public static final int UNDEFINED = -1;
+    public static final int LEFT_OF_SHOWCASE = 0;
+    public static final int RIGHT_OF_SHOWCASE = 2;
+    public static final int ABOVE_SHOWCASE = 1;
+    public static final int BELOW_SHOWCASE = 3;
 
     private Button mEndButton;
     private final TextDrawer textDrawer;
@@ -301,14 +307,16 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void fadeOutShowcase() {
-        animationFactory.fadeOutView(this, fadeOutMillis, new AnimationEndListener() {
-            @Override
-            public void onAnimationEnd() {
-                setVisibility(View.GONE);
-                isShowing = false;
-                mEventListener.onShowcaseViewDidHide(ShowcaseView.this);
-            }
-        });
+        animationFactory.fadeOutView(
+                this, fadeOutMillis, new AnimationEndListener() {
+                    @Override
+                    public void onAnimationEnd() {
+                        setVisibility(View.GONE);
+                        isShowing = false;
+                        mEventListener.onShowcaseViewDidHide(ShowcaseView.this);
+                    }
+                }
+        );
     }
 
     @Override
@@ -319,7 +327,8 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void fadeInShowcase() {
-        animationFactory.fadeInView(this, fadeInMillis,
+        animationFactory.fadeInView(
+                this, fadeInMillis,
                 new AnimationStartListener() {
                     @Override
                     public void onAnimationStart() {
@@ -644,11 +653,35 @@ public class ShowcaseView extends RelativeLayout
     }
 
     /**
+     * Sets the text alignment of the detail text
+     */
+    public void setDetailTextAlignment(Layout.Alignment textAlignment) {
+        textDrawer.setDetailTextAlignment(textAlignment);
+        hasAlteredText = true;
+        invalidate();
+    }
+
+    /**
+     * Sets the text alignment of the title text
+     */
+    public void setTitleTextAlignment(Layout.Alignment textAlignment) {
+        textDrawer.setTitleTextAlignment(textAlignment);
+        hasAlteredText = true;
+        invalidate();
+    }
+
+    /**
      * Set the duration of the fading in and fading out of the ShowcaseView
      */
     private void setFadeDurations(long fadeInMillis, long fadeOutMillis) {
         this.fadeInMillis = fadeInMillis;
         this.fadeOutMillis = fadeOutMillis;
+    }
+
+    public void forceTextPosition(int textPosition) {
+        textDrawer.forceTextPosition(textPosition);
+        hasAlteredText = true;
+        invalidate();
     }
 
     /**
