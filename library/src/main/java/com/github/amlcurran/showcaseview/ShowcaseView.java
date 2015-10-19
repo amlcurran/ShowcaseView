@@ -24,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.text.Layout;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -301,14 +302,16 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void fadeOutShowcase() {
-        animationFactory.fadeOutView(this, fadeOutMillis, new AnimationEndListener() {
-            @Override
-            public void onAnimationEnd() {
-                setVisibility(View.GONE);
-                isShowing = false;
-                mEventListener.onShowcaseViewDidHide(ShowcaseView.this);
-            }
-        });
+        animationFactory.fadeOutView(
+                this, fadeOutMillis, new AnimationEndListener() {
+                    @Override
+                    public void onAnimationEnd() {
+                        setVisibility(View.GONE);
+                        isShowing = false;
+                        mEventListener.onShowcaseViewDidHide(ShowcaseView.this);
+                    }
+                }
+        );
     }
 
     @Override
@@ -319,7 +322,8 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void fadeInShowcase() {
-        animationFactory.fadeInView(this, fadeInMillis,
+        animationFactory.fadeInView(
+                this, fadeInMillis,
                 new AnimationStartListener() {
                     @Override
                     public void onAnimationStart() {
@@ -641,6 +645,24 @@ public class ShowcaseView extends RelativeLayout
     @Override
     public void setButtonPosition(RelativeLayout.LayoutParams layoutParams) {
         mEndButton.setLayoutParams(layoutParams);
+    }
+
+    /**
+     * Sets the text alignment of the detail text
+     */
+    public void setDetailTextAlignment(Layout.Alignment textAlignment) {
+        textDrawer.setDetailTextAlignment(textAlignment);
+        hasAlteredText = true;
+        invalidate();
+    }
+
+    /**
+     * Sets the text alignment of the title text
+     */
+    public void setTitleTextAlignment(Layout.Alignment textAlignment) {
+        textDrawer.setTitleTextAlignment(textAlignment);
+        hasAlteredText = true;
+        invalidate();
     }
 
     /**
