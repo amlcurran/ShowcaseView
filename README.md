@@ -1,12 +1,10 @@
-ShowcaseView is deprecated
+ShowcaseView Enhanced
 ====
-Currently, ShowcaseView is not under active development; issues cannot be opened and PRs will not be accepted.
 
-I've decided to make this decision because I want to rewrite the project from scratch with a far better API. A lot of things Google keep introducing in Android break ShowcaseView and it is too difficult to make these changes with the project in it's current form.
+This is a fork of the ShowcaseView library of amlcurran. The original library will be rewritten, but I needed two changes fast:
 
-The project is still available on Maven, see below for the instructions. Please see the new-scv branch for development of the new API.
-
-
+* Place the "ok" button above a navigation bar if it is visible
+* Place the "ok" button on the left side if the target is on the right side of the screen.
 
 ShowcaseView
 ---
@@ -56,6 +54,21 @@ new ShowcaseView.Builder(this)
     .setContentTitle("ShowcaseView")
     .setContentText("This is highlighting the Home button")
     .hideOnTouchOutside()
+    .build();
+~~~
+
+New in ShowcaseView Enhanced
+===
+
+If you have a visible navigation bar:
+
+~~~
+new ShowcaseView.Builder(this)
+    .setTarget(new ActionViewTarget(this, ActionViewTarget.Type.HOME))
+    .setContentTitle("ShowcaseView")
+    .setContentText("This is highlighting the Home button")
+    .hideOnTouchOutside()
+	.setNavigationBarVisible(true)
     .build();
 ~~~
 
