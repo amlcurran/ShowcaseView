@@ -387,8 +387,8 @@ public class ShowcaseView extends RelativeLayout
         final ShowcaseView showcaseView;
         private final Activity activity;
 
-        private ViewGroup mParent;
-        private int mParentIndex;
+        private ViewGroup parent;
+        private int parentIndex;
 
         public Builder(Activity activity) {
             this(activity, false);
@@ -398,6 +398,9 @@ public class ShowcaseView extends RelativeLayout
             this.activity = activity;
             this.showcaseView = new ShowcaseView(activity, useNewStyle);
             this.showcaseView.setTarget(Target.NONE);
+
+            this.parent = ((ViewGroup) activity.getWindow().getDecorView());
+            this.parentIndex = -1;
         }
 
         /**
@@ -406,16 +409,7 @@ public class ShowcaseView extends RelativeLayout
          * @return the created ShowcaseView
          */
         public ShowcaseView build() {
-            ViewGroup parent;
-            int index;
-            if (mParent == null) {
-                parent = ((ViewGroup) activity.getWindow().getDecorView());
-                index = mParentIndex;
-            } else {
-                parent = mParent;
-                index = -1;
-            }
-            insertShowcaseView(showcaseView, parent, index);
+            insertShowcaseView(showcaseView, parent, parentIndex);
             return showcaseView;
         }
 
@@ -518,8 +512,8 @@ public class ShowcaseView extends RelativeLayout
         }
 
         public Builder setParent(ViewGroup parent, int index) {
-            mParent = parent;
-            mParentIndex = index;
+            this.parent = parent;
+            this.parentIndex = index;
             return this;
         }
     }
