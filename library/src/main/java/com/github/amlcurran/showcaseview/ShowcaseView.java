@@ -83,6 +83,7 @@ public class ShowcaseView extends RelativeLayout
     private boolean isShowing;
     private int backgroundColor;
     private int showcaseColor;
+    private boolean blockAllTouches;
 
     protected ShowcaseView(Context context, boolean newStyle) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
@@ -340,6 +341,9 @@ public class ShowcaseView extends RelativeLayout
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (blockAllTouches) {
+            return true;
+        }
 
         float xDelta = Math.abs(motionEvent.getRawX() - showcaseX);
         float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
@@ -593,6 +597,15 @@ public class ShowcaseView extends RelativeLayout
             }
             return replaceEndButton((Button) view);
         }
+
+        /**
+         * Block any touch made on the ShowcaseView, even inside the showcase
+         */
+        public Builder blockAllTouches() {
+            showcaseView.setBlockAllTouches(true);
+            return this;
+        }
+
     }
 
     private void setEndButton(Button button) {
@@ -698,6 +711,10 @@ public class ShowcaseView extends RelativeLayout
     @Override
     public void setBlocksTouches(boolean blockTouches) {
         this.blockTouches = blockTouches;
+    }
+
+    private void setBlockAllTouches(boolean blockAllTouches) {
+        this.blockAllTouches = blockAllTouches;
     }
 
     /**
