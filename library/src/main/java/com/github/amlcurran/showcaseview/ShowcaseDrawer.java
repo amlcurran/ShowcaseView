@@ -19,10 +19,7 @@ package com.github.amlcurran.showcaseview;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-/**
- * Created by curraa01 on 13/10/2013.
- */
-interface ShowcaseDrawer {
+public interface ShowcaseDrawer {
 
     void setShowcaseColour(int color);
 

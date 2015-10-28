@@ -16,5 +16,5 @@
   -->
 
 <resources>
-
+  <color name="custom_showcase_bg">#b9002153</color>
 </resources>
