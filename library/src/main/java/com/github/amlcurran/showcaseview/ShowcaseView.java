@@ -358,8 +358,8 @@ public class ShowcaseView extends RelativeLayout
         return blockTouches && distanceFromFocus > showcaseDrawer.getBlockedRadius();
     }
 
-    private static void insertShowcaseView(ShowcaseView showcaseView, Activity activity) {
-        ((ViewGroup) activity.getWindow().getDecorView()).addView(showcaseView);
+    private static void insertShowcaseView(ShowcaseView showcaseView, ViewGroup parent, int parentIndex) {
+        parent.addView(showcaseView, parentIndex);
         if (!showcaseView.hasShot()) {
             showcaseView.show();
         } else {
@@ -403,6 +403,9 @@ public class ShowcaseView extends RelativeLayout
         final ShowcaseView showcaseView;
         private final Activity activity;
 
+        private ViewGroup parent;
+        private int parentIndex;
+
         public Builder(Activity activity) {
             this(activity, false);
         }
@@ -417,6 +420,9 @@ public class ShowcaseView extends RelativeLayout
             this.activity = activity;
             this.showcaseView = new ShowcaseView(activity, useNewStyle);
             this.showcaseView.setTarget(Target.NONE);
+
+            this.parent = ((ViewGroup) activity.getWindow().getDecorView());
+            this.parentIndex = -1;
         }
 
         /**
@@ -425,7 +431,7 @@ public class ShowcaseView extends RelativeLayout
          * @return the created ShowcaseView
          */
         public ShowcaseView build() {
-            insertShowcaseView(showcaseView, activity);
+            insertShowcaseView(showcaseView, parent, parentIndex);
             return showcaseView;
         }
 
@@ -556,6 +562,12 @@ public class ShowcaseView extends RelativeLayout
 
         public Builder setShowcaseEventListener(OnShowcaseEventListener showcaseEventListener) {
             showcaseView.setOnShowcaseEventListener(showcaseEventListener);
+            return this;
+        }
+
+        public Builder setParent(ViewGroup parent, int index) {
+            this.parent = parent;
+            this.parentIndex = index;
             return this;
         }
 
