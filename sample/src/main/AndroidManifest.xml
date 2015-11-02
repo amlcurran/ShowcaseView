@@ -20,13 +20,13 @@
 
     <application
         android:label="@string/app_name"
+        android:theme="@style/AppTheme"
         android:icon="@drawable/ic_launcher"
         android:allowBackup="true">
 
         <activity
             android:name=".SampleActivity"
             android:label="@string/app_name"
-            android:theme="@style/CompatDarkActionBarTheme"
             android:logo="@drawable/ic_logo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,6 +41,8 @@
         <activity android:name=".CustomTextActivity" />
 
         <activity android:name=".CustomShowcaseActivity" />
+
+        <activity android:name=".ActionItemsSampleActivity" />
 
     </application>
 </manifest>

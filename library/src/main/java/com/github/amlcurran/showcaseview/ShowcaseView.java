@@ -84,6 +84,7 @@ public class ShowcaseView extends RelativeLayout
     private int backgroundColor;
     private int showcaseColor;
     private boolean blockAllTouches;
+    private final int[] positionInWindow = new int[2];
 
     protected ShowcaseView(Context context, boolean newStyle) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
@@ -97,7 +98,6 @@ public class ShowcaseView extends RelativeLayout
         showcaseAreaCalculator = new ShowcaseAreaCalculator();
         shotStateStore = new ShotStateStore(context);
 
-        apiUtils.setFitsSystemWindowsCompat(this);
         getViewTreeObserver().addOnPreDrawListener(new CalculateTextOnPreDraw());
         getViewTreeObserver().addOnGlobalLayoutListener(new UpdateOnGlobalLayout());
 
@@ -155,8 +155,9 @@ public class ShowcaseView extends RelativeLayout
         if (shotStateStore.hasShot()) {
             return;
         }
-        showcaseX = x;
-        showcaseY = y;
+        getLocationInWindow(positionInWindow);
+        showcaseX = x - positionInWindow[0];
+        showcaseY = y - positionInWindow[1];
         //init();
         invalidate();
     }
@@ -420,9 +421,8 @@ public class ShowcaseView extends RelativeLayout
             this.activity = activity;
             this.showcaseView = new ShowcaseView(activity, useNewStyle);
             this.showcaseView.setTarget(Target.NONE);
-
-            this.parent = ((ViewGroup) activity.getWindow().getDecorView());
-            this.parentIndex = -1;
+            this.parent = (ViewGroup) activity.findViewById(android.R.id.content);
+            this.parentIndex = parent.getChildCount();
         }
 
         /**
@@ -618,6 +618,15 @@ public class ShowcaseView extends RelativeLayout
             return this;
         }
 
+        /**
+         * Uses the android decor view to insert a showcase, this is not recommended
+         * as then UI elements in showcase view can hide behind the nav bar
+         */
+        public Builder useDecorViewAsParent() {
+            this.parent = ((ViewGroup) activity.getWindow().getDecorView());
+            this.parentIndex = -1;
+            return this;
+        }
     }
 
     private void setEndButton(Button button) {

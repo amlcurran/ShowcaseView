@@ -17,7 +17,15 @@
 
 <resources>
 
-    <style name="CompatDarkActionBarTheme" parent="android:Theme.Holo.Light" />
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#3973cf</item>
+        <item name="colorPrimaryDark">#3365b5</item>
+    </style>
+
+    <style name="Toolbar">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+    </style>
 
     <style name="CustomShowcaseTheme" parent="ShowcaseView.Light">
         <item name="sv_backgroundColor">#3300A621</item>
@@ -40,14 +48,6 @@
         <item name="sv_showcaseColor">#00801A</item>
         <item name="sv_buttonText">Close</item>
         <item name="sv_titleTextAppearance">@style/CustomTitle</item>
-    </style>
-
-    <style name="SampleTheme" parent="Theme.AppCompat.Light">
-        <item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>
-    </style>
-
-    <style name="SampleTheme2" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="showcaseViewStyle">@style/CustomShowcaseTheme2</item>
     </style>
 
     <style name="CustomTitle" parent="TextAppearance.ShowcaseView.Title">
