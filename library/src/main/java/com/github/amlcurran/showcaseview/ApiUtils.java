@@ -33,7 +33,7 @@ public class ApiUtils {
     @TargetApi(14)
     public void setFitsSystemWindowsCompat(View view) {
         if (isCompatWith(Build.VERSION_CODES.ICE_CREAM_SANDWICH)) {
-            view.setFitsSystemWindows(true);
+            view.setFitsSystemWindows(false);
         }
     }
 }

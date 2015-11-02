@@ -84,6 +84,7 @@ public class ShowcaseView extends RelativeLayout
     private int backgroundColor;
     private int showcaseColor;
     private boolean blockAllTouches;
+    private final int[] positionInWindow = new int[2];
 
     protected ShowcaseView(Context context, boolean newStyle) {
         this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
@@ -154,8 +155,9 @@ public class ShowcaseView extends RelativeLayout
         if (shotStateStore.hasShot()) {
             return;
         }
-        showcaseX = x;
-        showcaseY = y;
+        getLocationInWindow(positionInWindow);
+        showcaseX = x - positionInWindow[0];
+        showcaseY = y - positionInWindow[1];
         //init();
         invalidate();
     }
