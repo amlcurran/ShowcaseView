@@ -17,11 +17,12 @@
 package com.github.amlcurran.showcaseview.sample;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.sample.animations.AnimationSampleActivity;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
-public class SampleActivity extends Activity implements View.OnClickListener,
+public class SampleActivity extends AppCompatActivity implements View.OnClickListener,
         OnShowcaseEventListener, AdapterView.OnItemClickListener {
 
     private static final float ALPHA_DIM_VALUE = 0.1f;
@@ -53,6 +54,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         HardcodedListAdapter adapter = new HardcodedListAdapter(this);
         listView = (ListView) findViewById(R.id.listView);

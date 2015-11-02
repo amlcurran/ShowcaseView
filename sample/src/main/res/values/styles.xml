@@ -16,8 +16,11 @@
   -->
 
 <resources>
-  
-  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar" />
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#3973cf</item>
+        <item name="colorPrimaryDark">#3365b5</item>
+    </style>
 
     <style name="CustomShowcaseTheme" parent="ShowcaseView.Light">
         <item name="sv_backgroundColor">#3300A621</item>
