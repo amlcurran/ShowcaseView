@@ -167,33 +167,27 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void setShowcase(final Target target, final boolean animate) {
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        if (!shotStateStore.hasShot()) {
 
-                if (!shotStateStore.hasShot()) {
-
-                    updateBitmap();
-                    Point targetPoint = target.getPoint();
-                    if (targetPoint != null) {
-                        hasNoTarget = false;
-                        if (animate) {
-                            animationFactory.animateTargetToPoint(ShowcaseView.this, targetPoint);
-                        } else {
-                            setShowcasePosition(targetPoint);
-                        }
-                    } else {
-                        hasNoTarget = true;
-                        invalidate();
-                    }
-
+            updateBitmap();
+            Point targetPoint = target.getPoint();
+            if (targetPoint != null) {
+                hasNoTarget = false;
+                if (animate) {
+                    animationFactory.animateTargetToPoint(ShowcaseView.this, targetPoint);
+                } else {
+                    setShowcasePosition(targetPoint);
                 }
+            } else {
+                hasNoTarget = true;
+                invalidate();
             }
-        }, 100);
+
+        }
     }
 
     private void updateBitmap() {
-        if (bitmapBuffer == null || haveBoundsChanged()) {
+        if ((bitmapBuffer == null || haveBoundsChanged()) && getMeasuredHeight() > 0 && getMeasuredWidth() > 0) {
             if(bitmapBuffer != null)
         		bitmapBuffer.recycle();
             bitmapBuffer = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
