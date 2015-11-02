@@ -41,27 +41,27 @@ class NewShowcaseDrawer extends StandardShowcaseDrawer {
     }
 
     @Override
-    public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier) {
+    public void drawShowcase(Bitmap buffer, float x, float y) {
         Canvas bufferCanvas = new Canvas(buffer);
         eraserPaint.setAlpha(ALPHA_60_PERCENT);
-        bufferCanvas.drawCircle(x, y, outerRadius, eraserPaint);
+        bufferCanvas.drawCircle(x, y, outerRadius * scaleMultiplier, eraserPaint);
         eraserPaint.setAlpha(0);
-        bufferCanvas.drawCircle(x, y, innerRadius, eraserPaint);
+        bufferCanvas.drawCircle(x, y, innerRadius * scaleMultiplier, eraserPaint);
     }
 
     @Override
     public int getShowcaseWidth() {
-        return (int) (outerRadius * 2);
+        return (int) (outerRadius * scaleMultiplier * 2);
     }
 
     @Override
     public int getShowcaseHeight() {
-        return (int) (outerRadius * 2);
+        return (int) (outerRadius * scaleMultiplier * 2);
     }
 
     @Override
     public float getBlockedRadius() {
-        return innerRadius;
+        return innerRadius * scaleMultiplier;
     }
 
     @Override

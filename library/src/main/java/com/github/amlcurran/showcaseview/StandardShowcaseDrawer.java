@@ -19,6 +19,7 @@ package com.github.amlcurran.showcaseview;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -31,6 +32,7 @@ class StandardShowcaseDrawer implements ShowcaseDrawer {
     private final Paint basicPaint;
     private final float showcaseRadius;
     protected int backgroundColour;
+    protected float scaleMultiplier = 1F;
 
     public StandardShowcaseDrawer(Resources resources) {
         PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
@@ -50,32 +52,40 @@ class StandardShowcaseDrawer implements ShowcaseDrawer {
     }
 
     @Override
-    public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier) {
+    public void setScaleMultiplier(float scaleMultiplier) {
+        this.scaleMultiplier = scaleMultiplier;
+    }
+
+    @Override
+    public void drawShowcase(Bitmap buffer, float x, float y) {
         Canvas bufferCanvas = new Canvas(buffer);
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleMultiplier, scaleMultiplier, x, y);
+        bufferCanvas.setMatrix(matrix);
+
         bufferCanvas.drawCircle(x, y, showcaseRadius, eraserPaint);
-        int halfW = getShowcaseWidth() / 2;
-        int halfH = getShowcaseHeight() / 2;
+        int halfW = showcaseDrawable.getIntrinsicWidth() / 2;
+        int halfH = showcaseDrawable.getIntrinsicHeight() / 2;
         int left = (int) (x - halfW);
         int top = (int) (y - halfH);
-        showcaseDrawable.setBounds(left, top,
-                left + getShowcaseWidth(),
-                top + getShowcaseHeight());
+        showcaseDrawable.setBounds(left, top, left + 2 * halfW, top + 2 * halfH);
         showcaseDrawable.draw(bufferCanvas);
     }
 
     @Override
     public int getShowcaseWidth() {
-        return showcaseDrawable.getIntrinsicWidth();
+        return (int) (scaleMultiplier * showcaseDrawable.getIntrinsicWidth());
     }
 
     @Override
     public int getShowcaseHeight() {
-        return showcaseDrawable.getIntrinsicHeight();
+        return (int) (scaleMultiplier * showcaseDrawable.getIntrinsicHeight());
     }
 
     @Override
     public float getBlockedRadius() {
-        return showcaseRadius;
+        return showcaseRadius * scaleMultiplier;
     }
 
     @Override

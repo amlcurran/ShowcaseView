@@ -64,7 +64,6 @@ public class ShowcaseView extends RelativeLayout
     // Showcase metrics
     private int showcaseX = -1;
     private int showcaseY = -1;
-    private float scaleMultiplier = 1f;
 
     // Touch items
     private boolean hasCustomClickListener = false;
@@ -281,7 +280,7 @@ public class ShowcaseView extends RelativeLayout
 
         // Draw the showcase drawable
         if (!hasNoTarget) {
-            showcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY, scaleMultiplier);
+            showcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY);
             showcaseDrawer.drawToCanvas(canvas, bitmapBuffer);
         }
 
@@ -384,7 +383,7 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private void setScaleMultiplier(float scaleMultiplier) {
-        this.scaleMultiplier = scaleMultiplier;
+        showcaseDrawer.setScaleMultiplier(scaleMultiplier);
     }
 
     public void hideButton() {
@@ -557,6 +556,11 @@ public class ShowcaseView extends RelativeLayout
          */
         public Builder singleShot(long shotId) {
             showcaseView.setSingleShot(shotId);
+            return this;
+        }
+
+        public Builder setScaleMultiplier(float scaleMultiplier) {
+            showcaseView.setScaleMultiplier(scaleMultiplier);
             return this;
         }
 
