@@ -69,7 +69,9 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         lps.setMargins(margin, margin, margin, margin);
 
         ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
+        ViewGroup viewById = (ViewGroup) findViewById(android.R.id.content);
         sv = new ShowcaseView.Builder(this)
+                .setParent(viewById, viewById.getChildCount())
                 .withMaterialShowcase()
                 .setTarget(target)
                 .setContentTitle(R.string.showcase_main_title)

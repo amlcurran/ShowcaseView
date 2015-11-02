@@ -97,7 +97,6 @@ public class ShowcaseView extends RelativeLayout
         showcaseAreaCalculator = new ShowcaseAreaCalculator();
         shotStateStore = new ShotStateStore(context);
 
-        apiUtils.setFitsSystemWindowsCompat(this);
         getViewTreeObserver().addOnPreDrawListener(new CalculateTextOnPreDraw());
         getViewTreeObserver().addOnGlobalLayoutListener(new UpdateOnGlobalLayout());
 

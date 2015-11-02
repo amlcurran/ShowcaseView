@@ -16,8 +16,8 @@
   -->
 
 <resources>
-
-    <style name="CompatDarkActionBarTheme" parent="android:Theme.Holo.Light" />
+  
+  <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar" />
 
     <style name="CustomShowcaseTheme" parent="ShowcaseView.Light">
         <item name="sv_backgroundColor">#3300A621</item>
