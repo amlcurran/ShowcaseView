@@ -619,6 +619,15 @@ public class ShowcaseView extends RelativeLayout
             return this;
         }
 
+        /**
+         * Uses the android content view to insert a showcase, this is highly recommended
+         * when using appcompat (and really, highly recommended in general)
+         */
+        public Builder useContentViewAsParent() {
+            parent = (ViewGroup) activity.findViewById(android.R.id.content);
+            parentIndex = parent.getChildCount();
+            return this;
+        }
     }
 
     private void setEndButton(Button button) {

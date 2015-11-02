@@ -71,9 +71,8 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         lps.setMargins(margin, margin, margin, margin);
 
         ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
-        ViewGroup viewById = (ViewGroup) findViewById(android.R.id.content);
         sv = new ShowcaseView.Builder(this)
-                .setParent(viewById, viewById.getChildCount())
+                .useContentViewAsParent()
                 .withMaterialShowcase()
                 .setTarget(target)
                 .setContentTitle(R.string.showcase_main_title)
@@ -131,7 +130,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         switch (position) {
             case 0:
-                //startActivity(new Intent(this, ActionItemsSampleActivity.class));
+                startActivity(new Intent(this, ActionItemsSampleActivity.class));
                 break;
             case 1:
                 startActivity(new Intent(this, AnimationSampleActivity.class));
