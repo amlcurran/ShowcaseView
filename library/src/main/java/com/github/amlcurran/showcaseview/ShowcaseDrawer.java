@@ -35,5 +35,9 @@ public interface ShowcaseDrawer {
 
     void erase(Bitmap bitmapBuffer);
 
+    void setInnerCircleRadius(float innerRadius);
+
+    void setOuterCircleRadius(float outerRadius);
+
     void drawToCanvas(Canvas canvas, Bitmap bitmapBuffer);
 }
