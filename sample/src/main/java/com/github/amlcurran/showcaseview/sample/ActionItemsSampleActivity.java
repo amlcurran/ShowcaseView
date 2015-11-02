@@ -19,7 +19,6 @@ public class ActionItemsSampleActivity extends AppCompatActivity {
 
         new ShowcaseView.Builder(this)
                 .withMaterialShowcase()
-                .useContentViewAsParent()
                 .setTarget(new ToolbarActionItemTarget(viewById, R.id.menu_item1))
                 .setStyle(R.style.CustomShowcaseTheme2)
                 .setContentText("Here's how to highlight items on a toolbar")

@@ -421,9 +421,8 @@ public class ShowcaseView extends RelativeLayout
             this.activity = activity;
             this.showcaseView = new ShowcaseView(activity, useNewStyle);
             this.showcaseView.setTarget(Target.NONE);
-
-            this.parent = ((ViewGroup) activity.getWindow().getDecorView());
-            this.parentIndex = -1;
+            this.parent = (ViewGroup) activity.findViewById(android.R.id.content);
+            this.parentIndex = parent.getChildCount();
         }
 
         /**
@@ -620,12 +619,12 @@ public class ShowcaseView extends RelativeLayout
         }
 
         /**
-         * Uses the android content view to insert a showcase, this is highly recommended
-         * when using appcompat (and really, highly recommended in general)
+         * Uses the android decor view to insert a showcase, this is not recommended
+         * as then UI elements in showcase view can hide behind the nav bar
          */
-        public Builder useContentViewAsParent() {
-            parent = (ViewGroup) activity.findViewById(android.R.id.content);
-            parentIndex = parent.getChildCount();
+        public Builder useDecorViewAsParent() {
+            this.parent = ((ViewGroup) activity.getWindow().getDecorView());
+            this.parentIndex = -1;
             return this;
         }
     }

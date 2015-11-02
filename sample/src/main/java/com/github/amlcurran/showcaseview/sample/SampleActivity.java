@@ -72,7 +72,6 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
 
         ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
         sv = new ShowcaseView.Builder(this)
-                .useContentViewAsParent()
                 .withMaterialShowcase()
                 .setTarget(target)
                 .setContentTitle(R.string.showcase_main_title)
