@@ -286,28 +286,24 @@ public class ShowcaseView extends RelativeLayout
     @SuppressWarnings("NullableProblems")
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        try {
-            if (showcaseX < 0 || showcaseY < 0 || shotStateStore.hasShot() || bitmapBuffer == null) {
-                super.dispatchDraw(canvas);
-                return;
-            }
-
-            //Draw background color
-            showcaseDrawer.erase(bitmapBuffer);
-
-            // Draw the showcase drawable
-            if (!hasNoTarget) {
-                showcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY, scaleMultiplier);
-                showcaseDrawer.drawToCanvas(canvas, bitmapBuffer);
-            }
-
-            // Draw the text on the screen, recalculating its position if necessary
-            textDrawer.draw(canvas);
-
+        if (showcaseX < 0 || showcaseY < 0 || shotStateStore.hasShot() || bitmapBuffer == null) {
             super.dispatchDraw(canvas);
-        } catch(Exception e) {
-            e.printStackTrace();
+            return;
         }
+
+        //Draw background color
+        showcaseDrawer.erase(bitmapBuffer);
+
+        // Draw the showcase drawable
+        if (!hasNoTarget) {
+            showcaseDrawer.drawShowcase(bitmapBuffer, showcaseX, showcaseY, scaleMultiplier);
+            showcaseDrawer.drawToCanvas(canvas, bitmapBuffer);
+        }
+
+        // Draw the text on the screen, recalculating its position if necessary
+        textDrawer.draw(canvas);
+
+        super.dispatchDraw(canvas);
 
     }
 
