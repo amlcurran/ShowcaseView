@@ -120,7 +120,6 @@ class TextDrawer {
         }
     }
 
-
     /**
      * Calculates the best place to position text
      *  @param canvasW width of the screen
