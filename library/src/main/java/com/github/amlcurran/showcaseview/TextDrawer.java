@@ -71,12 +71,13 @@ class TextDrawer {
     public void draw(Canvas canvas) {
         if (shouldDrawText()) {
             float[] textPosition = getBestTextPosition();
+            int width = Math.max(0, (int) mBestTextPosition[INDEX_TEXT_WIDTH]);
 
             if (!TextUtils.isEmpty(mTitle)) {
                 canvas.save();
                 if (hasRecalculated) {
                     mDynamicTitleLayout = new DynamicLayout(mTitle, titlePaint,
-                                                            (int) mBestTextPosition[INDEX_TEXT_WIDTH], titleTextAlignment, 1.0f, 1.0f, true);
+                            width, titleTextAlignment, 1.0f, 1.0f, true);
                 }
                 if (mDynamicTitleLayout != null) {
                     canvas.translate(textPosition[INDEX_TEXT_START_X], textPosition[INDEX_TEXT_START_Y]);
@@ -89,7 +90,7 @@ class TextDrawer {
                 canvas.save();
                 if (hasRecalculated) {
                     mDynamicDetailLayout = new DynamicLayout(mDetails, textPaint,
-                                                             (int) mBestTextPosition[INDEX_TEXT_WIDTH], detailTextAlignment, 1.2f, 1.0f, true);
+                                                             width, detailTextAlignment, 1.2f, 1.0f, true);
                 }
                 float offsetForTitle = mDynamicTitleLayout != null ? mDynamicTitleLayout.getHeight() : 0;
                 if (mDynamicDetailLayout != null) {
@@ -127,71 +128,71 @@ class TextDrawer {
      */
     public void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView, boolean shouldCentreText) {
 
-    	Rect showcase = showcaseView.hasShowcaseView() ?
-    			calculator.getShowcaseRect() :
-    			new Rect();
-    	
-    	int[] areas = new int[4]; //left, top, right, bottom
-    	areas[ShowcaseView.LEFT_OF_SHOWCASE] = showcase.left * canvasH;
-    	areas[ShowcaseView.ABOVE_SHOWCASE] = showcase.top * canvasW;
-    	areas[ShowcaseView.RIGHT_OF_SHOWCASE] = (canvasW - showcase.right) * canvasH;
-    	areas[ShowcaseView.BELOW_SHOWCASE] = (canvasH - showcase.bottom) * canvasW;
-    	
-    	int largest = 0;
-    	for(int i = 1; i < areas.length; i++) {
-    		if(areas[i] > areas[largest])
-    			largest = i;
-    	}
+        Rect showcase = showcaseView.hasShowcaseView() ?
+                calculator.getShowcaseRect() :
+                new Rect();
+
+        int[] areas = new int[4]; //left, top, right, bottom
+        areas[ShowcaseView.LEFT_OF_SHOWCASE] = showcase.left * canvasH;
+        areas[ShowcaseView.ABOVE_SHOWCASE] = showcase.top * canvasW;
+        areas[ShowcaseView.RIGHT_OF_SHOWCASE] = (canvasW - showcase.right) * canvasH;
+        areas[ShowcaseView.BELOW_SHOWCASE] = (canvasH - showcase.bottom) * canvasW;
+
+        int largest = 0;
+        for(int i = 1; i < areas.length; i++) {
+            if(areas[i] > areas[largest])
+                largest = i;
+        }
 
         if (forcedTextPosition != ShowcaseView.UNDEFINED) {
             largest = forcedTextPosition;
         }
 
-    	// Position text in largest area
-    	switch(largest) {
-    	case ShowcaseView.LEFT_OF_SHOWCASE:
-    		mBestTextPosition[INDEX_TEXT_START_X] = padding;
-    		mBestTextPosition[INDEX_TEXT_START_Y] = padding;
-    		mBestTextPosition[INDEX_TEXT_WIDTH] = showcase.left - 2 * padding;
-    		break;
-    	case ShowcaseView.ABOVE_SHOWCASE:
-    		mBestTextPosition[INDEX_TEXT_START_X] = padding;
-    		mBestTextPosition[INDEX_TEXT_START_Y] = padding + actionBarOffset;
-    		mBestTextPosition[INDEX_TEXT_WIDTH] = canvasW - 2 * padding;
-    		break;
-    	case ShowcaseView.RIGHT_OF_SHOWCASE:
-    		mBestTextPosition[INDEX_TEXT_START_X] = showcase.right + padding;
-    		mBestTextPosition[INDEX_TEXT_START_Y] = padding;
-    		mBestTextPosition[INDEX_TEXT_WIDTH] = (canvasW - showcase.right) - 2 * padding;
-    		break;
-    	case ShowcaseView.BELOW_SHOWCASE:
-    		mBestTextPosition[INDEX_TEXT_START_X] = padding;
-    		mBestTextPosition[INDEX_TEXT_START_Y] = showcase.bottom + padding;
-    		mBestTextPosition[INDEX_TEXT_WIDTH] = canvasW - 2 * padding;
-    		break;
-    	}
-    	if(shouldCentreText) {
-	    	// Center text vertically or horizontally
-	    	switch(largest) {
-	    	case ShowcaseView.LEFT_OF_SHOWCASE:
-	    	case ShowcaseView.RIGHT_OF_SHOWCASE:
-	    		mBestTextPosition[INDEX_TEXT_START_Y] += canvasH / 4;
-	    		break;
-	    	case ShowcaseView.ABOVE_SHOWCASE:
-	    	case ShowcaseView.BELOW_SHOWCASE:
-	    		mBestTextPosition[INDEX_TEXT_WIDTH] /= 2;
-	    		mBestTextPosition[INDEX_TEXT_START_X] += canvasW / 4;
-	    		break;
-	    	} 
-    	} else {
-    		// As text is not centered add actionbar padding if the text is left or right
-	    	switch(largest) {
-	    		case ShowcaseView.LEFT_OF_SHOWCASE:
-	    		case ShowcaseView.RIGHT_OF_SHOWCASE:
-	    			mBestTextPosition[INDEX_TEXT_START_Y] += actionBarOffset;
-	    			break;
-	    	}
-    	}
+        // Position text in largest area
+        switch(largest) {
+            case ShowcaseView.LEFT_OF_SHOWCASE:
+                mBestTextPosition[INDEX_TEXT_START_X] = padding;
+                mBestTextPosition[INDEX_TEXT_START_Y] = padding;
+                mBestTextPosition[INDEX_TEXT_WIDTH] = showcase.left - 2 * padding;
+                break;
+            case ShowcaseView.ABOVE_SHOWCASE:
+                mBestTextPosition[INDEX_TEXT_START_X] = padding;
+                mBestTextPosition[INDEX_TEXT_START_Y] = padding + actionBarOffset;
+                mBestTextPosition[INDEX_TEXT_WIDTH] = canvasW - 2 * padding;
+                break;
+            case ShowcaseView.RIGHT_OF_SHOWCASE:
+                mBestTextPosition[INDEX_TEXT_START_X] = showcase.right + padding;
+                mBestTextPosition[INDEX_TEXT_START_Y] = padding;
+                mBestTextPosition[INDEX_TEXT_WIDTH] = (canvasW - showcase.right) - 2 * padding;
+                break;
+            case ShowcaseView.BELOW_SHOWCASE:
+                mBestTextPosition[INDEX_TEXT_START_X] = padding;
+                mBestTextPosition[INDEX_TEXT_START_Y] = showcase.bottom + padding;
+                mBestTextPosition[INDEX_TEXT_WIDTH] = canvasW - 2 * padding;
+                break;
+        }
+        if(shouldCentreText) {
+            // Center text vertically or horizontally
+            switch(largest) {
+                case ShowcaseView.LEFT_OF_SHOWCASE:
+                case ShowcaseView.RIGHT_OF_SHOWCASE:
+                    mBestTextPosition[INDEX_TEXT_START_Y] += canvasH / 4;
+                    break;
+                case ShowcaseView.ABOVE_SHOWCASE:
+                case ShowcaseView.BELOW_SHOWCASE:
+                    mBestTextPosition[INDEX_TEXT_WIDTH] /= 2;
+                    mBestTextPosition[INDEX_TEXT_START_X] += canvasW / 4;
+                    break;
+            }
+        } else {
+            // As text is not centered add actionbar padding if the text is left or right
+            switch(largest) {
+                case ShowcaseView.LEFT_OF_SHOWCASE:
+                case ShowcaseView.RIGHT_OF_SHOWCASE:
+                    mBestTextPosition[INDEX_TEXT_START_Y] += actionBarOffset;
+                    break;
+            }
+        }
 
         hasRecalculated = true;
     }
