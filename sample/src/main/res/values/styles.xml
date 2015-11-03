@@ -17,7 +17,15 @@
 
 <resources>
 
-    <style name="CompatDarkActionBarTheme" parent="android:Theme.Holo.Light" />
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#3973cf</item>
+        <item name="colorPrimaryDark">#3365b5</item>
+    </style>
+
+    <style name="Toolbar">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+    </style>
 
     <style name="CustomShowcaseTheme" parent="ShowcaseView.Light">
         <item name="sv_backgroundColor">#3300A621</item>
@@ -27,11 +35,12 @@
         <item name="sv_titleTextAppearance">@style/CustomTitle</item>
     </style>
 
-    <style name="CustomShowcaseTheme2" parent="ShowcaseView.Light">
-        <item name="sv_backgroundColor">#663d4353</item>
+    <style name="CustomShowcaseTheme2" parent="ShowcaseView">
+        <item name="sv_backgroundColor">#e51249d9</item>
         <item name="sv_showcaseColor">#25467A</item>
         <item name="sv_buttonText">Close</item>
         <item name="sv_titleTextAppearance">@style/CustomTitle2</item>
+        <item name="sv_detailTextAppearance">@style/CustomText2</item>
     </style>
 
     <style name="CustomShowcaseTheme3" parent="ShowcaseView">
@@ -41,20 +50,16 @@
         <item name="sv_titleTextAppearance">@style/CustomTitle</item>
     </style>
 
-    <style name="SampleTheme" parent="Theme.AppCompat.Light">
-        <item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>
-    </style>
-
-    <style name="SampleTheme2" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="showcaseViewStyle">@style/CustomShowcaseTheme2</item>
-    </style>
-
     <style name="CustomTitle" parent="TextAppearance.ShowcaseView.Title">
         <item name="android:textColor">#00801A</item>
     </style>
 
-    <style name="CustomTitle2" parent="TextAppearance.ShowcaseView.Title">
-        <item name="android:textColor">#25467A</item>
+    <style name="CustomTitle2" parent="TextAppearance.ShowcaseView.Title.Light">
+        <item name="android:textColor">#deffffff</item>
+    </style>
+
+    <style name="CustomText2" parent="TextAppearance.ShowcaseView.Detail.Light">
+        <item name="android:textColor">#8affffff</item>
     </style>
 
     <style name="ListItemBigtext">

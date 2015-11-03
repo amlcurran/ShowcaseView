@@ -15,13 +15,15 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:id="@+id/toolbar"
+            app:theme="@style/Toolbar"
             android:layout_height="wrap_content"/>
 
     <Button
@@ -31,12 +33,6 @@
         android:text="Button"
         android:minWidth="96dp"
         android:layout_margin="16dp"
-        android:layout_gravity="center_horizontal" />
-
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center" />
 
 </LinearLayout>

@@ -17,11 +17,12 @@
 package com.github.amlcurran.showcaseview.sample;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.sample.animations.AnimationSampleActivity;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
-public class SampleActivity extends Activity implements View.OnClickListener,
+public class SampleActivity extends AppCompatActivity implements View.OnClickListener,
         OnShowcaseEventListener, AdapterView.OnItemClickListener {
 
     private static final float ALPHA_DIM_VALUE = 0.1f;
@@ -53,6 +54,7 @@ public class SampleActivity extends Activity implements View.OnClickListener,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         HardcodedListAdapter adapter = new HardcodedListAdapter(this);
         listView = (ListView) findViewById(R.id.listView);
@@ -69,12 +71,14 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         lps.setMargins(margin, margin, margin, margin);
 
         ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
-        sv = new ShowcaseView.Builder(this, true)
+        sv = new ShowcaseView.Builder(this)
+                .withMaterialShowcase()
                 .setTarget(target)
                 .setContentTitle(R.string.showcase_main_title)
                 .setContentText(R.string.showcase_main_message)
                 .setStyle(R.style.CustomShowcaseTheme2)
                 .setShowcaseEventListener(this)
+                .replaceEndButton(R.layout.view_custom_button)
                 .build();
         sv.setButtonPosition(lps);
     }
@@ -124,22 +128,21 @@ public class SampleActivity extends Activity implements View.OnClickListener,
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         switch (position) {
-
             case 0:
-                //startActivity(new Intent(this, ActionItemsSampleActivity.class));
+                startActivity(new Intent(this, ActionItemsSampleActivity.class));
                 break;
-
             case 1:
                 startActivity(new Intent(this, AnimationSampleActivity.class));
                 break;
-
             case 2:
                 startActivity(new Intent(this, SingleShotActivity.class));
                 break;
-
-            // Not currently used
             case 3:
-                startActivity(new Intent(this, MemoryManagementTesting.class));
+                startActivity(new Intent(this, CustomTextActivity.class));
+                break;
+            case 4:
+                startActivity(new Intent(this, CustomShowcaseActivity.class));
+                break;
         }
     }
 
@@ -148,13 +151,17 @@ public class SampleActivity extends Activity implements View.OnClickListener,
         private static final int[] TITLE_RES_IDS = new int[] {
                 R.string.title_action_items,
                 R.string.title_animations,
-                R.string.title_single_shot//, R.string.title_memory
+                R.string.title_single_shot,
+                R.string.custom_text,
+                 R.string.custom_showcase_title//, R.string.title_memory
         };
 
         private static final int[] SUMMARY_RES_IDS = new int[] {
                 R.string.sum_action_items,
                 R.string.sum_animations,
-                R.string.sum_single_shot//, R.string.sum_memory
+                R.string.sum_single_shot,
+                R.string.custom_text_summary,
+                R.string.custom_showcase_summary//, R.string.sum_memory
         };
 
         public HardcodedListAdapter(Context context) {

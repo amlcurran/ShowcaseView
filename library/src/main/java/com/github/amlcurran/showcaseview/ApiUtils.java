@@ -16,11 +16,7 @@
 
 package com.github.amlcurran.showcaseview;
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Build;
-import android.view.View;
 
 public class ApiUtils {
 
@@ -32,19 +28,4 @@ public class ApiUtils {
         return isCompatWith(Build.VERSION_CODES.HONEYCOMB);
     }
 
-    @TargetApi(14)
-    public void setFitsSystemWindowsCompat(View view) {
-        if (isCompatWith(Build.VERSION_CODES.ICE_CREAM_SANDWICH)) {
-            view.setFitsSystemWindows(true);
-        }
-    }
-
-    public static int getNavigationBarHeight(Context context) {
-        Resources resources = context.getResources();
-        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            return resources.getDimensionPixelSize(resourceId);
-        }
-        return 0;
-    }
 }
