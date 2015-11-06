@@ -52,6 +52,7 @@ class TextDrawer {
     private TextAppearanceSpan mTitleSpan;
     private TextAppearanceSpan mDetailSpan;
     private boolean hasRecalculated;
+    @ShowcaseView.TextPosition
     private int forcedTextPosition = ShowcaseView.UNDEFINED;
 
     public TextDrawer(Resources resources, ShowcaseAreaCalculator calculator, Context context) {
@@ -230,7 +231,7 @@ class TextDrawer {
         this.titleTextAlignment = titleTextAlignment;
     }
 
-    public void forceTextPosition(int textPosition) {
+    public void forceTextPosition(@ShowcaseView.TextPosition int textPosition) {
         if (textPosition > ShowcaseView.BELOW_SHOWCASE || textPosition < ShowcaseView.UNDEFINED) {
             throw new IllegalArgumentException("ShowcaseView text was forced with an invalid position");
         }

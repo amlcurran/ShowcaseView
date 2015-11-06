@@ -24,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.support.annotation.IntDef;
 import android.text.Layout;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -37,6 +38,9 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.github.amlcurran.showcaseview.targets.Target;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationEndListener;
 import static com.github.amlcurran.showcaseview.AnimationFactory.AnimationStartListener;
@@ -53,6 +57,10 @@ public class ShowcaseView extends RelativeLayout
     public static final int RIGHT_OF_SHOWCASE = 2;
     public static final int ABOVE_SHOWCASE = 1;
     public static final int BELOW_SHOWCASE = 3;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({UNDEFINED, LEFT_OF_SHOWCASE, RIGHT_OF_SHOWCASE, ABOVE_SHOWCASE, BELOW_SHOWCASE})
+    public @interface TextPosition {}
 
     private Button mEndButton;
     private final TextDrawer textDrawer;
@@ -712,7 +720,7 @@ public class ShowcaseView extends RelativeLayout
         this.fadeOutMillis = fadeOutMillis;
     }
 
-    public void forceTextPosition(int textPosition) {
+    public void forceTextPosition(@TextPosition int textPosition) {
         textDrawer.forceTextPosition(textPosition);
         hasAlteredText = true;
         invalidate();
