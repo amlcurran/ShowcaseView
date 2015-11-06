@@ -16,13 +16,16 @@
 
 package com.github.amlcurran.showcaseview;
 
+import android.os.Build.VERSION_CODES;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+@TargetApi(VERSION_CODES.HONEYCOMB)
 class AnimatorAnimationFactory implements AnimationFactory {
 
     private static final String ALPHA = "alpha";

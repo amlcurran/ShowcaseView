@@ -102,7 +102,14 @@ public class ShowcaseView extends RelativeLayout
         super(context, attrs, defStyle);
 
         ApiUtils apiUtils = new ApiUtils();
-        animationFactory = new AnimatorAnimationFactory();
+        if (apiUtils.isCompatWithHoneycomb())
+        {
+            animationFactory = new AnimatorAnimationFactory();
+        }
+        else
+        {
+            animationFactory = new JumpingAnimationFactory();
+        }
         showcaseAreaCalculator = new ShowcaseAreaCalculator();
         shotStateStore = new ShotStateStore(context);
 
