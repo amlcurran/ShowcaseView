@@ -63,8 +63,10 @@ The [legacy branch](https://github.com/amlcurran/ShowcaseView/tree/legacy) is st
 Is it worth using?
 ----
 Perhaps. Why not ask
-[Google](https://github.com/googlecast/CastVideos-android),
-[HaxSync](https://play.google.com/store/apps/details?id=org.mots.haxsync), or [AllCast](https://play.google.com/store/apps/details?id=com.koushikdutta.cast), which each use the library?
+[Google](https://github.com/googlecast/CastVideos-android), [iPlayer Radio](https://play.google.com/store/apps/details?id=uk.co.bbc.android.iplayerradio),
+or [AllCast](https://play.google.com/store/apps/details?id=com.koushikdutta.cast), which each use the library?
+
+Previous users include The Guardian and HaxSync
 
 What's missing in v5
 ---
