@@ -60,7 +60,8 @@ public class ShowcaseView extends RelativeLayout
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({UNDEFINED, LEFT_OF_SHOWCASE, RIGHT_OF_SHOWCASE, ABOVE_SHOWCASE, BELOW_SHOWCASE})
-    public @interface TextPosition {}
+    public @interface TextPosition {
+    }
 
     private Button mEndButton;
     private final TextDrawer textDrawer;
@@ -102,13 +103,10 @@ public class ShowcaseView extends RelativeLayout
         super(context, attrs, defStyle);
 
         ApiUtils apiUtils = new ApiUtils();
-        if (apiUtils.isCompatWithHoneycomb())
-        {
+        if (apiUtils.isCompatWithHoneycomb()) {
             animationFactory = new AnimatorAnimationFactory();
-        }
-        else
-        {
-            animationFactory = new JumpingAnimationFactory();
+        } else {
+            animationFactory = new NoAnimationFactory();
         }
         showcaseAreaCalculator = new ShowcaseAreaCalculator();
         shotStateStore = new ShotStateStore(context);
@@ -209,8 +207,9 @@ public class ShowcaseView extends RelativeLayout
 
     private void updateBitmap() {
         if (bitmapBuffer == null || haveBoundsChanged()) {
-            if(bitmapBuffer != null)
-        		bitmapBuffer.recycle();
+            if (bitmapBuffer != null) {
+                bitmapBuffer.recycle();
+            }
             bitmapBuffer = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
 
         }
@@ -429,7 +428,7 @@ public class ShowcaseView extends RelativeLayout
         /**
          * @param useNewStyle should use "new style" showcase (see {@link #withNewStyleShowcase()}
          * @deprecated use {@link #withHoloShowcase()}, {@link #withNewStyleShowcase()}, or
-         *  {@link #setShowcaseDrawer(ShowcaseDrawer)}
+         * {@link #setShowcaseDrawer(ShowcaseDrawer)}
          */
         @Deprecated
         public Builder(Activity activity, boolean useNewStyle) {
