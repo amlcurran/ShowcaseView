@@ -143,6 +143,9 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
             case 4:
                 startActivity(new Intent(this, CustomShowcaseActivity.class));
                 break;
+            case 5:
+                startActivity(new Intent(this, MemoryManagementTesting.class));
+                break;
         }
     }
 
@@ -153,7 +156,8 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                 R.string.title_animations,
                 R.string.title_single_shot,
                 R.string.custom_text,
-                 R.string.custom_showcase_title//, R.string.title_memory
+                 R.string.custom_showcase_title,
+                R.string.title_memory
         };
 
         private static final int[] SUMMARY_RES_IDS = new int[] {
@@ -161,7 +165,8 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                 R.string.sum_animations,
                 R.string.sum_single_shot,
                 R.string.custom_text_summary,
-                R.string.custom_showcase_summary//, R.string.sum_memory
+                R.string.custom_showcase_summary,
+                R.string.sum_memory
         };
 
         public HardcodedListAdapter(Context context) {
