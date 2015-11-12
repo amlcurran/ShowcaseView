@@ -34,7 +34,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
@@ -112,9 +111,6 @@ public class ShowcaseView extends RelativeLayout
         showcaseAreaCalculator = new ShowcaseAreaCalculator();
         shotStateStore = new ShotStateStore(context);
 
-        getViewTreeObserver().addOnPreDrawListener(new CalculateTextOnPreDraw());
-        getViewTreeObserver().addOnGlobalLayoutListener(new UpdateOnGlobalLayout());
-
         // Get the attributes for the ShowcaseView
         final TypedArray styled = context.getTheme()
                 .obtainStyledAttributes(attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle,
@@ -173,6 +169,7 @@ public class ShowcaseView extends RelativeLayout
         showcaseX = x - positionInWindow[0];
         showcaseY = y - positionInWindow[1];
         //init();
+        recalculateText();
         invalidate();
     }
 
@@ -212,7 +209,6 @@ public class ShowcaseView extends RelativeLayout
                 bitmapBuffer.recycle();
             }
             bitmapBuffer = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-
         }
     }
 
@@ -310,7 +306,6 @@ public class ShowcaseView extends RelativeLayout
 
     @Override
     public void hide() {
-        clearBitmap();
         // If the type is set to one-shot, store that it has shot
         shotStateStore.storeShot();
         mEventListener.onShowcaseViewHide(this);
@@ -330,6 +325,7 @@ public class ShowcaseView extends RelativeLayout
                     @Override
                     public void onAnimationEnd() {
                         setVisibility(View.GONE);
+                        clearBitmap();
                         isShowing = false;
                         mEventListener.onShowcaseViewDidHide(ShowcaseView.this);
                     }
@@ -340,8 +336,15 @@ public class ShowcaseView extends RelativeLayout
     @Override
     public void show() {
         isShowing = true;
+        if (canUpdateBitmap()) {
+            updateBitmap();
+        }
         mEventListener.onShowcaseViewShow(this);
         fadeInShowcase();
+    }
+
+    private boolean canUpdateBitmap() {
+        return getMeasuredHeight() > 0 && getMeasuredWidth() > 0;
     }
 
     private void fadeInShowcase() {
@@ -802,25 +805,6 @@ public class ShowcaseView extends RelativeLayout
             mEndButton.getBackground().setColorFilter(showcaseColor, PorterDuff.Mode.MULTIPLY);
         } else {
             mEndButton.getBackground().setColorFilter(HOLO_BLUE, PorterDuff.Mode.MULTIPLY);
-        }
-    }
-
-    private class UpdateOnGlobalLayout implements ViewTreeObserver.OnGlobalLayoutListener {
-
-        @Override
-        public void onGlobalLayout() {
-            if (!shotStateStore.hasShot()) {
-                updateBitmap();
-            }
-        }
-    }
-
-    private class CalculateTextOnPreDraw implements ViewTreeObserver.OnPreDrawListener {
-
-        @Override
-        public boolean onPreDraw() {
-            recalculateText();
-            return true;
         }
     }
 
