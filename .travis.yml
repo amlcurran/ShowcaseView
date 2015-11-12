@@ -3,3 +3,6 @@ android:
   components:
     - android-23
     - build-tools-22.0.1
+    - extra-google-m2repository
+    - extra-android-support
+    - extra-android-m2repository
