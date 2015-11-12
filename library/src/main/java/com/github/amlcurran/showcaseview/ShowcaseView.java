@@ -415,7 +415,7 @@ public class ShowcaseView extends RelativeLayout
      */
     public static class Builder {
 
-        final ShowcaseView showcaseView;
+        private final ShowcaseView showcaseView;
         private final Activity activity;
 
         private ViewGroup parent;
