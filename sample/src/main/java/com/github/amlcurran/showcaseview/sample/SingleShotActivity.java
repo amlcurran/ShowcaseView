@@ -31,7 +31,7 @@ public class SingleShotActivity extends Activity {
         setContentView(R.layout.activity_single_shot);
 
         Target viewTarget = new ViewTarget(R.id.button, this);
-        new ShowcaseView.Builder(this, true)
+        new ShowcaseView.Builder(this)
                 .setTarget(viewTarget)
                 .setContentTitle(R.string.title_single_shot)
                 .setContentText(R.string.R_string_desc_single_shot)
