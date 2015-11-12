@@ -38,7 +38,7 @@ import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.sample.animations.AnimationSampleActivity;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
-public class SampleActivity extends AppCompatActivity implements View.OnClickListener,
+public class MainActivity extends AppCompatActivity implements View.OnClickListener,
         OnShowcaseEventListener, AdapterView.OnItemClickListener {
 
     private static final float ALPHA_DIM_VALUE = 0.1f;
@@ -50,7 +50,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
         HardcodedListAdapter adapter = new HardcodedListAdapter(this);

@@ -16,35 +16,40 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.amlcurran.showcaseview.sample">
+          package="com.github.amlcurran.showcaseview.sample">
 
     <application
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:icon="@drawable/ic_launcher"
-        android:allowBackup="true">
-
-        <activity
-            android:name=".SampleActivity"
             android:label="@string/app_name"
-            android:logo="@drawable/ic_logo">
+            android:theme="@style/AppTheme"
+            android:icon="@drawable/ic_launcher"
+            android:allowBackup="true">
+
+        <activity android:name=".MainActivity"/>
+
+        <activity-alias
+                android:name=".EntryPoint"
+                android:targetActivity=".MainActivity"
+                android:label="@string/app_name"
+                android:logo="@drawable/ic_logo">
+
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
 
-        <activity android:name=".animations.AnimationSampleActivity" />
+        </activity-alias>
 
-        <activity android:name=".MemoryManagementTesting" />
+        <activity android:name=".animations.AnimationSampleActivity"/>
 
-        <activity android:name=".SingleShotActivity" />
+        <activity android:name=".MemoryManagementTesting"/>
 
-        <activity android:name=".CustomTextActivity" />
+        <activity android:name=".SingleShotActivity"/>
 
-        <activity android:name=".CustomShowcaseActivity" />
+        <activity android:name=".CustomTextActivity"/>
 
-        <activity android:name=".ActionItemsSampleActivity" />
+        <activity android:name=".CustomShowcaseActivity"/>
+
+        <activity android:name=".ActionItemsSampleActivity"/>
 
     </application>
 </manifest>
