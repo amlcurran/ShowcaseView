@@ -209,7 +209,6 @@ public class ShowcaseView extends RelativeLayout
                 bitmapBuffer.recycle();
             }
             bitmapBuffer = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-
         }
     }
 
@@ -337,8 +336,15 @@ public class ShowcaseView extends RelativeLayout
     @Override
     public void show() {
         isShowing = true;
+        if (canUpdateBitmap()) {
+            updateBitmap();
+        }
         mEventListener.onShowcaseViewShow(this);
         fadeInShowcase();
+    }
+
+    private boolean canUpdateBitmap() {
+        return getMeasuredHeight() > 0 && getMeasuredWidth() > 0;
     }
 
     private void fadeInShowcase() {
