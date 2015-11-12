@@ -39,7 +39,6 @@ class TextDrawer {
     private final TextPaint titlePaint;
     private final TextPaint textPaint;
     private final Context context;
-    private final ShowcaseAreaCalculator calculator;
     private final float padding;
     private final float actionBarOffset;
 
@@ -55,11 +54,10 @@ class TextDrawer {
     @ShowcaseView.TextPosition
     private int forcedTextPosition = ShowcaseView.UNDEFINED;
 
-    public TextDrawer(Resources resources, ShowcaseAreaCalculator calculator, Context context) {
+    public TextDrawer(Resources resources, Context context) {
         padding = resources.getDimension(R.dimen.text_padding);
         actionBarOffset = resources.getDimension(R.dimen.action_bar_offset);
 
-        this.calculator = calculator;
         this.context = context;
 
         titlePaint = new TextPaint();
@@ -125,14 +123,11 @@ class TextDrawer {
      *  @param canvasW width of the screen
      * @param canvasH height of the screen
      * @param shouldCentreText
+     * @param showcase
      */
-    public void calculateTextPosition(int canvasW, int canvasH, ShowcaseView showcaseView, boolean shouldCentreText) {
+    public void calculateTextPosition(int canvasW, int canvasH, boolean shouldCentreText, Rect showcase) {
 
-    	Rect showcase = showcaseView.hasShowcaseView() ?
-    			calculator.getShowcaseRect() :
-    			new Rect();
-    	
-    	int[] areas = new int[4]; //left, top, right, bottom
+        int[] areas = new int[4]; //left, top, right, bottom
     	areas[ShowcaseView.LEFT_OF_SHOWCASE] = showcase.left * canvasH;
     	areas[ShowcaseView.ABOVE_SHOWCASE] = showcase.top * canvasW;
     	areas[ShowcaseView.RIGHT_OF_SHOWCASE] = (canvasW - showcase.right) * canvasH;

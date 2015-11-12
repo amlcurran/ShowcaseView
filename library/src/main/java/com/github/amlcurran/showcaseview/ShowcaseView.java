@@ -24,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.support.annotation.IntDef;
 import android.text.Layout;
 import android.text.TextPaint;
@@ -129,7 +130,7 @@ public class ShowcaseView extends RelativeLayout
         } else {
             showcaseDrawer = new StandardShowcaseDrawer(getResources(), context.getTheme());
         }
-        textDrawer = new TextDrawer(getResources(), showcaseAreaCalculator, getContext());
+        textDrawer = new TextDrawer(getResources(), getContext());
 
         updateStyle(styled, false);
 
@@ -277,7 +278,8 @@ public class ShowcaseView extends RelativeLayout
         boolean recalculatedCling = showcaseAreaCalculator.calculateShowcaseRect(showcaseX, showcaseY, showcaseDrawer);
         boolean recalculateText = recalculatedCling || hasAlteredText;
         if (recalculateText) {
-            textDrawer.calculateTextPosition(getMeasuredWidth(), getMeasuredHeight(), this, shouldCentreText);
+            Rect rect = hasShowcaseView() ? showcaseAreaCalculator.getShowcaseRect() : new Rect();
+            textDrawer.calculateTextPosition(getMeasuredWidth(), getMeasuredHeight(), shouldCentreText, rect);
         }
         hasAlteredText = false;
     }
