@@ -17,11 +17,11 @@
 package com.github.amlcurran.showcaseview.sample.animations;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.github.amlcurran.showcaseview.ApiUtils;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.sample.R;
 import com.github.amlcurran.showcaseview.targets.Target;
@@ -37,7 +37,6 @@ public class AnimationSampleActivity extends Activity implements View.OnClickLis
     private TextView textView1;
     private TextView textView2;
     private TextView textView3;
-    private final ApiUtils apiUtils = new ApiUtils();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +56,7 @@ public class AnimationSampleActivity extends Activity implements View.OnClickLis
 
 
     private void setAlpha(float alpha, View... views) {
-        if (apiUtils.isCompatWithHoneycomb()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             for (View view : views) {
                 view.setAlpha(alpha);
             }

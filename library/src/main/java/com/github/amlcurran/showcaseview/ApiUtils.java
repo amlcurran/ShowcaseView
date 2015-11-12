@@ -18,7 +18,7 @@ package com.github.amlcurran.showcaseview;
 
 import android.os.Build;
 
-public class ApiUtils {
+class ApiUtils {
 
     public boolean isCompatWith(int versionCode) {
         return Build.VERSION.SDK_INT >= versionCode;
