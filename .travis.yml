@@ -1,1 +1,4 @@
 language: android
+android:
+  components:
+    - android-23
