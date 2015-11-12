@@ -29,8 +29,8 @@ class NewShowcaseDrawer extends StandardShowcaseDrawer {
     private final float outerRadius;
     private final float innerRadius;
 
-    public NewShowcaseDrawer(Resources resources) {
-        super(resources);
+    public NewShowcaseDrawer(Resources resources, Resources.Theme theme) {
+        super(resources, theme);
         outerRadius = resources.getDimension(R.dimen.showcase_radius_outer);
         innerRadius = resources.getDimension(R.dimen.showcase_radius_inner);
     }

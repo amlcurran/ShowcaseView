@@ -125,9 +125,9 @@ public class ShowcaseView extends RelativeLayout
 
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
         if (newStyle) {
-            showcaseDrawer = new NewShowcaseDrawer(getResources());
+            showcaseDrawer = new NewShowcaseDrawer(getResources(), context.getTheme());
         } else {
-            showcaseDrawer = new StandardShowcaseDrawer(getResources());
+            showcaseDrawer = new StandardShowcaseDrawer(getResources(), context.getTheme());
         }
         textDrawer = new TextDrawer(getResources(), showcaseAreaCalculator, getContext());
 
@@ -454,7 +454,7 @@ public class ShowcaseView extends RelativeLayout
          * <img alt="Holo showcase example" src="../../../../../../../../example2.png" />
          */
         public Builder withHoloShowcase() {
-            return setShowcaseDrawer(new StandardShowcaseDrawer(activity.getResources()));
+            return setShowcaseDrawer(new StandardShowcaseDrawer(activity.getResources(), activity.getTheme()));
         }
 
         /**
@@ -462,7 +462,7 @@ public class ShowcaseView extends RelativeLayout
          * <img alt="Holo showcase example" src="../../../../../../../../example.png" />
          */
         public Builder withNewStyleShowcase() {
-            return setShowcaseDrawer(new NewShowcaseDrawer(activity.getResources()));
+            return setShowcaseDrawer(new NewShowcaseDrawer(activity.getResources(), activity.getTheme()));
         }
 
         /**
