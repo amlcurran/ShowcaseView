@@ -16,6 +16,7 @@
 
 package com.github.amlcurran.showcaseview;
 
+import android.animation.AnimatorListenerAdapter;
 import android.os.Build.VERSION_CODES;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -41,23 +42,13 @@ class AnimatorAnimationFactory implements AnimationFactory {
     @Override
     public void fadeInView(View target, long duration, final AnimationStartListener listener) {
         ObjectAnimator oa = ObjectAnimator.ofFloat(target, ALPHA, INVISIBLE, VISIBLE);
-        oa.setDuration(duration).addListener(new Animator.AnimatorListener() {
+        oa.setDuration(duration).addListener(new AnimatorListenerAdapter() {
+
             @Override
             public void onAnimationStart(Animator animator) {
                 listener.onAnimationStart();
             }
 
-            @Override
-            public void onAnimationEnd(Animator animator) {
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-            }
         });
         oa.start();
     }
@@ -65,23 +56,13 @@ class AnimatorAnimationFactory implements AnimationFactory {
     @Override
     public void fadeOutView(View target, long duration, final AnimationEndListener listener) {
         ObjectAnimator oa = ObjectAnimator.ofFloat(target, ALPHA, INVISIBLE);
-        oa.setDuration(duration).addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-            }
+        oa.setDuration(duration).addListener(new AnimatorListenerAdapter() {
 
             @Override
             public void onAnimationEnd(Animator animator) {
                 listener.onAnimationEnd();
             }
 
-            @Override
-            public void onAnimationCancel(Animator animator) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-            }
         });
         oa.start();
     }
