@@ -17,4 +17,10 @@
 
 <resources>
   <color name="custom_showcase_bg">#b9002153</color>
+  <color name="app_color_1">#3973cf</color>
+  <color name="app_color_1_dark">#3365b5</color>
+  <color name="app_color_1_ninety">#e53973cf</color>
+  <color name="app_color_2">#00801A</color>
+  <color name="app_color_2_ninety">#E500801A</color>
+  <color name="app_color_2_dark">#006614</color>
 </resources>
