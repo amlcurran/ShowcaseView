@@ -26,5 +26,5 @@ public interface Target {
         }
     };
 
-    public Point getPoint();
+    Point getPoint();
 }

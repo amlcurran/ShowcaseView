@@ -3,7 +3,7 @@ package com.github.amlcurran.showcaseview;
 import android.graphics.Point;
 import android.view.View;
 
-public class NoAnimationFactory implements AnimationFactory {
+class NoAnimationFactory implements AnimationFactory {
 
     @Override
     public void fadeInView(View target, long duration, AnimationStartListener listener) {

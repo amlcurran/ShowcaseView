@@ -26,11 +26,11 @@ interface AnimationFactory {
 
     void animateTargetToPoint(ShowcaseView showcaseView, Point point);
 
-    public interface AnimationStartListener {
+    interface AnimationStartListener {
         void onAnimationStart();
     }
 
-    public interface AnimationEndListener {
+    interface AnimationEndListener {
         void onAnimationEnd();
     }
 }
