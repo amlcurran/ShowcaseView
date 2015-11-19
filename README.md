@@ -17,7 +17,7 @@ Project set-up
 If you're using a Gradle-based project, then you can add SCV as a dependency directly:
 
 ~~~
-compile 'com.github.amlcurran.showcaseview:library:5.0.0'
+compile 'com.github.amlcurran.showcaseview:library:5.3.0'
 ~~~
 
 If you're using Maven (but not Gradle), you can add the APKlib as a dependency:
@@ -26,7 +26,7 @@ If you're using Maven (but not Gradle), you can add the APKlib as a dependency:
 <dependency>
   <groupId>com.github.amlcurran.showcaseview</groupId>
   <artifactId>library</artifactId>
-  <version>5.0.0</version>
+  <version>5.3.0</version>
   <type>apklib</type>
 </dependency>
 ~~~
@@ -63,8 +63,10 @@ The [legacy branch](https://github.com/amlcurran/ShowcaseView/tree/legacy) is st
 Is it worth using?
 ----
 Perhaps. Why not ask
-[Google](https://github.com/googlecast/CastVideos-android),
-[HaxSync](https://play.google.com/store/apps/details?id=org.mots.haxsync), or [AllCast](https://play.google.com/store/apps/details?id=com.koushikdutta.cast), which each use the library?
+[Google](https://github.com/googlecast/CastVideos-android), [iPlayer Radio](https://play.google.com/store/apps/details?id=uk.co.bbc.android.iplayerradio),
+or [AllCast](https://play.google.com/store/apps/details?id=com.koushikdutta.cast), which each use the library?
+
+Previous users include The Guardian and HaxSync
 
 What's missing in v5
 ---

@@ -26,7 +26,7 @@ interface Reflector {
 
     ViewParent getActionBarView();
 
-    public enum ActionBarType {
+    enum ActionBarType {
         STANDARD, APP_COMPAT, ACTIONBAR_SHERLOCK
     }
 }

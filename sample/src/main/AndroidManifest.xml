@@ -36,6 +36,8 @@
 
         <activity android:name=".animations.AnimationSampleActivity" />
 
+        <activity android:name=".MemoryManagementTesting" />
+
         <activity android:name=".SingleShotActivity" />
 
         <activity android:name=".CustomTextActivity" />

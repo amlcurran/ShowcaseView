@@ -19,21 +19,43 @@ package com.github.amlcurran.showcaseview.sample;
 import android.app.Activity;
 import android.os.Bundle;
 
-public class MemoryManagementTesting extends Activity {
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
+
+public class MemoryManagementTesting extends Activity implements OnShowcaseEventListener {
+
+    int currentShowcase = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        showcase();
+    }
 
-//        ShowcaseViews showcaseViews = new ShowcaseViews(this);
-//
-//        ShowcaseViews.ItemViewProperties properties = new ShowcaseViews.ItemViewProperties(
-//                R.id.buttonBlocked, R.string.showcase_like_title, R.string.showcase_like_message
-//        );
-//
-//        showcaseViews.addView(properties).addView(properties).addView(properties).addView(properties)
-//                .addView(properties).addView(properties).show();
+    private void showcase() {
+        new ShowcaseView.Builder(this)
+                .withMaterialShowcase()
+                .setContentText(String.format("Showing %1$d", currentShowcase))
+                .setTarget(new ViewTarget(R.id.buttonBlocked, this))
+                .setShowcaseEventListener(this)
+                .build();
+    }
+
+    @Override
+    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+
+    }
+
+    @Override
+    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+        currentShowcase++;
+        showcase();
+    }
+
+    @Override
+    public void onShowcaseViewShow(ShowcaseView showcaseView) {
 
     }
 }

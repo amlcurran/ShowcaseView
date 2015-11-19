@@ -23,6 +23,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 
 class StandardShowcaseDrawer implements ShowcaseDrawer {
 
@@ -32,7 +33,7 @@ class StandardShowcaseDrawer implements ShowcaseDrawer {
     private final float showcaseRadius;
     protected int backgroundColour;
 
-    public StandardShowcaseDrawer(Resources resources) {
+    public StandardShowcaseDrawer(Resources resources, Resources.Theme theme) {
         PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.MULTIPLY);
         eraserPaint = new Paint();
         eraserPaint.setColor(0xFFFFFF);
@@ -41,7 +42,7 @@ class StandardShowcaseDrawer implements ShowcaseDrawer {
         eraserPaint.setAntiAlias(true);
         basicPaint = new Paint();
         showcaseRadius = resources.getDimension(R.dimen.showcase_radius);
-        showcaseDrawable = resources.getDrawable(R.drawable.cling_bleached);
+        showcaseDrawable = ResourcesCompat.getDrawable(resources, R.drawable.cling_bleached, theme);
     }
 
     @Override
