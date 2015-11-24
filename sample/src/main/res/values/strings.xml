@@ -69,4 +69,6 @@
     <string name="custom_showcase_painting_text">A showcase can be drawn in any shape you like</string>
     <string name="custom_showcase_title">Custom showcase</string>
     <string name="custom_showcase_summary">Implementing your own drawing for a showcase</string>
+    <string name="title_events">Events</string>
+    <string name="sum_event">Details ShowcaseView lifecycle events</string>
 </resources>
