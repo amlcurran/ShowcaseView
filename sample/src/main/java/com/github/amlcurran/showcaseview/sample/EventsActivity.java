@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
+import android.view.MotionEvent;
 import android.widget.TextView;
 
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
@@ -21,6 +22,7 @@ public class EventsActivity extends AppCompatActivity {
 
         new ShowcaseView.Builder(this)
                 .withMaterialShowcase()
+                .setStyle(R.style.CustomShowcaseTheme3)
                 .setTarget(new ViewTarget(R.id.imageView, this))
                 .setContentTitle("Events")
                 .setContentText("Listening to ShowcaseView events is easy!")
@@ -29,6 +31,7 @@ public class EventsActivity extends AppCompatActivity {
     }
 
     private static class LogToTextListener implements OnShowcaseEventListener {
+
         private final TextView eventLog;
         private final SpannableStringBuilder stringBuilder;
 
@@ -56,5 +59,11 @@ public class EventsActivity extends AppCompatActivity {
         public void onShowcaseViewShow(ShowcaseView showcaseView) {
             append("Showcase shown");
         }
+
+        @Override
+        public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
+            append("Touch blocked: x: " + motionEvent.getX() + " y: " + motionEvent.getY());
+        }
+
     }
 }

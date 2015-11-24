@@ -362,6 +362,7 @@ public class ShowcaseView extends RelativeLayout
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if (blockAllTouches) {
+            mEventListener.onShowcaseViewTouchBlocked(motionEvent);
             return true;
         }
 
@@ -375,7 +376,11 @@ public class ShowcaseView extends RelativeLayout
             return true;
         }
 
-        return blockTouches && distanceFromFocus > showcaseDrawer.getBlockedRadius();
+        boolean blocked = blockTouches && distanceFromFocus > showcaseDrawer.getBlockedRadius();
+        if (blocked) {
+            mEventListener.onShowcaseViewTouchBlocked(motionEvent);
+        }
+        return blocked;
     }
 
     private static void insertShowcaseView(ShowcaseView showcaseView, ViewGroup parent, int parentIndex) {

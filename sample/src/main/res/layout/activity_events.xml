@@ -28,17 +28,23 @@
           android:layout_centerHorizontal="true"
           android:layout_marginTop="48dp"/>
 
-  <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:id="@+id/events_log"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:layout_below="@+id/imageView"
-          android:layout_alignParentRight="true"
-          android:layout_alignParentEnd="true"
-          android:layout_alignParentBottom="true"
-          android:padding="16dp"
-          android:textSize="14sp"/>
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/imageView"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/events_log"
+                android:padding="16dp"
+                android:textSize="14sp"/>
+
+    </ScrollView>
 
 </RelativeLayout>

@@ -16,6 +16,8 @@
 
 package com.github.amlcurran.showcaseview;
 
+import android.view.MotionEvent;
+
 /**
 * @author Alex
 */
@@ -56,6 +58,12 @@ public interface OnShowcaseEventListener {
         public void onShowcaseViewShow(ShowcaseView showcaseView) {
 
         }
+
+        @Override
+        public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
+
+        }
     };
 
+    void onShowcaseViewTouchBlocked(MotionEvent motionEvent);
 }

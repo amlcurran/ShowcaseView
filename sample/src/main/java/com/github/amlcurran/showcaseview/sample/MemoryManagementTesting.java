@@ -18,6 +18,7 @@ package com.github.amlcurran.showcaseview.sample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
@@ -56,6 +57,11 @@ public class MemoryManagementTesting extends Activity implements OnShowcaseEvent
 
     @Override
     public void onShowcaseViewShow(ShowcaseView showcaseView) {
+
+    }
+
+    @Override
+    public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
 
     }
 }

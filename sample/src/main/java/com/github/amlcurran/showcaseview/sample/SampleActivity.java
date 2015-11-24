@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -120,6 +121,11 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         dimView(listView);
         buttonBlocked.setText(R.string.button_hide);
         //buttonBlocked.setEnabled(true);
+    }
+
+    @Override
+    public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
+
     }
 
     @Override
