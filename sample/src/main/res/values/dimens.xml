@@ -2,4 +2,5 @@
 <resources>
     <dimen name="custom_showcase_width">96dip</dimen>
     <dimen name="custom_showcase_height">48dip</dimen>
+    <dimen name="touch_button_wobble">12dp</dimen>
 </resources>
