@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.SimpleShowcaseEventListener;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class EventsActivity extends AppCompatActivity {
         TextView eventLog = (TextView) findViewById(R.id.events_log);
         Button customButton = (Button) getLayoutInflater().inflate(R.layout.view_custom_button, null);
 
-        ShowcaseView showcaseView = new ShowcaseView.Builder(this)
+        new ShowcaseView.Builder(this)
                 .withMaterialShowcase()
                 .setStyle(R.style.CustomShowcaseTheme3)
                 .setTarget(new ViewTarget(R.id.imageView, this))
@@ -114,26 +115,11 @@ public class EventsActivity extends AppCompatActivity {
         }
     }
 
-    private class ShakeButtonListener implements OnShowcaseEventListener {
+    private class ShakeButtonListener extends SimpleShowcaseEventListener {
         private final Button button;
 
         public ShakeButtonListener(Button button) {
             this.button = button;
-        }
-
-        @Override
-        public void onShowcaseViewHide(ShowcaseView showcaseView) {
-            // No-op
-        }
-
-        @Override
-        public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-            // No-op
-        }
-
-        @Override
-        public void onShowcaseViewShow(ShowcaseView showcaseView) {
-            // No-op
         }
 
         @Override
