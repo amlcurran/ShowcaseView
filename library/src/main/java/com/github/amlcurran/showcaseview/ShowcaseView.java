@@ -368,8 +368,8 @@ public class ShowcaseView extends RelativeLayout
             return true;
         }
 
-        float xDelta = Math.abs(motionEvent.getRawX() - showcaseX);
-        float yDelta = Math.abs(motionEvent.getRawY() - showcaseY);
+        float xDelta = Math.abs(motionEvent.getRawX() - positionInWindow[0] - showcaseX);
+        float yDelta = Math.abs(motionEvent.getRawY() - positionInWindow[1] - showcaseY);
         double distanceFromFocus = Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
 
         if (MotionEvent.ACTION_UP == motionEvent.getAction() &&
