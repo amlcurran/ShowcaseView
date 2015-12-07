@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <style name="ListItemBigtext">
+    <item name="android:textColor">#25467A</item>
+    <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    <item name="android:fontFamily">sans-serif-light</item>
+    <item name="android:textStyle">italic</item>
+  </style>
+</resources>

@@ -19,11 +19,11 @@ package com.github.amlcurran.showcaseview.sample;
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.SimpleShowcaseEventListener;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
-public class MemoryManagementTesting extends Activity implements OnShowcaseEventListener {
+public class MemoryManagementTesting extends Activity {
 
     int currentShowcase = 1;
 
@@ -39,23 +39,16 @@ public class MemoryManagementTesting extends Activity implements OnShowcaseEvent
                 .withMaterialShowcase()
                 .setContentText(String.format("Showing %1$d", currentShowcase))
                 .setTarget(new ViewTarget(R.id.buttonBlocked, this))
-                .setShowcaseEventListener(this)
+                .setShowcaseEventListener(
+                        new SimpleShowcaseEventListener() {
+                            @Override
+                            public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+                                currentShowcase++;
+                                showcase();
+                            }
+                        }
+                )
                 .build();
     }
 
-    @Override
-    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-
-    }
-
-    @Override
-    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
-        currentShowcase++;
-        showcase();
-    }
-
-    @Override
-    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-
-    }
 }

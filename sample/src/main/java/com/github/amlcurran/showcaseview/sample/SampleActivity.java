@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -123,6 +124,11 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
+    public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
+
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         switch (position) {
             case 0:
@@ -143,6 +149,9 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
             case 5:
                 startActivity(new Intent(this, MemoryManagementTesting.class));
                 break;
+            case 6:
+                startActivity(new Intent(this, EventsActivity.class));
+                break;
         }
     }
 
@@ -154,7 +163,8 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                 R.string.title_single_shot,
                 R.string.custom_text,
                  R.string.custom_showcase_title,
-                R.string.title_memory
+                R.string.title_memory,
+                R.string.title_events
         };
 
         private static final int[] SUMMARY_RES_IDS = new int[] {
@@ -163,7 +173,8 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                 R.string.sum_single_shot,
                 R.string.custom_text_summary,
                 R.string.custom_showcase_summary,
-                R.string.sum_memory
+                R.string.sum_memory,
+                R.string.sum_event
         };
 
         public HardcodedListAdapter(Context context) {
