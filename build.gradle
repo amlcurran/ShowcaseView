@@ -47,6 +47,3 @@ task editReadme(type: Copy) {
   }
   into '.'
 }
-editReadme.outputs.upToDateWhen({
-  return false
-})
