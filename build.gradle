@@ -30,3 +30,23 @@ allprojects {
     options.encoding = "UTF-8"
   }
 }
+
+task release << {
+
+  println newVersion
+
+
+}
+
+import org.apache.tools.ant.filters.ReplaceTokens
+task editReadme(type: Copy) {
+  from('.') {
+    include 'README-template.md'
+    rename ('README-template.md', 'README.md')
+    filter(ReplaceTokens, tokens: ['version': versionName])
+  }
+  into '.'
+}
+editReadme.outputs.upToDateWhen({
+  return false
+})
