@@ -32,10 +32,14 @@ allprojects {
 }
 
 task release << {
+  println versionName
+}
 
-  println newVersion
+release.dependsOn('editReadme')
+release.finalizedBy('commitRelease')
 
-
+task commitRelease(type: Exec) {
+  commandLine 'git', "commit", "-am", "Update to version " + versionName
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
