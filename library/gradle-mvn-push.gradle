@@ -39,6 +39,14 @@ def getRepositoryPassword() {
     return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
 }
 
+def getVersionName() {
+    if (project.hasProperty('versionName')) {
+        return versionName
+    } else {
+        return "0"
+    }
+}
+
 afterEvaluate { project ->
     uploadArchives {
         repositories {
@@ -47,7 +55,7 @@ afterEvaluate { project ->
 
                 pom.groupId = GROUP
                 pom.artifactId = POM_ARTIFACT_ID
-                pom.version = versionName
+                pom.version = getVersionName()
 
                 repository(url: getReleaseRepositoryUrl()) {
                     authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
@@ -105,7 +113,7 @@ afterEvaluate { project ->
     }
 
     task androidJavadocs(type: Javadoc) {
-        title = "ShowcaseView ${versionName}"
+        title = "ShowcaseView ${getVersionName()}"
         ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
         source = android.sourceSets.main.java.getSrcDirs()
         classpath = files(ext.androidJar)

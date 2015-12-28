@@ -1,20 +1,20 @@
-task release << {
+task showcaseViewRelease << {
     println versionName
 }
 
-release.dependsOn('editReadme')
-release.dependsOn('library:uploadArchives')
-release.finalizedBy('commitRelease')
+showcaseViewRelease.dependsOn('editReadme')
+showcaseViewRelease.dependsOn('library:uploadArchives')
+showcaseViewRelease.finalizedBy('commitRelease')
 
-task commitRelease(type: Exec) {
+task commitRelease(type: Exec) << {
     if (project.hasProperty('versionName')) {
         commandLine 'git', "commit", "README.md", "-m", "Update to version " + versionName
     } else {
-//        throw new TaskExecutionException(tasks['commitRelease'], new NullPointerException("No version name supplied"))
+        throw new TaskExecutionException(tasks['commitRelease'], new NullPointerException("No version name supplied"))
     }
 }
 
-task createGithubRelease(type: Exec) {
+task createGithubRelease(type: Exec) << {
     def jsonData = JsonOutput.toJson([
             tag_name : "v$versionName",
             name: "v$versionName",
@@ -26,7 +26,7 @@ task createGithubRelease(type: Exec) {
 import groovy.json.JsonOutput
 import org.apache.tools.ant.filters.ReplaceTokens
 
-task editReadme(type: Copy) {
+task editReadme(type: Copy) << {
     from('.') {
         include 'README-template.md'
         rename('README-template.md', 'README.md')
