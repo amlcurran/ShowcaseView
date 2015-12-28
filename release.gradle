@@ -7,7 +7,7 @@ release.dependsOn('library:uploadArchives')
 release.finalizedBy('commitRelease')
 
 task commitRelease(type: Exec) {
-    commandLine 'git', "commit", "-am", "Update to version " + versionName
+    commandLine 'git', "commit", "README.md", "-m", "Update to version " + versionName
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
