@@ -3,6 +3,7 @@ task release << {
 }
 
 release.dependsOn('editReadme')
+release.dependsOn('library:uploadArchives')
 release.finalizedBy('commitRelease')
 
 task commitRelease(type: Exec) {

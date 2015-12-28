@@ -40,10 +40,19 @@ android {
     buildToolsVersion BUILD_TOOLS_VERSION
 
     defaultConfig {
-        versionName VERSION_NAME
+        versionName String.valueOf(parseVersionName())
         versionCode Integer.parseInt(VERSION_CODE)
         targetSdkVersion Integer.parseInt(TARGET_SDK)
         minSdkVersion Integer.parseInt(MIN_SDK_LIBRARY)
+    }
+}
+
+def parseVersionName() {
+    if (project.hasProperty('versionName')) {
+        return versionName
+    } else {
+        println("No version name supplied, using default")
+        return "0"
     }
 }
 
