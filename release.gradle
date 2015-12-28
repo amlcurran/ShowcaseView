@@ -1,0 +1,21 @@
+task release << {
+    println versionName
+}
+
+release.dependsOn('editReadme')
+release.finalizedBy('commitRelease')
+
+task commitRelease(type: Exec) {
+    commandLine 'git', "commit", "-am", "Update to version " + versionName
+}
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+task editReadme(type: Copy) {
+    from('.') {
+        include 'README-template.md'
+        rename('README-template.md', 'README.md')
+        filter(ReplaceTokens, tokens: ['version': versionName])
+    }
+    into '.'
+}
