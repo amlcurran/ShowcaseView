@@ -18,17 +18,15 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 def isReleaseBuild() {
-    return VERSION_NAME.contains("SNAPSHOT") == false
+    return versionName.contains("SNAPSHOT") == false
 }
 
 def getReleaseRepositoryUrl() {
-    println 'Release build'
     return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
             : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 }
 
 def getSnapshotRepositoryUrl() {
-    println 'Snapshot build'
     return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
             : "https://oss.sonatype.org/content/repositories/snapshots/"
 }
@@ -41,6 +39,14 @@ def getRepositoryPassword() {
     return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
 }
 
+def getVersionName() {
+    if (project.hasProperty('versionName')) {
+        return versionName
+    } else {
+        return "0"
+    }
+}
+
 afterEvaluate { project ->
     uploadArchives {
         repositories {
@@ -49,7 +55,7 @@ afterEvaluate { project ->
 
                 pom.groupId = GROUP
                 pom.artifactId = POM_ARTIFACT_ID
-                pom.version = VERSION_NAME
+                pom.version = getVersionName()
 
                 repository(url: getReleaseRepositoryUrl()) {
                     authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
@@ -107,7 +113,7 @@ afterEvaluate { project ->
     }
 
     task androidJavadocs(type: Javadoc) {
-        title = "ShowcaseView ${VERSION_NAME}"
+        title = "ShowcaseView ${getVersionName()}"
         ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
         source = android.sourceSets.main.java.getSrcDirs()
         classpath = files(ext.androidJar)

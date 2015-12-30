@@ -30,3 +30,5 @@ allprojects {
     options.encoding = "UTF-8"
   }
 }
+
+apply from:'release.gradle'
