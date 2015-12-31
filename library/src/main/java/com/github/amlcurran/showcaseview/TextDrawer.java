@@ -67,19 +67,29 @@ class TextDrawer {
         textPaint.setAntiAlias(true);
     }
 
+
     public void draw(Canvas canvas) {
         if (shouldDrawText()) {
+
             float[] textPosition = getBestTextPosition();
-            int width = Math.max(0, (int) mBestTextPosition[INDEX_TEXT_WIDTH]);
+
+            // ADDED FIX FOR LG G3
+            // @author CollegeDev
+            for (float position : textPosition) {
+                if (position < 0) {
+                    return;
+                }
+            }
 
             if (!TextUtils.isEmpty(mTitle)) {
                 canvas.save();
                 if (hasRecalculated) {
                     mDynamicTitleLayout = new DynamicLayout(mTitle, titlePaint,
-                                                            width, titleTextAlignment, 1.0f, 1.0f, true);
+                            (int) textPosition[2], Layout.Alignment.ALIGN_NORMAL,
+                            1.0f, 1.0f, true);
                 }
                 if (mDynamicTitleLayout != null) {
-                    canvas.translate(textPosition[INDEX_TEXT_START_X], textPosition[INDEX_TEXT_START_Y]);
+                    canvas.translate(textPosition[0], textPosition[1]);
                     mDynamicTitleLayout.draw(canvas);
                     canvas.restore();
                 }
@@ -89,11 +99,14 @@ class TextDrawer {
                 canvas.save();
                 if (hasRecalculated) {
                     mDynamicDetailLayout = new DynamicLayout(mDetails, textPaint,
-                                                             width, detailTextAlignment, 1.2f, 1.0f, true);
+                            (int) textPosition[2],
+                            Layout.Alignment.ALIGN_NORMAL,
+                            1.2f, 1.0f, true);
                 }
-                float offsetForTitle = mDynamicTitleLayout != null ? mDynamicTitleLayout.getHeight() : 0;
+                float offsetForTitle = mDynamicTitleLayout != null ? mDynamicTitleLayout.getHeight() :
+                        0;
                 if (mDynamicDetailLayout != null) {
-                    canvas.translate(textPosition[INDEX_TEXT_START_X], textPosition[INDEX_TEXT_START_Y] + offsetForTitle);
+                    canvas.translate(textPosition[0], textPosition[1] + offsetForTitle);
                     mDynamicDetailLayout.draw(canvas);
                     canvas.restore();
                 }
