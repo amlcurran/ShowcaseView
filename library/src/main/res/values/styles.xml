@@ -34,10 +34,19 @@
     </style>
 
     <style name="ShowcaseView">
-        <item name="sv_titleTextAppearance">@style/TextAppearance.ShowcaseView.Title</item>
-        <item name="sv_detailTextAppearance">@style/TextAppearance.ShowcaseView.Detail</item>
-        <item name="sv_backgroundColor">#3333B5E5</item>
+        <item name="sv_backgroundColor">#e51249d9</item>
+        <item name="sv_showcaseColor">#25467A</item>
         <item name="sv_buttonText">@android:string/ok</item>
+        <item name="sv_titleTextAppearance">@style/TextAppearance.ShowcaseView.Title.Material</item>
+        <item name="sv_detailTextAppearance">@style/TextAppearance.ShowcaseView.Detail.Material</item>
+    </style>
+
+    <style name="TextAppearance.ShowcaseView.Title.Material" parent="TextAppearance.ShowcaseView.Title.Light">
+        <item name="android:textColor">#deffffff</item>
+    </style>
+
+    <style name="TextAppearance.ShowcaseView.Detail.Material" parent="TextAppearance.ShowcaseView.Detail.Light">
+        <item name="android:textColor">#8affffff</item>
     </style>
 
     <style name="TextAppearance.ShowcaseView.Title" parent="android:style/TextAppearance.Large">
