@@ -95,11 +95,11 @@ public class ShowcaseView extends RelativeLayout
     private boolean blockAllTouches;
     private final int[] positionInWindow = new int[2];
 
-    protected ShowcaseView(Context context, boolean newStyle) {
-        this(context, null, R.styleable.CustomTheme_showcaseViewStyle, newStyle);
+    protected ShowcaseView(Context context) {
+        this(context, null, R.styleable.CustomTheme_showcaseViewStyle);
     }
 
-    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle, boolean newStyle) {
+    protected ShowcaseView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         ApiUtils apiUtils = new ApiUtils();
@@ -121,11 +121,7 @@ public class ShowcaseView extends RelativeLayout
         fadeOutMillis = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
-        if (newStyle) {
-            showcaseDrawer = new NewShowcaseDrawer(getResources(), context.getTheme());
-        } else {
-            showcaseDrawer = new StandardShowcaseDrawer(getResources(), context.getTheme());
-        }
+        showcaseDrawer = new MaterialShowcaseDrawer(getResources());
         textDrawer = new TextDrawer(getResources(), getContext());
 
         updateStyle(styled, false);
@@ -434,19 +430,12 @@ public class ShowcaseView extends RelativeLayout
         private ViewGroup parent;
         private int parentIndex;
 
-        public Builder(Activity activity) {
-            this(activity, false);
-        }
-
         /**
-         * @param useNewStyle should use "new style" showcase (see {@link #withNewStyleShowcase()}
-         * @deprecated use {@link #withHoloShowcase()}, {@link #withNewStyleShowcase()}, or
-         * {@link #setShowcaseDrawer(ShowcaseDrawer)}
+         * Constructs a new, material ShowcaseView. This wont be shown in the UI until {@link #build()} is called
          */
-        @Deprecated
-        public Builder(Activity activity, boolean useNewStyle) {
+        public Builder(Activity activity) {
             this.activity = activity;
-            this.showcaseView = new ShowcaseView(activity, useNewStyle);
+            this.showcaseView = new ShowcaseView(activity);
             this.showcaseView.setTarget(Target.NONE);
             this.parent = (ViewGroup) activity.findViewById(android.R.id.content);
             this.parentIndex = parent.getChildCount();
