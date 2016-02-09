@@ -25,7 +25,7 @@
         android:allowBackup="true">
 
         <activity
-            android:name=".SampleActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:logo="@drawable/ic_logo">
             <intent-filter>
@@ -47,6 +47,8 @@
         <activity android:name=".ActionItemsSampleActivity" />
 
         <activity android:name=".EventsActivity" />
+
+        <activity android:name=".FragmentDemoActivity" />
 
     </application>
 </manifest>
