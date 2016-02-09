@@ -16,7 +16,7 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.amlcurran.showcaseview.sample">
+    package="com.espian.showcaseview.sample">
 
     <application
         android:label="@string/app_name"
@@ -25,7 +25,7 @@
         android:allowBackup="true">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.github.amlcurran.showcaseview.sample.MainActivity"
             android:label="@string/app_name"
             android:logo="@drawable/ic_logo">
             <intent-filter>
@@ -34,21 +34,21 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".animations.AnimationSampleActivity" />
+        <activity android:name="com.github.amlcurran.showcaseview.sample.animations.AnimationSampleActivity" />
 
-        <activity android:name=".MemoryManagementTesting" />
+        <activity android:name="com.github.amlcurran.showcaseview.sample.MemoryManagementTesting" />
 
-        <activity android:name=".SingleShotActivity" />
+        <activity android:name="com.github.amlcurran.showcaseview.sample.SingleShotActivity" />
 
-        <activity android:name=".CustomTextActivity" />
+        <activity android:name="com.github.amlcurran.showcaseview.sample.CustomTextActivity" />
 
-        <activity android:name=".CustomShowcaseActivity" />
+        <activity android:name="com.github.amlcurran.showcaseview.sample.CustomShowcaseActivity" />
 
-        <activity android:name=".ActionItemsSampleActivity" />
+        <activity android:name="com.github.amlcurran.showcaseview.sample.ActionItemsSampleActivity" />
 
-        <activity android:name=".EventsActivity" />
+        <activity android:name="com.github.amlcurran.showcaseview.sample.EventsActivity" />
 
-        <activity android:name=".FragmentDemoActivity" />
+        <activity android:name="com.github.amlcurran.showcaseview.sample.FragmentDemoActivity" />
 
     </application>
 </manifest>

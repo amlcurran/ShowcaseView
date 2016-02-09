@@ -19,6 +19,7 @@ package com.github.amlcurran.showcaseview.sample;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.espian.showcaseview.sample.R;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;

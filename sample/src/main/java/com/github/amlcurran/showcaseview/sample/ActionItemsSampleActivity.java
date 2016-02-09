@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
+import com.espian.showcaseview.sample.R;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 
 public class ActionItemsSampleActivity extends AppCompatActivity {

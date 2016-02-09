@@ -24,7 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.github.amlcurran.showcaseview.sample.R;
+import com.espian.showcaseview.sample.R;
 
 public class MultipleShowcaseSampleActivity extends Activity {
 

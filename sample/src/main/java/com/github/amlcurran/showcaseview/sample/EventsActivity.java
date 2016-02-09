@@ -10,6 +10,7 @@ import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.espian.showcaseview.sample.R;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.SimpleShowcaseEventListener;

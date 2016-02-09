@@ -52,9 +52,32 @@ android {
         minSdkVersion Integer.parseInt(MIN_SDK_SAMPLE)
     }
 
+    signingConfigs {
+        release {
+            storeFile file(project.hasProperty("SHOWCASEVIEW_KEYSTORE_LOCATION") ? SHOWCASEVIEW_KEYSTORE_LOCATION : "/Users/amlcurran/.android/debug.keystore")
+            storePassword returnDefault("SHOWCASEVIEW_KEYSTORE_PW")
+            keyAlias returnDefault("SHOWCASEVIEW_KEY_ALIAS")
+            keyPassword returnDefault("SHOWCASEVIEW_KEY_PW")
+        }
+    }
+
     lintOptions {
         abortOnError false
     }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+def returnDefault(String propertyName) {
+   if (project.hasProperty(propertyName)) {
+       return project.property(propertyName)
+   } else {
+       return ""
+   }
 }
 
 def parseVersionName() {
@@ -62,6 +85,6 @@ def parseVersionName() {
         return versionName
     } else {
         println("No version name supplied, using default")
-        return "0"
+        return "5.4.0"
     }
 }

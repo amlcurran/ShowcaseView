@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Layout;
 import android.text.TextPaint;
 
+import com.espian.showcaseview.sample.R;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
