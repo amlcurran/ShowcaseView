@@ -72,11 +72,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ViewTarget target = new ViewTarget(R.id.buttonBlocked, this);
         sv = new ShowcaseView.Builder(this)
-                .withMaterialShowcase()
                 .setTarget(target)
                 .setContentTitle(R.string.showcase_main_title)
                 .setContentText(R.string.showcase_main_message)
-                .setStyle(R.style.CustomShowcaseTheme2)
                 .setShowcaseEventListener(this)
                 .replaceEndButton(R.layout.view_custom_button)
                 .build();
