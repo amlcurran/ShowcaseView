@@ -159,13 +159,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private enum DemoOption {
         ACTION_ITEMS(R.string.title_action_items, R.string.sum_action_items, ActionItemsSampleActivity.class),
-        ANIMATIONS(R.string.title_animations, R.string.sum_animations, AnimationSampleActivity.class),
+        FRAGMENTS(R.string.title_fragments, R.string.sum_fragments, FragmentDemoActivity.class),
+        EVENTS(R.string.title_events, R.string.sum_event, EventsActivity.class),
         SINGLE_SHOT(R.string.title_single_shot, R.string.sum_single_shot, SingleShotActivity.class),
+        ANIMATIONS(R.string.title_animations, R.string.sum_animations, AnimationSampleActivity.class),
         CUSTOM_TEXT(R.string.custom_text, R.string.custom_text_summary, CustomTextActivity.class),
         CUSTOM_SHOWCASE(R.string.custom_showcase_title, R.string.custom_showcase_summary, CustomShowcaseActivity.class),
-        MEMORY(R.string.title_memory, R.string.sum_memory, MemoryManagementTesting.class),
-        EVENTS(R.string.title_events, R.string.sum_event, EventsActivity.class),
-        FRAGMENTS(R.string.title_fragments, R.string.sum_fragments, FragmentDemoActivity.class);
+        MEMORY(R.string.title_memory, R.string.sum_memory, MemoryManagementTesting.class);
 
         final int titleRes;
         final int summaryRes;
