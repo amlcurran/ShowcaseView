@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/does_really_work_with_fragments"
-        android:id="@+id/buttonFragments"
+        android:id="@+id/fragment_demo_button"
         android:layout_centerInParent="true" />
 
 </RelativeLayout>

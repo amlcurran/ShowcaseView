@@ -48,5 +48,7 @@
 
         <activity android:name=".EventsActivity" />
 
+        <activity android:name=".FragmentDemoActivity" />
+
     </application>
 </manifest>
