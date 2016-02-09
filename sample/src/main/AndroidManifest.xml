@@ -25,7 +25,7 @@
         android:allowBackup="true">
 
         <activity
-            android:name=".SampleActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:logo="@drawable/ic_logo">
             <intent-filter>

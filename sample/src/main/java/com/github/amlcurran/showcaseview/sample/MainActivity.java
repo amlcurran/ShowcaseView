@@ -39,7 +39,7 @@ import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.sample.animations.AnimationSampleActivity;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
-public class SampleActivity extends AppCompatActivity implements View.OnClickListener,
+public class MainActivity extends AppCompatActivity implements View.OnClickListener,
         OnShowcaseEventListener, AdapterView.OnItemClickListener {
 
     private static final float ALPHA_DIM_VALUE = 0.1f;
