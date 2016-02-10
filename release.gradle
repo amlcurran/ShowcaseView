@@ -9,15 +9,11 @@ showcaseViewRelease.dependsOn('library:uploadArchives')
 showcaseViewRelease.finalizedBy('commitRelease')
 
 task commitRelease(type: Exec) {
-    commandLine 'git', "commit", "README.md", "-m", "Update to version " + (project.hasProperty("versionName") ? project.property("versionName") : "")
-}
-commitRelease.doLast {
-    if (!project.hasProperty("versionName")) {
-        println("Sad face");
-    }
+    commandLine 'git', "commit", "README.md", "-m", "Update to version " + getVersionName()
 }
 
 task createGithubRelease(type: Exec) {
+    def versionName = getVersionName()
     def jsonData = JsonOutput.toJson([
             tag_name: "v$versionName",
             name    : "v$versionName",
@@ -36,4 +32,13 @@ task editReadme(type: Copy) {
         filter(ReplaceTokens, tokens: ['version': versionName])
     }
     into '.'
+}
+
+def getVersionName() {
+    if (project.hasProperty("versionName")) {
+        return project.property("versionName")
+    } else {
+        println("using default version no.")
+        return ""
+    }
 }
