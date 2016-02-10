@@ -15,8 +15,8 @@ task commitRelease(type: Exec) {
 task createGithubRelease(type: Exec) {
     def versionName = getVersionName()
     def jsonData = JsonOutput.toJson([
-            tag_name: "v$versionName",
-            name    : "v$versionName",
+            tag_name: "$versionName",
+            name    : "$versionName",
             draft   : true])
     commandLine "curl", "--data", jsonData, "-u", "amlcurran:" + System.getenv('GITHUB_TOKEN'), "https://api.github.com/repos/amlcurran/ShowcaseView/releases"
 }
