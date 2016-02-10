@@ -25,6 +25,7 @@ import android.text.Layout;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.style.MetricAffectingSpan;
 import android.text.style.TextAppearanceSpan;
 
 /**
@@ -42,14 +43,17 @@ class TextDrawer {
     private final float padding;
     private final float actionBarOffset;
 
-    private Layout.Alignment detailTextAlignment = Layout.Alignment.ALIGN_NORMAL;
-    private Layout.Alignment titleTextAlignment = Layout.Alignment.ALIGN_NORMAL;
-    private CharSequence mTitle, mDetails;
+    private Layout.Alignment textAlignment = Layout.Alignment.ALIGN_NORMAL;
+    private SpannableString textString;
+    private DynamicLayout textLayout;
+    private MetricAffectingSpan textSpan;
+
+    private Layout.Alignment titleAlignment = Layout.Alignment.ALIGN_NORMAL;
+    private SpannableString titleString;
+    private DynamicLayout titleLayout;
+    private MetricAffectingSpan titleSpan;
+
     private float[] mBestTextPosition = new float[3];
-    private DynamicLayout mDynamicTitleLayout;
-    private DynamicLayout mDynamicDetailLayout;
-    private TextAppearanceSpan mTitleSpan;
-    private TextAppearanceSpan mDetailSpan;
     private boolean hasRecalculated;
     @ShowcaseView.TextPosition
     private int forcedTextPosition = ShowcaseView.UNDEFINED;
@@ -72,29 +76,29 @@ class TextDrawer {
             float[] textPosition = getBestTextPosition();
             int width = Math.max(0, (int) mBestTextPosition[INDEX_TEXT_WIDTH]);
 
-            if (!TextUtils.isEmpty(mTitle)) {
+            if (!TextUtils.isEmpty(titleString)) {
                 canvas.save();
                 if (hasRecalculated) {
-                    mDynamicTitleLayout = new DynamicLayout(mTitle, titlePaint,
-                                                            width, titleTextAlignment, 1.0f, 1.0f, true);
+                    titleLayout = new DynamicLayout(titleString, titlePaint,
+                                                            width, titleAlignment, 1.0f, 1.0f, true);
                 }
-                if (mDynamicTitleLayout != null) {
+                if (titleLayout != null) {
                     canvas.translate(textPosition[INDEX_TEXT_START_X], textPosition[INDEX_TEXT_START_Y]);
-                    mDynamicTitleLayout.draw(canvas);
+                    titleLayout.draw(canvas);
                     canvas.restore();
                 }
             }
 
-            if (!TextUtils.isEmpty(mDetails)) {
+            if (!TextUtils.isEmpty(textString)) {
                 canvas.save();
                 if (hasRecalculated) {
-                    mDynamicDetailLayout = new DynamicLayout(mDetails, textPaint,
-                                                             width, detailTextAlignment, 1.2f, 1.0f, true);
+                    textLayout = new DynamicLayout(textString, textPaint,
+                                                             width, textAlignment, 1.2f, 1.0f, true);
                 }
-                float offsetForTitle = mDynamicTitleLayout != null ? mDynamicTitleLayout.getHeight() : 0;
-                if (mDynamicDetailLayout != null) {
+                float offsetForTitle = titleLayout != null ? titleLayout.getHeight() : 0;
+                if (textLayout != null) {
                     canvas.translate(textPosition[INDEX_TEXT_START_X], textPosition[INDEX_TEXT_START_Y] + offsetForTitle);
-                    mDynamicDetailLayout.draw(canvas);
+                    textLayout.draw(canvas);
                     canvas.restore();
                 }
 
@@ -106,16 +110,16 @@ class TextDrawer {
     public void setContentText(CharSequence details) {
         if (details != null) {
             SpannableString ssbDetail = new SpannableString(details);
-            ssbDetail.setSpan(mDetailSpan, 0, ssbDetail.length(), 0);
-            mDetails = ssbDetail;
+            ssbDetail.setSpan(textSpan, 0, ssbDetail.length(), 0);
+            textString = ssbDetail;
         }
     }
 
     public void setContentTitle(CharSequence title) {
         if (title != null) {
             SpannableString ssbTitle = new SpannableString(title);
-            ssbTitle.setSpan(mTitleSpan, 0, ssbTitle.length(), 0);
-            mTitle = ssbTitle;
+            ssbTitle.setSpan(titleSpan, 0, ssbTitle.length(), 0);
+            titleString = ssbTitle;
         }
     }
 
@@ -194,13 +198,13 @@ class TextDrawer {
     }
 
     public void setTitleStyling(int styleId) {
-        mTitleSpan = new TextAppearanceSpan(this.context, styleId);
-        setContentTitle(mTitle);
+        titleSpan = new TextAppearanceSpan(this.context, styleId);
+        setContentTitle(titleString);
     }
 
     public void setDetailStyling(int styleId) {
-        mDetailSpan = new TextAppearanceSpan(this.context, styleId);
-        setContentText(mDetails);
+        textSpan = new TextAppearanceSpan(this.context, styleId);
+        setContentText(textString);
     }
 
     public float[] getBestTextPosition() {
@@ -208,23 +212,33 @@ class TextDrawer {
     }
 
     public boolean shouldDrawText() {
-        return !TextUtils.isEmpty(mTitle) || !TextUtils.isEmpty(mDetails);
+        return !TextUtils.isEmpty(titleString) || !TextUtils.isEmpty(textString);
     }
 
     public void setContentPaint(TextPaint contentPaint) {
         textPaint.set(contentPaint);
+        if (textString != null) {
+            textString.removeSpan(textSpan);
+        }
+        textSpan = new NoOpSpan();
+        setContentText(textString);
     }
 
     public void setTitlePaint(TextPaint textPaint) {
         titlePaint.set(textPaint);
+        if (titleString != null) {
+            titleString.removeSpan(titleSpan);
+        }
+        titleSpan = new NoOpSpan();
+        setContentTitle(titleString);
     }
 
     public void setDetailTextAlignment(Layout.Alignment textAlignment) {
-        this.detailTextAlignment = textAlignment;
+        this.textAlignment = textAlignment;
     }
 
     public void setTitleTextAlignment(Layout.Alignment titleTextAlignment) {
-        this.titleTextAlignment = titleTextAlignment;
+        this.titleAlignment = titleTextAlignment;
     }
 
     public void forceTextPosition(@ShowcaseView.TextPosition int textPosition) {
@@ -232,5 +246,17 @@ class TextDrawer {
             throw new IllegalArgumentException("ShowcaseView text was forced with an invalid position");
         }
         forcedTextPosition = textPosition;
+    }
+
+    private static class NoOpSpan extends MetricAffectingSpan {
+        @Override
+        public void updateDrawState(TextPaint tp) {
+            // No-op
+        }
+
+        @Override
+        public void updateMeasureState(TextPaint p) {
+            // No-op
+        }
     }
 }
