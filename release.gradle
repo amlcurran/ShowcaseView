@@ -17,7 +17,7 @@ commitRelease.doLast {
     }
 }
 
-task createGithubRelease(type: Exec) << {
+task createGithubRelease(type: Exec) {
     def jsonData = JsonOutput.toJson([
             tag_name: "v$versionName",
             name    : "v$versionName",
