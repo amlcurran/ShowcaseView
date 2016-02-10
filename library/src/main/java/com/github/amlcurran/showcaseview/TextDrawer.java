@@ -25,6 +25,7 @@ import android.text.Layout;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.style.MetricAffectingSpan;
 import android.text.style.TextAppearanceSpan;
 
 /**
@@ -44,12 +45,13 @@ class TextDrawer {
 
     private Layout.Alignment detailTextAlignment = Layout.Alignment.ALIGN_NORMAL;
     private Layout.Alignment titleTextAlignment = Layout.Alignment.ALIGN_NORMAL;
-    private CharSequence mTitle, mDetails;
+    private SpannableString mTitle;
+    private SpannableString mDetails;
     private float[] mBestTextPosition = new float[3];
     private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
-    private TextAppearanceSpan mTitleSpan;
-    private TextAppearanceSpan mDetailSpan;
+    private MetricAffectingSpan mTitleSpan;
+    private MetricAffectingSpan mDetailSpan;
     private boolean hasRecalculated;
     @ShowcaseView.TextPosition
     private int forcedTextPosition = ShowcaseView.UNDEFINED;
@@ -213,10 +215,20 @@ class TextDrawer {
 
     public void setContentPaint(TextPaint contentPaint) {
         textPaint.set(contentPaint);
+        if (mDetails != null) {
+            mDetails.removeSpan(mDetailSpan);
+        }
+        mDetailSpan = new NoOpSpan();
+        setContentText(mDetails);
     }
 
     public void setTitlePaint(TextPaint textPaint) {
         titlePaint.set(textPaint);
+        if (mTitle != null) {
+            mTitle.removeSpan(mTitleSpan);
+        }
+        mTitleSpan = new NoOpSpan();
+        setContentTitle(mTitle);
     }
 
     public void setDetailTextAlignment(Layout.Alignment textAlignment) {
@@ -232,5 +244,17 @@ class TextDrawer {
             throw new IllegalArgumentException("ShowcaseView text was forced with an invalid position");
         }
         forcedTextPosition = textPosition;
+    }
+
+    private static class NoOpSpan extends MetricAffectingSpan {
+        @Override
+        public void updateDrawState(TextPaint tp) {
+            // No-op
+        }
+
+        @Override
+        public void updateMeasureState(TextPaint p) {
+            // No-op
+        }
     }
 }
