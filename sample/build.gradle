@@ -81,10 +81,10 @@ def returnDefault(String propertyName) {
 }
 
 def parseVersionName() {
-    if (project.hasProperty('versionName')) {
-        return versionName
+    if (project.hasProperty("versionName")) {
+        return project.property("versionName")
     } else {
         println("No version name supplied, using default")
-        return "5.4.0"
+        return "0"
     }
 }

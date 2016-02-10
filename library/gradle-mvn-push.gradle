@@ -40,9 +40,10 @@ def getRepositoryPassword() {
 }
 
 def getVersionName() {
-    if (project.hasProperty('versionName')) {
-        return versionName
+    if (project.hasProperty("versionName")) {
+        return project.property("versionName")
     } else {
+        println("No version name supplied, using default (mvn-push)")
         return "0"
     }
 }

@@ -1,24 +1,27 @@
 task showcaseViewRelease << {
-    println versionName
+    if (!project.hasProperty("versionName")) {
+        throw new TaskExecutionException(tasks['commitRelease'], new NullPointerException("No version name supplied"))
+    }
 }
 
 showcaseViewRelease.dependsOn('editReadme')
 showcaseViewRelease.dependsOn('library:uploadArchives')
 showcaseViewRelease.finalizedBy('commitRelease')
 
-task commitRelease(type: Exec) << {
-    if (project.hasProperty('versionName')) {
-        commandLine 'git', "commit", "README.md", "-m", "Update to version " + versionName
-    } else {
-        throw new TaskExecutionException(tasks['commitRelease'], new NullPointerException("No version name supplied"))
+task commitRelease(type: Exec) {
+    commandLine 'git', "commit", "README.md", "-m", "Update to version " + (project.hasProperty("versionName") ? project.property("versionName") : "")
+}
+commitRelease.doLast {
+    if (!project.hasProperty("versionName")) {
+        println("Sad face");
     }
 }
 
 task createGithubRelease(type: Exec) << {
     def jsonData = JsonOutput.toJson([
-            tag_name : "v$versionName",
-            name: "v$versionName",
-            draft: true])
+            tag_name: "v$versionName",
+            name    : "v$versionName",
+            draft   : true])
     commandLine "curl", "--data", jsonData, "-u", "amlcurran:" + System.getenv('GITHUB_TOKEN'), "https://api.github.com/repos/amlcurran/ShowcaseView/releases"
 }
 
@@ -26,7 +29,7 @@ task createGithubRelease(type: Exec) << {
 import groovy.json.JsonOutput
 import org.apache.tools.ant.filters.ReplaceTokens
 
-task editReadme(type: Copy) << {
+task editReadme(type: Copy) {
     from('.') {
         include 'README-template.md'
         rename('README-template.md', 'README.md')
