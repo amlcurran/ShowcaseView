@@ -225,19 +225,21 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void setShowcaseX(int x) {
-        setShowcasePosition(x, showcaseY);
+        setShowcasePosition(x, getShowcaseY());
     }
 
     public void setShowcaseY(int y) {
-        setShowcasePosition(showcaseX, y);
+        setShowcasePosition(getShowcaseX(), y);
     }
 
     public int getShowcaseX() {
-        return showcaseX;
+        getLocationInWindow(positionInWindow);
+        return showcaseX + positionInWindow[0];
     }
 
     public int getShowcaseY() {
-        return showcaseY;
+        getLocationInWindow(positionInWindow);
+        return showcaseY + positionInWindow[1];
     }
 
     /**
