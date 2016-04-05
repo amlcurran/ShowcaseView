@@ -64,6 +64,9 @@ public class ShowcaseView extends RelativeLayout
     }
 
     private Button mEndButton;
+    private Button mButtonTwo;
+
+
     private final TextDrawer textDrawer;
     private ShowcaseDrawer showcaseDrawer;
     private final ShowcaseAreaCalculator showcaseAreaCalculator;
@@ -121,6 +124,7 @@ public class ShowcaseView extends RelativeLayout
         fadeOutMillis = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
         mEndButton = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
+        mButtonTwo = (Button) LayoutInflater.from(context).inflate(R.layout.showcase_button, null);
         if (newStyle) {
             showcaseDrawer = new NewShowcaseDrawer(getResources(), context.getTheme());
         } else {
@@ -151,12 +155,29 @@ public class ShowcaseView extends RelativeLayout
             addView(mEndButton);
         }
 
+
     }
 
     private boolean hasShot() {
         return shotStateStore.hasShot();
     }
 
+
+    private void addButtonTwo() {
+        if (mButtonTwo.getParent() == null) {
+            int margin = (int) getResources().getDimension(R.dimen.button_margin);
+            RelativeLayout.LayoutParams lps = (LayoutParams) generateDefaultLayoutParams();
+            lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            lps.setMargins(margin, margin, margin, margin);
+            mButtonTwo.setLayoutParams(lps);
+            mButtonTwo.setText(android.R.string.cancel);
+            if (!hasCustomClickListener) {
+                mButtonTwo.setOnClickListener(hideOnClickListener);
+            }
+            addView(mButtonTwo);
+        }
+    }
     void setShowcasePosition(Point point) {
         setShowcasePosition(point.x, point.y);
     }
@@ -225,21 +246,19 @@ public class ShowcaseView extends RelativeLayout
     }
 
     public void setShowcaseX(int x) {
-        setShowcasePosition(x, getShowcaseY());
+        setShowcasePosition(x, showcaseY);
     }
 
     public void setShowcaseY(int y) {
-        setShowcasePosition(getShowcaseX(), y);
+        setShowcasePosition(showcaseX, y);
     }
 
     public int getShowcaseX() {
-        getLocationInWindow(positionInWindow);
-        return showcaseX + positionInWindow[0];
+        return showcaseX;
     }
 
     public int getShowcaseY() {
-        getLocationInWindow(positionInWindow);
-        return showcaseY + positionInWindow[1];
+        return showcaseY;
     }
 
     /**
@@ -261,6 +280,43 @@ public class ShowcaseView extends RelativeLayout
         hasCustomClickListener = true;
     }
 
+    public void overrideButtonTwoClick(OnClickListener listener) {
+        if (shotStateStore.hasShot()) {
+            return;
+        }
+        if (mButtonTwo != null) {
+            if (listener != null) {
+                mButtonTwo.setOnClickListener(listener);
+            } else {
+                mButtonTwo.setOnClickListener(hideOnClickListener);
+            }
+        }
+        hasCustomClickListener = true;
+    }
+
+
+
+    public void overrideButtonsClick(OnClickListener listener1,OnClickListener listener2) {
+        if (shotStateStore.hasShot()) {
+            return;
+        }
+        if (mEndButton != null) {
+            if (listener1 != null) {
+                mEndButton.setOnClickListener(listener1);
+            } else {
+                mEndButton.setOnClickListener(hideOnClickListener);
+            }
+        }
+        if (mButtonTwo != null) {
+            if (listener2 != null) {
+                mButtonTwo.setOnClickListener(listener2);
+            } else {
+                mButtonTwo.setOnClickListener(hideOnClickListener);
+            }
+        }
+        hasCustomClickListener = true;
+    }
+
     public void setOnShowcaseEventListener(OnShowcaseEventListener listener) {
         if (listener != null) {
             mEventListener = listener;
@@ -273,6 +329,22 @@ public class ShowcaseView extends RelativeLayout
         if (mEndButton != null) {
             mEndButton.setText(text);
         }
+    }
+
+    /**
+     * Set text of BOTH buttons
+     *
+     * @param text1 Listener to listen to on click events for first button
+     * @param text2 Listener to listen to on click events for second button
+     */
+    public void setButtonsText(CharSequence text1,CharSequence text2) {
+        if (mEndButton != null) {
+            mEndButton.setText(text1);
+        }
+        if (mButtonTwo != null) {
+            mButtonTwo.setText(text2);
+        }
+
     }
 
     private void recalculateText() {
@@ -424,6 +496,14 @@ public class ShowcaseView extends RelativeLayout
         mEndButton.setVisibility(VISIBLE);
     }
 
+    public void hideButtonTwo() {
+        mButtonTwo.setVisibility(GONE);
+    }
+
+    public void showButtonTwo() {
+        mButtonTwo.setVisibility(VISIBLE);
+    }
+
     /**
      * Builder class which allows easier creation of {@link ShowcaseView}s.
      * It is recommended that you use this Builder class.
@@ -555,6 +635,16 @@ public class ShowcaseView extends RelativeLayout
             return this;
         }
 
+        public Builder setOnClickListeners(OnClickListener onClickListener1,OnClickListener onClickListener2) {
+            showcaseView.overrideButtonsClick(onClickListener1,onClickListener2);
+            return this;
+        }
+
+        public Builder setOnClickButtonTwoListener(OnClickListener onClickListener) {
+            showcaseView.overrideButtonTwoClick(onClickListener);
+            return this;
+        }
+
         /**
          * Don't make the ShowcaseView block touches on itself. This doesn't
          * block touches in the showcased area.
@@ -628,6 +718,14 @@ public class ShowcaseView extends RelativeLayout
             showcaseView.setEndButton(button);
             return this;
         }
+        /**
+         * Call addSecondButton first!
+         *
+         */
+        public Builder replaceButtonTwo(Button button) {
+            showcaseView.setButtonTwo(button);
+            return this;
+        }
 
         /**
          * Replace the end button with the one provided. Note that this resets any OnClickListener provided
@@ -639,6 +737,17 @@ public class ShowcaseView extends RelativeLayout
                 throw new IllegalArgumentException("Attempted to replace showcase button with a layout which isn't a button");
             }
             return replaceEndButton((Button) view);
+        }
+        /**
+         * Call addSecondButton first!
+         *
+         */
+        public Builder replaceButtonTwo(int buttonResourceId) {
+            View view = LayoutInflater.from(activity).inflate(buttonResourceId, showcaseView, false);
+            if (!(view instanceof Button)) {
+                throw new IllegalArgumentException("Attempted to replace showcase button with a layout which isn't a button");
+            }
+            return replaceButtonTwo((Button) view);
         }
 
         /**
@@ -658,6 +767,14 @@ public class ShowcaseView extends RelativeLayout
             this.parentIndex = -1;
             return this;
         }
+        /**
+         * Call this first if you plan to use other Builder methods
+         * using the second button
+         */
+        public Builder addSecondButton(){
+            showcaseView.addButtonTwo();
+            return this;
+        }
     }
 
     private void setEndButton(Button button) {
@@ -668,6 +785,27 @@ public class ShowcaseView extends RelativeLayout
         button.setOnClickListener(hideOnClickListener);
         button.setLayoutParams(copyParams);
         addView(button);
+    }
+
+    private void setButtonTwo(Button button) {
+        LayoutParams copyParams = (LayoutParams) mButtonTwo.getLayoutParams();
+        mButtonTwo.setOnClickListener(null);
+        removeView(mButtonTwo);
+        mButtonTwo = button;
+        button.setOnClickListener(hideOnClickListener);
+        button.setLayoutParams(copyParams);
+        addView(button);
+    }
+
+
+    private void setButtons(Button button1,Button button2) {
+        if(button1 != null) {
+            setEndButton(button1);
+        }
+
+        if(button2 != null) {
+            setButtonTwo(button2);
+        }
     }
 
     private void setShowcaseDrawer(ShowcaseDrawer showcaseDrawer) {
@@ -717,6 +855,14 @@ public class ShowcaseView extends RelativeLayout
         mEndButton.setLayoutParams(layoutParams);
     }
 
+    public void setButtonTwoPosition(RelativeLayout.LayoutParams layoutParams) {
+        mButtonTwo.setLayoutParams(layoutParams);
+    }
+
+    public void setButtonPositions(RelativeLayout.LayoutParams layoutParams1,RelativeLayout.LayoutParams layoutParams2) {
+        setButtonPosition(layoutParams1);
+        setButtonTwoPosition(layoutParams2);
+    }
     /**
      * Sets the text alignment of the detail text
      */
@@ -803,12 +949,33 @@ public class ShowcaseView extends RelativeLayout
         showcaseDrawer.setBackgroundColour(backgroundColor);
         tintButton(showcaseColor, tintButton);
         mEndButton.setText(buttonText);
+        mButtonTwo.setText(buttonText);
         textDrawer.setTitleStyling(titleTextAppearance);
         textDrawer.setDetailStyling(detailTextAppearance);
         hasAlteredText = true;
 
         if (invalidate) {
             invalidate();
+        }
+    }
+
+    private void tintButtons(int showcaseColor, boolean tintButton) {
+        if (tintButton) {
+            mEndButton.getBackground().setColorFilter(showcaseColor, PorterDuff.Mode.MULTIPLY);
+            mButtonTwo.getBackground().setColorFilter(showcaseColor, PorterDuff.Mode.MULTIPLY);
+        } else {
+            mEndButton.getBackground().setColorFilter(HOLO_BLUE, PorterDuff.Mode.MULTIPLY);
+            mButtonTwo.getBackground().setColorFilter(HOLO_BLUE, PorterDuff.Mode.MULTIPLY);
+
+        }
+    }
+
+    private void tintButtonTwo(int showcaseColor, boolean tintButton) {
+        if (tintButton) {
+            mButtonTwo.getBackground().setColorFilter(showcaseColor, PorterDuff.Mode.MULTIPLY);
+        } else {
+            mButtonTwo.getBackground().setColorFilter(HOLO_BLUE, PorterDuff.Mode.MULTIPLY);
+
         }
     }
 

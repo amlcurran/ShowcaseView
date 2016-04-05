@@ -166,7 +166,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ANIMATIONS(R.string.title_animations, R.string.sum_animations, AnimationSampleActivity.class),
         CUSTOM_TEXT(R.string.custom_text, R.string.custom_text_summary, CustomTextActivity.class),
         CUSTOM_SHOWCASE(R.string.custom_showcase_title, R.string.custom_showcase_summary, CustomShowcaseActivity.class),
-        MEMORY(R.string.title_memory, R.string.sum_memory, MemoryManagementTesting.class);
+        MEMORY(R.string.title_memory, R.string.sum_memory, MemoryManagementTesting.class),
+        TWOBUTTONS(R.string.title_two_buttons, R.string.sum_twobuttons, ButtonTwoActivity.class);
+
 
         final int titleRes;
         final int summaryRes;
