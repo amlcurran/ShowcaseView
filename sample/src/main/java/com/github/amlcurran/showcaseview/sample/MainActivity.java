@@ -168,8 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         CUSTOM_SHOWCASE(R.string.custom_showcase_title, R.string.custom_showcase_summary, CustomShowcaseActivity.class),
         MEMORY(R.string.title_memory, R.string.sum_memory, MemoryManagementTesting.class),
         TWOBUTTONS(R.string.title_two_buttons, R.string.sum_twobuttons, ButtonTwoActivity.class);
-
-
+        
         final int titleRes;
         final int summaryRes;
         final Class<? extends Activity> activityClass;
