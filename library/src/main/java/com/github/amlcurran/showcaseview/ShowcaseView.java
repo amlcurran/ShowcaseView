@@ -405,11 +405,13 @@ public class ShowcaseView extends RelativeLayout
     @Override
     public void setContentTitle(CharSequence title) {
         textDrawer.setContentTitle(title);
+        invalidate();
     }
 
     @Override
     public void setContentText(CharSequence text) {
         textDrawer.setContentText(text);
+        invalidate();
     }
 
     private void setScaleMultiplier(float scaleMultiplier) {

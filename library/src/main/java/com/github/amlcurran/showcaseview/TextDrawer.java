@@ -112,6 +112,7 @@ class TextDrawer {
             SpannableString ssbDetail = new SpannableString(details);
             ssbDetail.setSpan(textSpan, 0, ssbDetail.length(), 0);
             textString = ssbDetail;
+            hasRecalculated = true;
         }
     }
 
@@ -120,6 +121,7 @@ class TextDrawer {
             SpannableString ssbTitle = new SpannableString(title);
             ssbTitle.setSpan(titleSpan, 0, ssbTitle.length(), 0);
             titleString = ssbTitle;
+            hasRecalculated = true;
         }
     }
 
