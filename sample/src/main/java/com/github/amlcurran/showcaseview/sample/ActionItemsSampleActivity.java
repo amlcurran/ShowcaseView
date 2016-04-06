@@ -8,6 +8,7 @@ import android.view.Menu;
 
 import com.espian.showcaseview.sample.R;
 import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 public class ActionItemsSampleActivity extends AppCompatActivity {
 
@@ -15,16 +16,22 @@ public class ActionItemsSampleActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_action_items);
-        Toolbar viewById = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(viewById);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        new ShowcaseView.Builder(this)
-                .withMaterialShowcase()
-                .setTarget(new ToolbarActionItemTarget(viewById, R.id.menu_item1))
-                .setStyle(R.style.CustomShowcaseTheme2)
-                .setContentText("Here's how to highlight items on a toolbar")
-                .build()
-                .show();
+        try {
+            ViewTarget navigationButtonViewTarget = ViewTargets.navigationButtonViewTarget(toolbar);
+            new ShowcaseView.Builder(this)
+                    .withMaterialShowcase()
+                    .setTarget(navigationButtonViewTarget)
+                    .setStyle(R.style.CustomShowcaseTheme2)
+                    .setContentText("Here's how to highlight items on a toolbar")
+                    .build()
+                    .show();
+        } catch (ViewTargets.MissingViewException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
