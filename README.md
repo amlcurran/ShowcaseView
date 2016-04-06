@@ -17,7 +17,7 @@ Project set-up
 If you're using a Gradle-based project, then you can add SCV as a dependency directly:
 
 ~~~
-compile 'com.github.amlcurran.showcaseview:library:5.4.2'
+compile 'com.github.amlcurran.showcaseview:library:5.4.3'
 ~~~
 
 If you're using Maven (but not Gradle), you can add the APKlib as a dependency:
@@ -26,7 +26,7 @@ If you're using Maven (but not Gradle), you can add the APKlib as a dependency:
 <dependency>
   <groupId>com.github.amlcurran.showcaseview</groupId>
   <artifactId>library</artifactId>
-  <version>5.4.2</version>
+  <version>5.4.3</version>
   <type>apklib</type>
 </dependency>
 ~~~
