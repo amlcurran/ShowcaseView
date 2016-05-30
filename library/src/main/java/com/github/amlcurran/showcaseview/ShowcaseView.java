@@ -740,7 +740,7 @@ public class ShowcaseView extends RelativeLayout
     /**
      * Set the duration of the fading in and fading out of the ShowcaseView
      */
-    private void setFadeDurations(long fadeInMillis, long fadeOutMillis) {
+    public void setFadeDurations(long fadeInMillis, long fadeOutMillis) {
         this.fadeInMillis = fadeInMillis;
         this.fadeOutMillis = fadeOutMillis;
     }
