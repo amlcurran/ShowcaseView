@@ -17,6 +17,8 @@ import java.util.List;
 
 /**
  * Wrapper for {@link ShowcaseView} allows to showcase multiple areas one after another.
+ *
+ * Created by Dariusz Deoniziak (darekdeoniziak@gmail.com)
  */
 public class ShowcaseViews implements OnShowcaseEventListener {
 
@@ -69,17 +71,17 @@ public class ShowcaseViews implements OnShowcaseEventListener {
         ViewProperties viewProperties = views.get(views.size() - 1);
         int shotId = viewProperties.id;
 
-        return didShowGuide(shotId);
+        return didShowGuideFor(shotId);
     }
 
     private boolean didShowFirstGuide() {
         ViewProperties viewProperties = views.get(0);
         int shotId = viewProperties.id;
 
-        return didShowGuide(shotId);
+        return didShowGuideFor(shotId);
     }
 
-    private boolean didShowGuide(int shotId) {
+    public boolean didShowGuideFor(int shotId) {
         SharedPreferences settings = activity.getSharedPreferences("showcase_internal", Context.MODE_PRIVATE);
         return settings.getBoolean("hasShot" + shotId, false);
     }
