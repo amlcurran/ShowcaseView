@@ -36,10 +36,6 @@ showcaseViews = new ShowcaseViews.Builder(this)
                     })
                     .show();
 ~~~
-Shot modes:
-ShowcaseViews.SHOT_MODE_MULTIPLE
-ShowcaseViews.SHOT_MODE_SINGLE
-ShowcaseViews.SHOT_MODE_ONCE_EACH_VIEW
 
 Copyright and Licensing
 ----
