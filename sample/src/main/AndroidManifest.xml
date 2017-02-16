@@ -50,5 +50,8 @@
 
         <activity android:name="com.github.amlcurran.showcaseview.sample.FragmentDemoActivity" />
 
+        <activity android:name="com.github.amlcurran.showcaseview.sample.ButtonTwoActivity" />
+
+
     </application>
 </manifest>

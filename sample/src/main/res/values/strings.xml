@@ -22,6 +22,7 @@
     <string name="title_action_items">Action Items</string>
     <string name="title_action_bar">Action Views</string>
     <string name="title_multiple">Multiple Showcases</string>
+    <string name="title_two_buttons">Multiple Buttons</string>
     <string name="title_fragments">Fragments</string>
     <string name="button_like">Like it!</string>
     <string name="error_message">"Your Android version is &lt; Honeycomb. You need actionbar support to run this sample."</string>
@@ -46,11 +47,13 @@
     <string name="showcase_menu_item_one_shot_title">Shown only once</string>
     <string name="showcase_menu_item_one_shot_message">This will be shown only once since it uses ShowcaseView.TYPE_ONE_SHOT as the shotType.\nDelete the app data to see it again.</string>
     <string name="does_really_work_with_fragments">Show toast</string>
+    <string name="showcase_twobuttons_message">Click on one of the buttons, or the showcase and observe the effect!</string>
     <string name="it_does_work">It does work with Fragments. :)</string>
     <string name="sum_action_items">Showcasing items on the ActionBar (including appcompat and ActionBarSherlock)</string>
     <string name="sum_action_bar">Other items that can be shown on an ActionBar, such as spinners and titles</string>
     <string name="sum_multiple">Demonstrates a series of Showcases moving from one to the next</string>
     <string name="sum_fragments">Usage of ShowcaseView with fragments</string>
+    <string name="sum_twobuttons">Two buttons for your showcase</string>
     <string name="anim_first">First we showcase this…</string>
     <string name="anim_second">Then this…</string>
     <string name="title_animations">Animations</string>
@@ -73,4 +76,15 @@
     <string name="custom_showcase_summary">Implementing your own drawing for a showcase</string>
     <string name="title_events">Events</string>
     <string name="sum_event">Details ShowcaseView lifecycle events</string>
+    <string name="two_buttons">What will you do?</string>
+    <string name="button1">Button 1</string>
+    <string name="button2">Button 2</string>
+    <string name="clicked_button1">Clicked button 1</string>
+    <string name="clicked_button2">Clicked button 2</string>
+    <string name="clicked_showcase">Clicked showcase</string>
+    <string name="AGAIN_showcase">AGAIN!</string>
+
+
+
+
 </resources>
