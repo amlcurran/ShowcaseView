@@ -79,6 +79,7 @@ public class ShowcaseView extends RelativeLayout
     private boolean hasCustomClickListener = false;
     private boolean blockTouches = true;
     private boolean hideOnTouch = false;
+    private boolean hideOnTouchTarget = false;
     private OnShowcaseEventListener mEventListener = OnShowcaseEventListener.NONE;
 
     private boolean hasAlteredText = false;
@@ -274,6 +275,10 @@ public class ShowcaseView extends RelativeLayout
             mEndButton.setText(text);
         }
     }
+    
+    public void setHideOnTouchTarget(boolean hideOnTouchTarget){
+        this.hideOnTouchTarget = hideOnTouchTarget;
+    }
 
     private void recalculateText() {
         boolean recalculatedCling = showcaseAreaCalculator.calculateShowcaseRect(showcaseX, showcaseY, showcaseDrawer);
@@ -384,6 +389,11 @@ public class ShowcaseView extends RelativeLayout
         boolean blocked = blockTouches && distanceFromFocus > showcaseDrawer.getBlockedRadius();
         if (blocked) {
             mEventListener.onShowcaseViewTouchBlocked(motionEvent);
+        }
+        
+        if (MotionEvent.ACTION_UP == motionEvent.getAction() &&
+            hideOnTouchTarget && distanceFromFocus <= showcaseDrawer.getBlockedRadius()) {
+            this.hide();
         }
         return blocked;
     }
@@ -536,6 +546,19 @@ public class ShowcaseView extends RelativeLayout
          */
         public Builder setTarget(Target target) {
             showcaseView.setTarget(target);
+            return this;
+        }
+        
+
+        /**
+         * Set whether the showcase should hide when the target is touched.
+         *
+         * @param hideOnTouchTarget true if this showcase should hide when the specified target is
+         *               touched. The showcase will hide when a touch is performed anywhere inside the
+         *               focus area.
+         */
+        public Builder setHideOnTouchTarget(boolean hideOnTouchTarget){
+            showcaseView.setHideOnTouchTarget(hideOnTouchTarget);
             return this;
         }
 
