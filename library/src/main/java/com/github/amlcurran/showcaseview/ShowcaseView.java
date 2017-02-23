@@ -529,6 +529,22 @@ public class ShowcaseView extends RelativeLayout
         }
 
         /**
+         * Sets the button text shown on the ShowcaseView.
+         */
+        public Builder setButtonText(int resId) {
+            showcaseView.setButtonText(activity.getString(resId));
+            return this;
+        }
+
+        /**
+         * Sets the button text shown on the ShowcaseView.
+         */
+        public Builder setButtonText(CharSequence text) {
+            showcaseView.setButtonText(text);
+            return this;
+        }
+
+        /**
          * Set the target of the showcase.
          *
          * @param target a {@link com.github.amlcurran.showcaseview.targets.Target} representing
