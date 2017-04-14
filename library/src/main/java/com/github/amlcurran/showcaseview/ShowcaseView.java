@@ -829,4 +829,12 @@ public class ShowcaseView extends RelativeLayout
         }
     };
 
+    protected long getFadeOutMillis() {
+        return fadeOutMillis;
+    }
+
+    protected long getFadeInMillis() {
+        return fadeInMillis;
+    }
+
 }
