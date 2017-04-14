@@ -431,6 +431,12 @@ public class ShowcaseView extends RelativeLayout
      * It is recommended that you use this Builder class.
      */
     public static class Builder {
+            
+            //add on
+        public Builder setScaleMultiplier(float multiplier){
+            showcaseView.setScaleMultiplier(multiplier);
+            return this;
+        }
 
         private final ShowcaseView showcaseView;
         private final Activity activity;
