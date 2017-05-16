@@ -32,7 +32,7 @@ public class MaterialShowcaseDrawer implements ShowcaseDrawer {
     @Override
     public void drawShowcase(Bitmap buffer, float x, float y, float scaleMultiplier) {
         Canvas bufferCanvas = new Canvas(buffer);
-        bufferCanvas.drawCircle(x, y, radius, eraserPaint);
+        bufferCanvas.drawCircle(x, y, getBlockedRadius(), eraserPaint);
     }
 
     @Override
