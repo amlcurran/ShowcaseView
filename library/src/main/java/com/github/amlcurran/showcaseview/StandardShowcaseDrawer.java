@@ -25,7 +25,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.res.ResourcesCompat;
 
-class StandardShowcaseDrawer implements ShowcaseDrawer {
+public class StandardShowcaseDrawer implements ShowcaseDrawer {
 
     protected final Paint eraserPaint;
     protected final Drawable showcaseDrawable;
