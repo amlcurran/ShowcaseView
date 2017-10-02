@@ -153,7 +153,7 @@ public class ShowcaseView extends RelativeLayout
 
     }
 
-    private boolean hasShot() {
+    public boolean hasShot() {
         return shotStateStore.hasShot();
     }
 
