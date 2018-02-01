@@ -405,11 +405,13 @@ public class ShowcaseView extends RelativeLayout
     @Override
     public void setContentTitle(CharSequence title) {
         textDrawer.setContentTitle(title);
+        invalidate();
     }
 
     @Override
     public void setContentText(CharSequence text) {
         textDrawer.setContentText(text);
+        invalidate();
     }
 
     private void setScaleMultiplier(float scaleMultiplier) {
@@ -738,7 +740,7 @@ public class ShowcaseView extends RelativeLayout
     /**
      * Set the duration of the fading in and fading out of the ShowcaseView
      */
-    private void setFadeDurations(long fadeInMillis, long fadeOutMillis) {
+    public void setFadeDurations(long fadeInMillis, long fadeOutMillis) {
         this.fadeInMillis = fadeInMillis;
         this.fadeOutMillis = fadeOutMillis;
     }

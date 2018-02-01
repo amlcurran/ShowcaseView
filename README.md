@@ -17,19 +17,19 @@ Project set-up
 If you're using a Gradle-based project, then you can add SCV as a dependency directly:
 
 ~~~
-compile 'com.github.amlcurran.showcaseview:library:5.4.2'
+compile 'com.github.amlcurran.showcaseview:library:5.4.3'
 ~~~
 
 If you're using Maven (but not Gradle), you can add the APKlib as a dependency:
 
-~~~
+```xml
 <dependency>
   <groupId>com.github.amlcurran.showcaseview</groupId>
   <artifactId>library</artifactId>
-  <version>5.4.2</version>
+  <version>5.4.3</version>
   <type>apklib</type>
 </dependency>
-~~~
+```
 
 If you're using a standard project without either Maven or Gradle, you'll have to download the project, and the add the library manually to your project.
 
@@ -41,14 +41,14 @@ To use ShowcaseView, use the Builder pattern.
 
 As an example:
 
-~~~
+```java
 new ShowcaseView.Builder(this)
     .setTarget(new ActionViewTarget(this, ActionViewTarget.Type.HOME))
     .setContentTitle("ShowcaseView")
     .setContentText("This is highlighting the Home button")
     .hideOnTouchOutside()
     .build();
-~~~
+```
 
 You can use styles to customise how a ShowcaseView looks. I'll write more documentation soon, but for now, check out the sample project's [styles](https://github.com/amlcurran/ShowcaseView/blob/master/sample/src/main/res/values/styles.xml).
 
